@@ -8,10 +8,12 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "sqlalchemy (>=2.0.41,<3.0.0)"
 ]
 
 [tool.poetry]
 packages = [
+    {include = "models", from = "src"},
     {include = "openfoodfacts", from = "src"},
 ]
 
