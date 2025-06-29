@@ -1,7 +1,8 @@
 # All the product fields than interest us.
 FIELDS = [
+    "product_name",
     "nutrition_grade_fr",
-    "novascore",
+    "nova_group",
     "energy-kcal_100g",
     "fat_100g",
     "saturated-fat_100g",
