@@ -28,10 +28,18 @@ def get_arg_parser():
     """
 
     arg_parser = ArgumentParser(
-        prog="OpenFoodFacts Proteines Resilientes Data Collector"
+        description="OpenFoodFacts Proteines Resilientes Data Collector"
     )
-    arg_parser.add_argument("codes", nargs="*", default=[])
-    arg_parser.add_argument("--codefile", "-f", nargs="?", type=Path)
+
+    ref_group = arg_parser.add_mutually_exclusive_group()
+
+    ref_group.add_argument("references", nargs="*", help="Product references")
+    ref_group.add_argument(
+        "--ref-file",
+        "-f",
+        type=Path,
+        help="Text file containing the product references, one by line",
+    )
 
     return arg_parser
 
@@ -48,29 +56,29 @@ def main():
     # Parse arguments.
     args = get_arg_parser().parse_args()
 
-    codes = None
+    references = None
 
     # Whether product references ("EAN") are passed by positional arguments or
     # via a text file.
-    if args.codefile is not None:
-        with open(args.codefile, "r") as reader:
-            codes = reader.read().splitlines()
+    if args.ref_file is not None:
+        with open(args.ref_file, "r") as reader:
+            references = reader.read().splitlines()
     else:
-        codes = args.codes
+        references = args.references
 
     # Set up OpenFoodFacts REST API client.
     api_client = off_api(
         user_agent=OPENFOODFACTS_USER_AGENT, country=OPENFOODFACTS_COUNTRY
     )
 
-    for code in codes:
+    for reference in references:
         # To take into account potential newlines or comments when read from a
         # text file.
-        if code == "" or code.startswith("#"):
+        if reference == "" or reference.startswith("#"):
             continue
         else:
             data = api_client.product.get(
-                code,
+                reference,
                 fields=FIELDS,
             )
 
@@ -81,7 +89,7 @@ def main():
 
             new_product = Product(
                 name=data["product_name"],
-                references=[Reference(type=RefType.EAN, value=code)],
+                references=[Reference(type=RefType.EAN, value=reference)],
                 nutriscore=NutriScore(data["nutrition_grade_fr"]),
                 novascore=NovaScore(data["nova_group"]),
                 fat_100g=float(data["fat_100g"]),
