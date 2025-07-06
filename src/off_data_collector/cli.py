@@ -22,7 +22,7 @@ OPENFOODFACTS_USER_AGENT = "OFFPRDC/0.1"
 DEFAULT_SQLITE_FILENAME = "data.sqlite"
 
 
-def get_arg_parser():
+def get_arg_parser() -> ArgumentParser:
     """
     Returns the argument parser.
     """
@@ -44,7 +44,7 @@ def get_arg_parser():
     return arg_parser
 
 
-def main():
+def main() -> None:
     """
     Entry point of the OpenFoodFacts Data Collector command-line tool.
     """
