@@ -1,5 +1,5 @@
 from enum import Enum, StrEnum, unique
-from typing import List
+from typing import List, Optional
 from typing import TYPE_CHECKING
 
 from sqlalchemy import String
@@ -97,15 +97,17 @@ class Product(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100))
 
-    references: Mapped[List["Reference"]] = relationship(back_populates="product")
+    references: Mapped[Optional[List["Reference"]]] = relationship(
+        back_populates="product"
+    )
 
-    nutriscore: Mapped[NutriScore]
-    novascore: Mapped[NovaScore]
+    nutriscore: Mapped[Optional[NutriScore]]
+    novascore: Mapped[Optional[NovaScore]]
 
-    fat_100g: Mapped[float]
-    saturated_fat_100g: Mapped[float]
-    carbohydrates_100g: Mapped[float]
-    sugars_100g: Mapped[float]
-    fiber_100g: Mapped[float]
-    proteins_100g: Mapped[float]
-    salt_100g: Mapped[float]
+    fat_100g: Mapped[Optional[float]]
+    saturated_fat_100g: Mapped[Optional[float]]
+    carbohydrates_100g: Mapped[Optional[float]]
+    sugars_100g: Mapped[Optional[float]]
+    fiber_100g: Mapped[Optional[float]]
+    proteins_100g: Mapped[Optional[float]]
+    salt_100g: Mapped[Optional[float]]
