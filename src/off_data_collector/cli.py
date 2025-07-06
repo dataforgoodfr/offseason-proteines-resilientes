@@ -123,24 +123,35 @@ def main() -> None:
         )
 
         # If the product was not found.
-        if data is None:
+        if data is None or data.get("product_name") is None:
             logger.debug(f"Reference not found: '{reference}'")
             continue
 
         logger.debug(f"Data received: {data}")
 
+        # TODO: Refactor the Product instantiation.
         new_product = Product(
             name=data["product_name"],
             references=[Reference(type=RefType.EAN, value=reference)],
-            nutriscore=NutriScore(data["nutrition_grade_fr"]),
-            novascore=NovaScore(data["nova_group"]),
-            fat_100g=float(data["fat_100g"]),
-            saturated_fat_100g=float(data["saturated-fat_100g"]),
-            carbohydrates_100g=float(data["carbohydrates_100g"]),
-            sugars_100g=float(data["sugars_100g"]),
-            fiber_100g=float(data["fiber_100g"]),
-            proteins_100g=float(data["proteins_100g"]),
-            salt_100g=float(data["salt_100g"]),
+            nutriscore=NutriScore(data["nutrition_grade_fr"])
+            if data.get("nutrition_grade_fr")
+            and data["nutrition_grade_fr"] != "unknown"
+            and data["nutrition_grade_fr"] != "not-applicable"
+            else None,
+            novascore=NovaScore(data["nova_group"]) if data.get("nova_group") else None,
+            fat_100g=float(data["fat_100g"]) if data.get("fat_100g") else None,
+            saturated_fat_100g=float(data["saturated-fat_100g"])
+            if data.get("saturated-fat_100g")
+            else None,
+            carbohydrates_100g=float(data["carbohydrates_100g"])
+            if data.get("carbohydrates_100g")
+            else None,
+            sugars_100g=float(data["sugars_100g"]) if data.get("sugars_100g") else None,
+            fiber_100g=float(data["fiber_100g"]) if data.get("fiber_100g") else None,
+            proteins_100g=float(data["proteins_100g"])
+            if data.get("proteins_100g")
+            else None,
+            salt_100g=float(data["salt_100g"]) if data.get("salt_100g") else None,
         )
 
         with Session(engine) as session:
