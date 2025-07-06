@@ -1,4 +1,6 @@
 from argparse import ArgumentParser
+from logging import getLogger, Formatter, Logger, StreamHandler
+from logging import DEBUG, INFO
 from pathlib import Path
 
 from openfoodfacts import API as off_api
@@ -41,7 +43,33 @@ def get_arg_parser() -> ArgumentParser:
         help="Text file containing the product references, one by line",
     )
 
+    arg_parser.add_argument(
+        "--debug",
+        "-d",
+        action="store_true",
+        default=False,
+        help="Enable the debug mode",
+    )
+
     return arg_parser
+
+
+def __set_up_root_logger(level=INFO) -> Logger:
+    """
+    Sets up the root logger.
+    """
+
+    root_logger = getLogger("")
+    root_logger.setLevel(level)
+
+    console = StreamHandler()
+
+    console_formatter = Formatter("%(name)-12s: %(levelname)-8s %(message)s")
+    console.setFormatter(console_formatter)
+
+    root_logger.addHandler(console)
+
+    return root_logger
 
 
 def main() -> None:
@@ -49,24 +77,34 @@ def main() -> None:
     Entry point of the OpenFoodFacts Data Collector command-line tool.
     """
 
-    # Create a new ORM engine.
+    args = get_arg_parser().parse_args()
+
+    log_level = DEBUG if args.debug else INFO
+    __set_up_root_logger(level=log_level)
+
+    logger = getLogger(__name__)
+    logger.info("Program started")
+
+    logger.debug("Setting up the database")
     engine = create_engine("sqlite+pysqlite:///" + DEFAULT_SQLITE_FILENAME)
     Base.metadata.create_all(engine)
-
-    # Parse arguments.
-    args = get_arg_parser().parse_args()
 
     references = None
 
     # Whether product references ("EAN") are passed by positional arguments or
     # via a text file.
     if args.ref_file is not None:
+        logger.info(f"Reading references from '{args.ref_file}'")
+
         with open(args.ref_file, "r") as reader:
             references = reader.read().splitlines()
     else:
+        logger.info("Reading references from CLI arguments")
         references = args.references
 
-    # Set up OpenFoodFacts REST API client.
+    logger.info(f"Processing {len(references)} references")
+
+    logger.debug("Setting up OpenFoodFacts REST API client")
     api_client = off_api(
         user_agent=OPENFOODFACTS_USER_AGENT, country=OPENFOODFACTS_COUNTRY
     )
@@ -77,6 +115,8 @@ def main() -> None:
         if reference == "" or reference.startswith("#"):
             continue
 
+        logger.debug(f"Processing reference '{reference}'")
+
         data = api_client.product.get(
             reference,
             fields=FIELDS,
@@ -84,8 +124,10 @@ def main() -> None:
 
         # If the product was not found.
         if data is None:
-            # TODO: add log
+            logger.debug(f"Reference not found: '{reference}'")
             continue
+
+        logger.debug(f"Data received: {data}")
 
         new_product = Product(
             name=data["product_name"],
@@ -104,3 +146,5 @@ def main() -> None:
         with Session(engine) as session:
             session.add(new_product)
             session.commit()
+
+    logger.info("Program ended")
