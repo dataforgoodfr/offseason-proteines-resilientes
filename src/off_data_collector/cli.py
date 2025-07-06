@@ -76,31 +76,31 @@ def main() -> None:
         # text file.
         if reference == "" or reference.startswith("#"):
             continue
-        else:
-            data = api_client.product.get(
-                reference,
-                fields=FIELDS,
-            )
 
-            # If the product was not found.
-            if data is None:
-                # TODO: add log
-                continue
+        data = api_client.product.get(
+            reference,
+            fields=FIELDS,
+        )
 
-            new_product = Product(
-                name=data["product_name"],
-                references=[Reference(type=RefType.EAN, value=reference)],
-                nutriscore=NutriScore(data["nutrition_grade_fr"]),
-                novascore=NovaScore(data["nova_group"]),
-                fat_100g=float(data["fat_100g"]),
-                saturated_fat_100g=float(data["saturated-fat_100g"]),
-                carbohydrates_100g=float(data["carbohydrates_100g"]),
-                sugars_100g=float(data["sugars_100g"]),
-                fiber_100g=float(data["fiber_100g"]),
-                proteins_100g=float(data["proteins_100g"]),
-                salt_100g=float(data["salt_100g"]),
-            )
+        # If the product was not found.
+        if data is None:
+            # TODO: add log
+            continue
 
-            with Session(engine) as session:
-                session.add(new_product)
-                session.commit()
+        new_product = Product(
+            name=data["product_name"],
+            references=[Reference(type=RefType.EAN, value=reference)],
+            nutriscore=NutriScore(data["nutrition_grade_fr"]),
+            novascore=NovaScore(data["nova_group"]),
+            fat_100g=float(data["fat_100g"]),
+            saturated_fat_100g=float(data["saturated-fat_100g"]),
+            carbohydrates_100g=float(data["carbohydrates_100g"]),
+            sugars_100g=float(data["sugars_100g"]),
+            fiber_100g=float(data["fiber_100g"]),
+            proteins_100g=float(data["proteins_100g"]),
+            salt_100g=float(data["salt_100g"]),
+        )
+
+        with Session(engine) as session:
+            session.add(new_product)
+            session.commit()
