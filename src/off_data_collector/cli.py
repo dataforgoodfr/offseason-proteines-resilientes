@@ -4,7 +4,7 @@ from logging import DEBUG, INFO
 from pathlib import Path
 
 from openfoodfacts import API as off_api
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import Session
 
 from .api import FIELDS
@@ -116,6 +116,19 @@ def main() -> None:
             continue
 
         logger.debug(f"Processing reference '{reference}'")
+
+        with Session(engine) as session:
+            ref_count = (
+                session.query(func.count())
+                .select_from(Reference)
+                .filter(Reference.value == reference)
+                .filter(Reference.type == RefType.EAN)
+                .scalar()
+            )
+
+        if ref_count != 0:
+            logger.debug(f"Reference ID {reference} already in database")
+            continue
 
         data = api_client.product.get(
             reference,
