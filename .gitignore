@@ -68,6 +68,9 @@ venv.bak/
 # PyPI configuration file
 .pypirc
 
+# SQLite
+*.sqlite
+
 # Text editors
 *~
 *.sw[nop]
