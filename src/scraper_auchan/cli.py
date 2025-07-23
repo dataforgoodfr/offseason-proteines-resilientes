@@ -2,6 +2,14 @@ from argparse import ArgumentParser
 from logging import getLogger, Formatter, Logger, StreamHandler
 from logging import DEBUG, INFO
 
+from scrapy.crawler import CrawlerProcess
+
+from .products_spider import AuchanProductsSpider
+
+
+# The User-Agent HTTP header used by Scrapy for the crawling requests.
+BOT_NAME = "proteines_resilientes"
+
 
 def __get_arg_parser() -> ArgumentParser:
     """
@@ -16,6 +24,11 @@ def __get_arg_parser() -> ArgumentParser:
         action="store_true",
         default=False,
         help="Enable the debug mode",
+    )
+
+    arg_parser.add_argument(
+        "query",
+        help="Query to be used in Auchan's search engine",
     )
 
     return arg_parser
@@ -51,5 +64,21 @@ def main() -> None:
 
     logger = getLogger(__name__)
     logger.info("Program started")
+
+    crawler = CrawlerProcess(
+        settings={
+            "AUTOTHROTTLE_ENABLED": True,
+            "BOT_NAME": BOT_NAME,
+            "FEEDS": {
+                "scraper_auchan_output.json": {"format": "json"},
+            },
+            "FEED_EXPORT_ENCODING": "utf-8",
+            "LOG_LEVEL": log_level,
+            "ROBOTSTXT_OBEY": False,
+            "TELNETCONSOLE_ENABLED": False,
+        }
+    )
+    crawler.crawl(AuchanProductsSpider, **{"query": args.query})
+    crawler.start()
 
     logger.info("Program ended")
