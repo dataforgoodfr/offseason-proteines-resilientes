@@ -68,7 +68,8 @@ venv.bak/
 # PyPI configuration file
 .pypirc
 
-# SQLite
+# Output data files
+*.json
 *.sqlite
 
 # Text editors
