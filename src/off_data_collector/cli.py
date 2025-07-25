@@ -9,8 +9,9 @@ from sqlalchemy.orm import Session
 
 from .api import FIELDS
 from models.base import Base
-from models.product import NutriScore, NovaScore, Product
-from models.reference import Reference, Type as RefType
+from models.nutrition_facts import NutritionFacts, NutriScore, NovaScore
+from models.product import Product
+from models.source import Source
 
 
 # The country code used to restrict OpenFoodFacts results to that specific
@@ -120,9 +121,8 @@ def main() -> None:
         with Session(engine) as session:
             ref_count = (
                 session.query(func.count())
-                .select_from(Reference)
-                .filter(Reference.value == reference)
-                .filter(Reference.type == RefType.EAN)
+                .select_from(Product)
+                .filter(Product.ean_13 == reference)
                 .scalar()
             )
 
@@ -144,27 +144,48 @@ def main() -> None:
 
         # TODO: Refactor the Product instantiation.
         new_product = Product(
+            ean_13=reference,
             name=data["product_name"],
-            references=[Reference(type=RefType.EAN, value=reference)],
-            nutriscore=NutriScore(data["nutrition_grade_fr"])
-            if data.get("nutrition_grade_fr")
-            and data["nutrition_grade_fr"] != "unknown"
-            and data["nutrition_grade_fr"] != "not-applicable"
-            else None,
-            novascore=NovaScore(data["nova_group"]) if data.get("nova_group") else None,
-            fat_100g=float(data["fat_100g"]) if data.get("fat_100g") else None,
-            saturated_fat_100g=float(data["saturated-fat_100g"])
-            if data.get("saturated-fat_100g")
-            else None,
-            carbohydrates_100g=float(data["carbohydrates_100g"])
-            if data.get("carbohydrates_100g")
-            else None,
-            sugars_100g=float(data["sugars_100g"]) if data.get("sugars_100g") else None,
-            fiber_100g=float(data["fiber_100g"]) if data.get("fiber_100g") else None,
-            proteins_100g=float(data["proteins_100g"])
-            if data.get("proteins_100g")
-            else None,
-            salt_100g=float(data["salt_100g"]) if data.get("salt_100g") else None,
+            brand=data["brands"] if data.get("brands") else None,
+            sources=[
+                Source(
+                    url=f"https://world.openfoodfacts.org/product/{reference}/",
+                    nutrition_facts=NutritionFacts(
+                        nutriscore=NutriScore(data["nutrition_grade_fr"])
+                        if data.get("nutrition_grade_fr")
+                        and data["nutrition_grade_fr"] != "unknown"
+                        and data["nutrition_grade_fr"] != "not-applicable"
+                        else None,
+                        novascore=NovaScore(data["nova_group"])
+                        if data.get("nova_group")
+                        else None,
+                        calories_100g=float(data["energy-kcal_100g"])
+                        if data.get("energy-kcal_100g")
+                        else None,
+                        fat_100g=float(data["fat_100g"])
+                        if data.get("fat_100g")
+                        else None,
+                        saturated_fat_100g=float(data["saturated-fat_100g"])
+                        if data.get("saturated-fat_100g")
+                        else None,
+                        carbohydrates_100g=float(data["carbohydrates_100g"])
+                        if data.get("carbohydrates_100g")
+                        else None,
+                        sugars_100g=float(data["sugars_100g"])
+                        if data.get("sugars_100g")
+                        else None,
+                        fiber_100g=float(data["fiber_100g"])
+                        if data.get("fiber_100g")
+                        else None,
+                        protein_100g=float(data["proteins_100g"])
+                        if data.get("proteins_100g")
+                        else None,
+                        salt_100g=float(data["salt_100g"])
+                        if data.get("salt_100g")
+                        else None,
+                    ),
+                ),
+            ],
         )
 
         with Session(engine) as session:

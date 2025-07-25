@@ -1,10 +1,10 @@
 """
-Unit tests for the 'models.product' module.
+Unit tests for the 'models.nutrition_facts' module.
 """
 
 import unittest
 
-from models.product import NutriScore, NovaScore
+from models.nutrition_facts import NutriScore, NovaScore
 
 
 class TestNutriScore(unittest.TestCase):

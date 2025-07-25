@@ -1,6 +1,7 @@
 # All the product fields than interest us.
 FIELDS = [
     "product_name",
+    "brands",
     "nutrition_grade_fr",
     "nova_group",
     "energy-kcal_100g",
