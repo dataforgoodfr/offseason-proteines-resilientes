@@ -73,6 +73,9 @@ def main() -> None:
                 "scraper_auchan_output.json": {"format": "json"},
             },
             "FEED_EXPORT_ENCODING": "utf-8",
+            "ITEM_PIPELINES": {
+                "scraper_auchan.pipeline_rdbms.ProductPipeline": 300,
+            },
             "LOG_LEVEL": log_level,
             "ROBOTSTXT_OBEY": False,
             "TELNETCONSOLE_ENABLED": False,

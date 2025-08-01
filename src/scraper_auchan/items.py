@@ -17,3 +17,6 @@ class ProductItem(scrapy.Item):
     # Technically speaking, an EAN corresponds to one unique product, but Auchan
     # sometimes displays multiple EANs on product page.
     eans = scrapy.Field()
+
+    # The URL of the product.
+    url = scrapy.Field()

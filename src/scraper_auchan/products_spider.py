@@ -44,6 +44,7 @@ class AuchanProductsSpider(Spider):
         ).get()
         item["brand"] = response.xpath("//meta[@itemprop='brand']/@content").get()
         item["eans"] = self.extract_eans(response)
+        item["url"] = response.url
 
         yield item
 
