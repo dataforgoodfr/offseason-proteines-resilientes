@@ -8,7 +8,7 @@ from logging import getLogger, StreamHandler
 from logging import INFO
 
 
-class BrowserNodriver:
+class ConnectorNodriver:
     def __init__(self):
         self.cookies_file = Path("cookies/superu.dat")
         self.superu_logger = getLogger(__name__)
