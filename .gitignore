@@ -75,3 +75,6 @@ venv.bak/
 # Text editors
 *~
 *.sw[nop]
+
+#uv
+uv.lock
