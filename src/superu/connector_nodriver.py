@@ -10,7 +10,7 @@ from logging import INFO
 
 class BrowserNodriver:
     def __init__(self):
-        self.cookies_file = Path("src/cookies/superu.dat")
+        self.cookies_file = Path("cookies/superu.dat")
         self.superu_logger = getLogger(__name__)
         self.superu_logger.setLevel(INFO)
         self.superu_logger.addHandler(StreamHandler())
