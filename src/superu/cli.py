@@ -3,34 +3,13 @@ from logging import getLogger, Formatter, Logger, StreamHandler
 from logging import DEBUG, INFO
 from pathlib import Path
 
-# from openfoodfacts import API as off_api
-# from sqlalchemy import create_engine, func
-# from sqlalchemy.orm import Session
-
-# from .api import FIELDS
-from models.base import Base
-from models.product import NutriScore, NovaScore, Product
-from models.reference import Reference, Type as RefType
-
-
-# The country code used to restrict OpenFoodFacts results to that specific
-# country.
-OPENFOODFACTS_COUNTRY = "fr"
-
-# The user agent used by the OpenFoodFacts REST API client.
-OPENFOODFACTS_USER_AGENT = "OFFPRDC/0.1"
-
-# The default SQLite database filename.
-DEFAULT_SQLITE_FILENAME = "data.sqlite"
-
-
 def __get_arg_parser() -> ArgumentParser:
     """
     Returns the argument parser.
     """
 
     arg_parser = ArgumentParser(
-        description="OpenFoodFacts Proteines Resilientes Data Collector"
+        description="SuperU Proteines Resilientes Data Collector"
     )
 
     ref_group = arg_parser.add_mutually_exclusive_group()
@@ -50,7 +29,6 @@ def __get_arg_parser() -> ArgumentParser:
         default=False,
         help="Enable the debug mode",
     )
-
     return arg_parser
 
 
@@ -86,12 +64,8 @@ def main() -> None:
     logger.info("Program started")
 
     logger.debug("Setting up the database")
-    # engine = create_engine("sqlite+pysqlite:///" + DEFAULT_SQLITE_FILENAME)
-    # Base.metadata.create_all(engine)
-
-    references = None
-
-    # Whether product references ("EAN") are passed by positional arguments or
+    
+    # Whether product name are passed by positional arguments or
     # via a text file.
     if args.ref_file is not None:
         logger.info(f"Reading references from '{args.ref_file}'")
@@ -104,71 +78,8 @@ def main() -> None:
 
     logger.info(f"Processing {len(references)} references")
 
-    logger.debug("Setting up OpenFoodFacts REST API client")
-    # api_client = off_api(
-    #     user_agent=OPENFOODFACTS_USER_AGENT, country=OPENFOODFACTS_COUNTRY
-    # )
+    logger.debug("Setting up SuperU scraper for product")
+    
 
-    # for reference in references:
-    #     # To take into account potential newlines or comments when read from a
-    #     # text file.
-    #     if reference == "" or reference.startswith("#"):
-    #         continue
-
-    #     logger.debug(f"Processing reference '{reference}'")
-
-    #     with Session(engine) as session:
-    #         ref_count = (
-    #             session.query(func.count())
-    #             .select_from(Reference)
-    #             .filter(Reference.value == reference)
-    #             .filter(Reference.type == RefType.EAN)
-    #             .scalar()
-    #         )
-
-    #     if ref_count != 0:
-    #         logger.debug(f"Reference ID {reference} already in database")
-    #         continue
-
-    #     data = api_client.product.get(
-    #         reference,
-    #         fields=FIELDS,
-    #     )
-
-    #     # If the product was not found.
-    #     if data is None or data.get("product_name") is None:
-    #         logger.debug(f"Reference not found: '{reference}'")
-    #         continue
-
-    #     logger.debug(f"Data received: {data}")
-
-    #     # TODO: Refactor the Product instantiation.
-    #     new_product = Product(
-    #         name=data["product_name"],
-    #         references=[Reference(type=RefType.EAN, value=reference)],
-    #         nutriscore=NutriScore(data["nutrition_grade_fr"])
-    #         if data.get("nutrition_grade_fr")
-    #         and data["nutrition_grade_fr"] != "unknown"
-    #         and data["nutrition_grade_fr"] != "not-applicable"
-    #         else None,
-    #         novascore=NovaScore(data["nova_group"]) if data.get("nova_group") else None,
-    #         fat_100g=float(data["fat_100g"]) if data.get("fat_100g") else None,
-    #         saturated_fat_100g=float(data["saturated-fat_100g"])
-    #         if data.get("saturated-fat_100g")
-    #         else None,
-    #         carbohydrates_100g=float(data["carbohydrates_100g"])
-    #         if data.get("carbohydrates_100g")
-    #         else None,
-    #         sugars_100g=float(data["sugars_100g"]) if data.get("sugars_100g") else None,
-    #         fiber_100g=float(data["fiber_100g"]) if data.get("fiber_100g") else None,
-    #         proteins_100g=float(data["proteins_100g"])
-    #         if data.get("proteins_100g")
-    #         else None,
-    #         salt_100g=float(data["salt_100g"]) if data.get("salt_100g") else None,
-    #     )
-
-    #     with Session(engine) as session:
-    #         session.add(new_product)
-    #         session.commit()
 
     logger.info("Program ended")
