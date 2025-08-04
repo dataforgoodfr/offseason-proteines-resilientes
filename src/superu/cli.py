@@ -2,6 +2,10 @@ from argparse import ArgumentParser
 from logging import getLogger, Formatter, Logger, StreamHandler
 from logging import DEBUG, INFO
 from pathlib import Path
+from superu.scraper_superu import SuperuScraper
+from superu.connector_nodriver import ConnectorNodriver
+from typing import List, Dict
+import time
 
 def __get_arg_parser() -> ArgumentParser:
     """
@@ -49,6 +53,21 @@ def __set_up_root_logger(level=INFO) -> Logger:
 
     return root_logger
 
+def __scrape_product(product: str) -> List[Dict]:
+    """Scrapes product information from Carrefour.
+    Args:
+        product (str): The product to search for.
+    Returns:
+        list: A list of dictionaries containing product information.
+    """
+    
+    # Select the correct scraper for the chosen distributor
+    scrapper = SuperuScraper(ConnectorNodriver())
+    page_htmls: List[str] = scrapper.get_pages(product, n_pages=1)
+    data: List[Dict] = [data for page_html in page_htmls for data in scrapper.parse_data(page_html)]
+    # Deduplicate
+    data: List[Dict] = [dict(t) for t in {tuple(sorted(d.items())) for d in data}]
+    return data
 
 def main() -> None:
     """
@@ -56,7 +75,6 @@ def main() -> None:
     """
 
     args = __get_arg_parser().parse_args()
-
     log_level = DEBUG if args.debug else INFO
     __set_up_root_logger(level=log_level)
 
@@ -79,7 +97,8 @@ def main() -> None:
     logger.info(f"Processing {len(references)} references")
 
     logger.debug("Setting up SuperU scraper for product")
-    
-
+    for reference in references:
+        data: List[Dict] = __scrape_product(reference)
+        print(data)
 
     logger.info("Program ended")

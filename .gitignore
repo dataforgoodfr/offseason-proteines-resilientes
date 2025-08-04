@@ -78,3 +78,5 @@ venv.bak/
 
 #uv
 uv.lock
+
+.fetch-client/*

@@ -1,12 +1,12 @@
 import sys
 import os
 import json
-from src.abstract.isite_connector import ISiteConnector
 from bs4 import BeautifulSoup
 from typing import List, Dict
 from urllib.parse import quote_plus
 from logging import getLogger, StreamHandler
 from logging import INFO
+from abstract.isite_connector import ISiteConnector
 
 root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if root_path not in sys.path:
@@ -52,7 +52,6 @@ class SuperuScraper:
                         "category3": data.get("product_cat3"),
                         "image": data.get("product_url_picture"),
                     })
-            print(products)
             return products
         except json.JSONDecodeError:
             self.superu_logger.error("Erreur de parsing JSON:", raw_data)
