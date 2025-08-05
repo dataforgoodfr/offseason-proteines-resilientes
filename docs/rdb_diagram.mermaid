@@ -1,0 +1,53 @@
+erDiagram
+    Product {
+        int product_id PK
+
+        string ean_13 UK "Max 13 characters"
+
+        string name "Max 255 characters"
+        string brand "Max 255 characters"
+        string category
+        string description
+    }
+
+    Source {
+        int source_id PK
+
+        string url "Max 8000 characters"
+        datetime seen_at
+
+        int product_id FK
+    }
+
+    NutritionFacts {
+        int nutrition_facts_id PK
+
+        enum nutriscore "Allowed values: A, B, C, D, E"
+        enum novascore "Allowed values: 1, 2, 3, 4"
+
+        decimal calories_100g "In kcal (1 kcal = 1000 calories = 1 Calorie)"
+
+        decimal fat_100g
+        decimal saturated_fat_100g
+        decimal carbohydrates_100g
+        decimal sugars_100g
+        decimal fiber_100g
+        decimal protein_100g
+        decimal salt_100g
+
+        int source_id FK
+    }
+
+    Price {
+        int price_id PK
+
+        decimal amount
+        string currency "Max 3 characters as ISO 4217 currency codes"
+
+        int source_id FK
+    }
+
+    Product 1--1+ Source : "has been seen at"
+
+    Source 1--one or zero NutritionFacts : "has"
+    Source 1--one or zero Price : "has"

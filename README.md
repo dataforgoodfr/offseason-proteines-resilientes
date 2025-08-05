@@ -1,6 +1,12 @@
 # Proteines Resilientes
 
+Global technical diagram of the solution:
+
 ![tech-diagram](./docs/tech-diagram.svg)
+
+And the diagram of the relational database model:
+
+![rdb-diagram](./docs/rdb_diagram.svg)
 
 ## Installation
 
@@ -23,10 +29,25 @@ The project is made of multiple CLI tools:
   EANs (product references) as input and fetches the corresponding product data
   from OpenFoodFacts via its REST API.
 
-## Testing
+## Development
+
+### Testing
 
 To run all the tests:
 
     $ python -m unittest discover
 
+## Documentation
+
+### Generating the Mermaid diagrams
+
+To generate the diagrams made with [mermaid][mermaid]:
+
+    $ npx -p @mermaid-js/mermaid-cli mmdc -i <input> -o <output>
+
+For instance, to generate an SVG image of the relational database diagram:
+
+    $ npx -p @mermaid-js/mermaid-cli mmdc -i docs/rdb_diagram.mermaid -o docs/rdb_diagram.svg
+
+ [mermaid]: http://mermaid.js.org/ "Mermaid website"
  [poetry]: https://python-poetry.org "Poetry website"
