@@ -1,5 +1,11 @@
 # Proteines Resilientes
 
+Proteines Resilientes is a data study designed to gather information from
+various online sources about food products sold in France, particularly their
+nutritional facts. The project's primary objective is to compare plant-based and
+animal-based products to assess their affordability, protein content, and other
+relevant factors.
+
 Global technical diagram of the solution:
 
 ![tech-diagram](./docs/tech-diagram.svg)
