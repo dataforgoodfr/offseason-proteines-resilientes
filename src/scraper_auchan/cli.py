@@ -69,9 +69,6 @@ def main() -> None:
         settings={
             "AUTOTHROTTLE_ENABLED": True,
             "BOT_NAME": BOT_NAME,
-            "FEEDS": {
-                "scraper_auchan_output.json": {"format": "json"},
-            },
             "FEED_EXPORT_ENCODING": "utf-8",
             "ITEM_PIPELINES": {
                 "scraper_auchan.pipeline_rdbms.ProductPipeline": 300,
