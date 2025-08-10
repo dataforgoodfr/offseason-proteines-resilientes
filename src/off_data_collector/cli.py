@@ -21,8 +21,10 @@ OPENFOODFACTS_COUNTRY = "fr"
 # The user agent used by the OpenFoodFacts REST API client.
 OPENFOODFACTS_USER_AGENT = "OFFPRDC/0.1"
 
-# The default SQLite database filename.
-DEFAULT_SQLITE_FILENAME = "data.sqlite"
+# The default database URL.
+#
+# See https://docs.sqlalchemy.org/en/20/core/engines.html#sqlalchemy.engine.URL.
+DEFAULT_DATABASE_URL = "sqlite+pysqlite:///data.sqlite"
 
 
 def __get_arg_parser() -> ArgumentParser:
@@ -42,6 +44,12 @@ def __get_arg_parser() -> ArgumentParser:
         "-f",
         type=Path,
         help="Text file containing the product references, one by line",
+    )
+
+    arg_parser.add_argument(
+        "--database",
+        default=DEFAULT_DATABASE_URL,
+        help=f"Database URL to use (defaults to {DEFAULT_DATABASE_URL})",
     )
 
     arg_parser.add_argument(
@@ -87,7 +95,7 @@ def main() -> None:
     logger.info("Program started")
 
     logger.debug("Setting up the database")
-    engine = create_engine("sqlite+pysqlite:///" + DEFAULT_SQLITE_FILENAME)
+    engine = create_engine(args.database)
     Base.metadata.create_all(engine)
 
     references = None
