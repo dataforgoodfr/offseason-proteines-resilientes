@@ -1,10 +1,11 @@
 from typing import List
 from typing import Optional
 
-from sqlalchemy import String
+from sqlalchemy import Boolean, String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import false
 
 from .base import Base
 from .source import Source
@@ -20,6 +21,7 @@ class Product(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     ean_13: Mapped[str] = mapped_column(String(13))
+    disabled: Mapped[Optional[bool]] = mapped_column(Boolean, server_default=false())
 
     name: Mapped[str] = mapped_column(String(255))
     brand: Mapped[Optional[str]] = mapped_column(String(255))
