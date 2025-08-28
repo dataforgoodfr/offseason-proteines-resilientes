@@ -2,6 +2,15 @@ from scrapy import Request, Spider
 
 from .items import ProductItem
 
+# Name of the cookie used to specify the "journey" ID.
+#
+# A journey ID is required to get the price on the product pages as it is tied
+# to a physical store.
+#
+# See https://github.com/dataforgoodfr/offseason-proteines-resilientes/issues/2
+# for more information.
+JOURNEY_COOKIE_NAME = "lark-journey"
+
 
 class AuchanProductsSpider(Spider):
     """
@@ -15,13 +24,18 @@ class AuchanProductsSpider(Spider):
 
     async def start(self):
         query = getattr(self, "query", None)
+        journey_id = getattr(self, "journey_id", None)
 
         if query is None:
             raise AttributeError("Missing 'query' argument")
+        if journey_id is None:
+            raise AttributeError("Missing 'journey_id' argument")
 
         url = f"https://www.auchan.fr/recherche?text={query}&page=1"
 
-        yield Request(url=url, callback=self.parse)
+        yield Request(
+            url=url, cookies={JOURNEY_COOKIE_NAME: journey_id}, callback=self.parse
+        )
 
     def parse(self, response):
         product_links = response.css("a.product-thumbnail__details-wrapper")
@@ -44,6 +58,7 @@ class AuchanProductsSpider(Spider):
         ).get()
         item["brand"] = response.xpath("//meta[@itemprop='brand']/@content").get()
         item["eans"] = self.extract_eans(response)
+        item["price"] = self.extract_price(response)
         item["url"] = response.url
 
         yield item
@@ -65,3 +80,14 @@ class AuchanProductsSpider(Spider):
                 ).re("(\d{13})")
 
                 return eans
+
+    @staticmethod
+    def extract_price(response) -> float:
+        """
+        Extracts the price from the response and turns it from the string
+        pattern 'X,YY€' into a float.
+        """
+
+        value = response.css(".product-price::text").get()
+
+        return float(value.replace("€", "").replace(",", ".").strip())

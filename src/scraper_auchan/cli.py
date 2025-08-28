@@ -10,6 +10,10 @@ from .products_spider import AuchanProductsSpider
 # The User-Agent HTTP header used by Scrapy for the crawling requests.
 BOT_NAME = "proteines_resilientes"
 
+# The default journey ID sets the location to Auchan Drive Saint-Cyr-Sur-Loire
+# (Tours).
+DEFAULT_JOURNEY_ID = "9ca9e4a5-0d62-4a94-9f92-c7c88e374a7f"
+
 
 def __get_arg_parser() -> ArgumentParser:
     """
@@ -24,6 +28,12 @@ def __get_arg_parser() -> ArgumentParser:
         action="store_true",
         default=False,
         help="Enable the debug mode",
+    )
+
+    arg_parser.add_argument(
+        "--journey-id",
+        default=DEFAULT_JOURNEY_ID,
+        help="The journey ID to send as cookie",
     )
 
     arg_parser.add_argument(
@@ -78,7 +88,9 @@ def main() -> None:
             "TELNETCONSOLE_ENABLED": False,
         }
     )
-    crawler.crawl(AuchanProductsSpider, **{"query": args.query})
+    crawler.crawl(
+        AuchanProductsSpider, **{"query": args.query, "journey_id": args.journey_id}
+    )
     crawler.start()
 
     logger.info("Program ended")
