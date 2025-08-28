@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from .items import ProductItem
 from models.base import Base
+from models.price import Price
 from models.product import Product
 from models.source import Source
 
@@ -39,16 +40,16 @@ class ProductPipeline:
                 )
 
                 if existing_product:
-                    existing_product.sources.append(Source(url=item["url"]))
+                    existing_product.sources.append(
+                        Source(url=item["url"], price=Price(amount=item["price"]))
+                    )
                 else:
                     product = Product(
                         ean_13=ean,
                         name=item["name"],
                         brand=item["brand"],
                         sources=[
-                            Source(
-                                url=item["url"],
-                            )
+                            Source(url=item["url"], price=Price(amount=item["price"]))
                         ],
                     )
 

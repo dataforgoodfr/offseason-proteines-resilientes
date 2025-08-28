@@ -58,6 +58,7 @@ class AuchanProductsSpider(Spider):
         ).get()
         item["brand"] = response.xpath("//meta[@itemprop='brand']/@content").get()
         item["eans"] = self.extract_eans(response)
+        item["price"] = self.extract_price(response)
         item["url"] = response.url
 
         yield item
@@ -79,3 +80,14 @@ class AuchanProductsSpider(Spider):
                 ).re("(\d{13})")
 
                 return eans
+
+    @staticmethod
+    def extract_price(response) -> float:
+        """
+        Extracts the price from the response and turns it from the string
+        pattern 'X,YY€' into a float.
+        """
+
+        value = response.css(".product-price::text").get()
+
+        return float(value.replace("€", "").replace(",", ".").strip())

@@ -18,5 +18,8 @@ class ProductItem(scrapy.Item):
     # sometimes displays multiple EANs on product page.
     eans = scrapy.Field()
 
+    # The price of the product.
+    price = scrapy.Field()
+
     # The URL of the product.
     url = scrapy.Field()
