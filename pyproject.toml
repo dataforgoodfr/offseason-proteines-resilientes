@@ -24,6 +24,7 @@ packages = [
 
 [tool.poetry.group.dev.dependencies]
 alembic = "^1.16.4"
+ruff = "^0.12.10"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
