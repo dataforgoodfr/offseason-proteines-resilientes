@@ -19,8 +19,10 @@ pr-scraper-auchan = "scraper_auchan.cli:main"
 
 [tool.poetry]
 packages = [
-    {include = "src"},
+    {include = "models", from = "src"},
+    {include = "off_data_collector", from = "src"},
 ]
+
 
 [tool.poetry.group.dev.dependencies]
 alembic = "^1.16.4"
