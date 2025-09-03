@@ -13,6 +13,7 @@ from models.base import Base
 from models.nutrition_facts import NutritionFacts, NutriScore, NovaScore
 from models.product import Product
 from models.source import Source
+from utils.database import DEFAULT_DATABASE_URL
 
 
 # The country code used to restrict OpenFoodFacts results to that specific
@@ -21,11 +22,6 @@ OPENFOODFACTS_COUNTRY = "fr"
 
 # The user agent used by the OpenFoodFacts REST API client.
 OPENFOODFACTS_USER_AGENT = "OFFPRDC/0.1"
-
-# The default database URL.
-#
-# See https://docs.sqlalchemy.org/en/20/core/engines.html#sqlalchemy.engine.URL.
-DEFAULT_DATABASE_URL = "sqlite+pysqlite:///data.sqlite"
 
 
 def __get_arg_parser() -> ArgumentParser:
