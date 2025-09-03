@@ -1,4 +1,6 @@
 from itemadapter import ItemAdapter
+from scrapy import Item
+from scrapy.spiders import Spider
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
@@ -15,7 +17,7 @@ class ProductPipeline:
     Scrapy pipeline used to store items into a RDBMS via SQLAlchemy.
     """
 
-    def open_spider(self, spider):
+    def open_spider(self, spider: Spider):
         database_url = spider.settings.get("DATABASE_URL", DEFAULT_DATABASE_URL)
 
         engine = create_engine(database_url)
@@ -24,10 +26,10 @@ class ProductPipeline:
         self.db_engine = engine
         self.db_session = Session(self.db_engine)
 
-    def close_spider(self, spider):
+    def close_spider(self, spider: Spider):
         self.db_session.close()
 
-    def process_item(self, item, spider):
+    def process_item(self, item: Item, spider: Spider):
         if isinstance(item, ProductItem):
             adapter = ItemAdapter(item)
 
