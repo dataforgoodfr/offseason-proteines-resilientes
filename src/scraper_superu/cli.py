@@ -62,7 +62,7 @@ def __scrape_product(product: str) -> List[Dict]:
 
 def main() -> None:
     """
-    Entry point of the OpenFoodFacts Data Collector command-line tool.
+    Entry point of the superu Data Collector command-line tool.
     """
 
     args = __get_arg_parser().parse_args()
