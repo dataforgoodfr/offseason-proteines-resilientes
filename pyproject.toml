@@ -18,7 +18,7 @@ dependencies = [
 [project.scripts]
 pr-offdc = "off_data_collector.cli:main"
 pr-scraper-auchan = "scraper_auchan.cli:main"
-pr-scraper-superu = "superu.cli:main"
+pr-scraper-superu = "scraper_superu.cli:main"
 
 [tool.poetry]
 packages = [
