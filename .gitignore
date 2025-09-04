@@ -76,7 +76,5 @@ venv.bak/
 *~
 *.sw[nop]
 
-#uv
-uv.lock
 
 .fetch-client/*
