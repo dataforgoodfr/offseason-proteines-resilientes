@@ -2,9 +2,11 @@ from argparse import ArgumentParser
 from logging import getLogger, Formatter, Logger, StreamHandler
 from logging import DEBUG, INFO
 from pathlib import Path
+from typing import List, Dict
+
 from scraper_superu.scraper_superu import SuperuScraper
 from scraper_superu.connector_nodriver import ConnectorNodriver
-from typing import List, Dict
+
 
 def __get_arg_parser() -> ArgumentParser:
     """
