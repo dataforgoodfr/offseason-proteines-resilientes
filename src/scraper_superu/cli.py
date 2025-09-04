@@ -72,8 +72,6 @@ def main() -> None:
     logger = getLogger(__name__)
     logger.info("Program started")
 
-    logger.debug("Setting up the database")
-    
     # Whether product name are passed by positional arguments or
     # via a text file.
     if args.ref_file is not None:
