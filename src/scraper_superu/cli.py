@@ -45,7 +45,7 @@ def __set_up_root_logger(level=INFO) -> Logger:
     return root_logger
 
 def __scrape_product(product: str) -> List[Dict]:
-    """Scrapes product information from Carrefour.
+    """Scrapes product information from superu.
     Args:
         product (str): The product to search for.
     Returns:
