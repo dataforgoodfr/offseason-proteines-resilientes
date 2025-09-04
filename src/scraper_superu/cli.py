@@ -6,6 +6,8 @@ from typing import List, Dict
 
 from scraper_superu.scraper_superu import SuperuScraper
 from scraper_superu.connector_nodriver import ConnectorNodriver
+from scraper_superu.spiders.superu_products_spider import SuperuProductsSpider
+from scrapy.crawler import CrawlerProcess
 
 
 def __get_arg_parser() -> ArgumentParser:
@@ -60,34 +62,67 @@ def __scrape_product(product: str) -> List[Dict]:
     data: List[Dict] = [dict(t) for t in {tuple(sorted(d.items())) for d in data}]
     return data
 
-def main() -> None:
-    """
-    Entry point of the superu Data Collector command-line tool.
-    """
+# def main() -> None:
+#     """
+#     Entry point of the superu Data Collector command-line tool.
+#     """
 
-    args = __get_arg_parser().parse_args()
-    log_level = DEBUG if args.debug else INFO
-    __set_up_root_logger(level=log_level)
+#     args = __get_arg_parser().parse_args()
+#     log_level = DEBUG if args.debug else INFO
+#     __set_up_root_logger(level=log_level)
 
-    logger = getLogger(__name__)
-    logger.info("Program started")
+#     logger = getLogger(__name__)
+#     logger.info("Program started")
 
-    # Whether product name are passed by positional arguments or
-    # via a text file.
-    if args.ref_file is not None:
-        logger.info(f"Reading references from '{args.ref_file}'")
+#     # Whether product name are passed by positional arguments or
+#     # via a text file.
+#     if args.ref_file is not None:
+#         logger.info(f"Reading references from '{args.ref_file}'")
 
-        with open(args.ref_file, "r") as reader:
-            references = reader.read().splitlines()
-    else:
-        logger.info("Reading references from CLI arguments")
-        references = args.references
+#         with open(args.ref_file, "r") as reader:
+#             references = reader.read().splitlines()
+#     else:
+#         logger.info("Reading references from CLI arguments")
+#         references = args.references
 
-    logger.info(f"Processing {len(references)} references")
+#     logger.info(f"Processing {len(references)} references")
 
-    logger.debug("Setting up SuperU scraper for product")
-    for reference in references:
-        data: List[Dict] = __scrape_product(reference)
-        print(data)
+#     logger.debug("Setting up SuperU scraper for product")
+#     for reference in references:
+#         data: List[Dict] = __scrape_product(reference)
+#         print(data)
 
-    logger.info("Program ended")
+#     logger.info("Program ended")
+
+def main() -> None: 
+     """ 
+     Entry point of the scraper for Auchan. 
+     """ 
+  
+     args = __get_arg_parser().parse_args() 
+  
+     log_level = DEBUG if args.debug else INFO 
+     __set_up_root_logger(level=log_level) 
+  
+     logger = getLogger(__name__) 
+     logger.info("Program started") 
+  
+     crawler = CrawlerProcess( 
+         settings={ 
+             "AUTOTHROTTLE_ENABLED": True, 
+             "BOT_NAME": SUPERU_BOT_NAME, 
+             "FEED_EXPORT_ENCODING": "utf-8", 
+             "ITEM_PIPELINES": { 
+                 "scraper_superu.pipeline_rdbms.ProductPipeline": 300, 
+             }, 
+             "LOG_LEVEL": log_level, 
+             "ROBOTSTXT_OBEY": False, 
+             "TELNETCONSOLE_ENABLED": False, 
+         } 
+     ) 
+     crawler.crawl( 
+         SuperuProductsSpider, **{"query": args.query, "journey_id": args.journey_id} 
+     ) 
+     crawler.start() 
+  
+     logger.info("Program ended") 
