@@ -17,16 +17,6 @@ def __get_arg_parser() -> ArgumentParser:
         description="SuperU Proteines Resilientes Data Collector"
     )
 
-    ref_group = arg_parser.add_mutually_exclusive_group()
-
-    ref_group.add_argument("references", nargs="*", help="Product references")
-    ref_group.add_argument(
-        "--ref-file",
-        "-f",
-        type=Path,
-        help="Text file containing the product references, one by line",
-    )
-
     arg_parser.add_argument(
         "--debug",
         "-d",
