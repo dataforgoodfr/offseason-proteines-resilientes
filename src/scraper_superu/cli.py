@@ -5,7 +5,6 @@ from pathlib import Path
 from scraper_superu.scraper_superu import SuperuScraper
 from scraper_superu.connector_nodriver import ConnectorNodriver
 from typing import List, Dict
-import time
 
 def __get_arg_parser() -> ArgumentParser:
     """
