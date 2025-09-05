@@ -174,6 +174,10 @@ def main() -> None:
                     continue
 
                 data = __fetch_product_data(api_client, reference)
+
+                if data is None:
+                    continue
+
                 __update_product(product, reference, data)
 
                 session.commit()
