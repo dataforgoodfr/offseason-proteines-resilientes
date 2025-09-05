@@ -5,7 +5,7 @@ from pathlib import Path
 
 from openfoodfacts import API as off_api
 from openfoodfacts.types import JSONType
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
 from .api import FIELDS
@@ -57,6 +57,13 @@ def __get_arg_parser() -> ArgumentParser:
     )
 
     arg_parser.add_argument(
+        "--all",
+        action="store_true",
+        default=False,
+        help="Update all products, including those already in the database",
+    )
+
+    arg_parser.add_argument(
         "--debug",
         "-d",
         action="store_true",
@@ -102,7 +109,7 @@ def main() -> None:
     engine = create_engine(args.database)
     Base.metadata.create_all(engine)
 
-    references = None
+    references = []
 
     # Whether product references ("EAN") are passed by positional arguments or
     # via a text file.
@@ -110,10 +117,17 @@ def main() -> None:
         logger.info(f"Reading references from '{args.ref_file}'")
 
         with open(args.ref_file, "r") as reader:
-            references = reader.read().splitlines()
+            references += reader.read().splitlines()
     else:
         logger.info("Reading references from CLI arguments")
-        references = args.references
+        references += args.references
+
+    # If the products already in the database also need to be updated.
+    if args.all:
+        logger.info("Reading references from database")
+
+        with Session(engine) as session:
+            references += session.execute(select(Product.ean_13)).scalars().all()
 
     logger.info(f"Processing {len(references)} references")
 
