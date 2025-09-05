@@ -5,7 +5,7 @@ from pathlib import Path
 
 from openfoodfacts import API as off_api
 from openfoodfacts.types import JSONType
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from .api import FIELDS
@@ -131,12 +131,10 @@ def main() -> None:
         logger.debug(f"Processing reference ID '{reference}'")
 
         with Session(engine) as session:
-            products = session.scalars(
-                select(Product).where(Product.ean_13 == reference)
-            )
+            products = session.query(Product).filter(Product.ean_13 == reference)
 
             # If the product does not already exist in the database.
-            if products == 0:
+            if products.count() == 0:
                 data = __fetch_product_data(api_client, reference)
                 new_product = __create_new_product(reference, data)
 
