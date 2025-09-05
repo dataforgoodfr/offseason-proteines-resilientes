@@ -22,6 +22,7 @@ packages = [
     {include = "models", from = "src"},
     {include = "off_data_collector", from = "src"},
     {include = "scraper_auchan", from = "src"},
+    {include = "utils", from = "src"},
 ]
 
 [tool.poetry.group.dev.dependencies]

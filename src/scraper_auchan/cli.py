@@ -5,6 +5,7 @@ from logging import DEBUG, INFO
 from scrapy.crawler import CrawlerProcess
 
 from .products_spider import AuchanProductsSpider
+from utils.database import DEFAULT_DATABASE_URL
 
 
 # The User-Agent HTTP header used by Scrapy for the crawling requests.
@@ -21,6 +22,12 @@ def __get_arg_parser() -> ArgumentParser:
     """
 
     arg_parser = ArgumentParser(description="Auchan web scraper")
+
+    arg_parser.add_argument(
+        "--database",
+        default=DEFAULT_DATABASE_URL,
+        help=f"Database URL to use (defaults to {DEFAULT_DATABASE_URL})",
+    )
 
     arg_parser.add_argument(
         "--debug",
@@ -79,6 +86,7 @@ def main() -> None:
         settings={
             "AUTOTHROTTLE_ENABLED": True,
             "BOT_NAME": BOT_NAME,
+            "DATABASE_URL": args.database,
             "FEED_EXPORT_ENCODING": "utf-8",
             "ITEM_PIPELINES": {
                 "scraper_auchan.pipeline_rdbms.ProductPipeline": 300,
