@@ -136,6 +136,10 @@ def main() -> None:
             # If the product does not already exist in the database.
             if products.count() == 0:
                 data = __fetch_product_data(api_client, reference)
+
+                if data is None:
+                    continue
+
                 new_product = __create_new_product(reference, data)
 
                 session.add(new_product)
