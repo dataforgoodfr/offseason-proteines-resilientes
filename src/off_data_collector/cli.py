@@ -30,7 +30,7 @@ def __get_arg_parser() -> ArgumentParser:
     """
 
     arg_parser = ArgumentParser(
-        description="OpenFoodFacts Proteines Resilientes Data Collector"
+        description="Proteines Resilientes OpenFoodFacts Data Collector"
     )
 
     ref_group = arg_parser.add_mutually_exclusive_group()
@@ -40,7 +40,7 @@ def __get_arg_parser() -> ArgumentParser:
         "--ref-file",
         "-f",
         type=Path,
-        help="Text file containing the product references, one by line",
+        help="Text file containing the product references (EAN-13), one by line",
     )
 
     arg_parser.add_argument(
@@ -53,7 +53,7 @@ def __get_arg_parser() -> ArgumentParser:
         "--force",
         action="store_true",
         default=False,
-        help="Product data will be updated even if the product already exists",
+        help="Product data will be updated even if the product already exists in the database",
     )
 
     arg_parser.add_argument(
