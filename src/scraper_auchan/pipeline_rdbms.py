@@ -1,4 +1,5 @@
 from logging import DEBUG, getLogger
+from typing import Optional
 
 from itemadapter import ItemAdapter
 from scrapy import Item
@@ -39,7 +40,7 @@ class ProductPipeline:
             adapter = ItemAdapter(item)
 
             for ean in adapter.get("eans"):
-                existing_product = (
+                existing_product: Optional[Product] = (
                     self.db_session.query(Product).filter(Product.ean_13 == ean).first()
                 )
 
