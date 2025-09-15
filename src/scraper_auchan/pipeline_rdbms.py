@@ -1,4 +1,4 @@
-from logging import DEBUG
+from logging import DEBUG, getLogger
 
 from itemadapter import ItemAdapter
 from scrapy import Item
@@ -33,6 +33,8 @@ class ProductPipeline:
         self.db_session.close()
 
     def process_item(self, item: Item, spider: Spider):
+        logger = getLogger(__name__)
+
         if isinstance(item, ProductItem):
             adapter = ItemAdapter(item)
 
@@ -42,13 +44,17 @@ class ProductPipeline:
                 )
 
                 if existing_product:
+                    logger.debug(f"Product {ean} already present in database")
+
                     if existing_product.disabled:
                         raise DropItem(f"Product {ean} is disabled. Skipping...", DEBUG)
 
+                    logger.debug(f"Adding new source to product {ean}")
                     existing_product.sources.append(
                         Source(url=item["url"], price=Price(amount=item["price"]))
                     )
                 else:
+                    logger.debug(f"Adding new product {ean}")
                     product = Product(
                         ean_13=ean,
                         name=item["name"],
