@@ -1,5 +1,8 @@
+from logging import DEBUG
+
 from itemadapter import ItemAdapter
 from scrapy import Item
+from scrapy.exceptions import DropItem
 from scrapy.spiders import Spider
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
@@ -39,6 +42,9 @@ class ProductPipeline:
                 )
 
                 if existing_product:
+                    if existing_product.disabled:
+                        raise DropItem(f"Product {ean} is disabled. Skipping...", DEBUG)
+
                     existing_product.sources.append(
                         Source(url=item["url"], price=Price(amount=item["price"]))
                     )
