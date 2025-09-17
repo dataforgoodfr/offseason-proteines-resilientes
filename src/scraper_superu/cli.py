@@ -1,13 +1,15 @@
 from argparse import ArgumentParser
 from logging import getLogger, Formatter, Logger, StreamHandler
 from logging import DEBUG, INFO
-from pathlib import Path
-from typing import List, Dict
 
-from scraper_superu.scraper_superu import SuperuScraper
-from scraper_superu.connector_nodriver import ConnectorNodriver
-from scraper_superu.spiders.superu_products_spider import SuperuProductsSpider
+from .products_spider import SuperUProductsSpider
 from scrapy.crawler import CrawlerProcess
+
+# The User-Agent HTTP header used by Scrapy for the crawling requests.
+BOT_NAME = "proteines_resilientes"
+# The default storeID sets the location to SuperU Drive La Riche
+# (Tours).
+DEFAULT_STORE_CP = "37005"
 
 
 def __get_arg_parser() -> ArgumentParser:
@@ -15,9 +17,7 @@ def __get_arg_parser() -> ArgumentParser:
     Returns the argument parser.
     """
 
-    arg_parser = ArgumentParser(
-        description="SuperU Proteines Resilientes Data Collector"
-    )
+    arg_parser = ArgumentParser(description="SuperU web scraper")
 
     arg_parser.add_argument(
         "--debug",
@@ -26,6 +26,18 @@ def __get_arg_parser() -> ArgumentParser:
         default=False,
         help="Enable the debug mode",
     )
+
+    arg_parser.add_argument(
+        "--store_cp",
+        default=DEFAULT_STORE_CP,
+        help="The store ID to send as cookie",
+    )
+
+    arg_parser.add_argument(
+        "query",
+        help="Query to be used in SuperU's search engine",
+    )
+
     return arg_parser
 
 
@@ -46,57 +58,9 @@ def __set_up_root_logger(level=INFO) -> Logger:
 
     return root_logger
 
-def __scrape_product(product: str) -> List[Dict]:
-    """Scrapes product information from superu.
-    Args:
-        product (str): The product to search for.
-    Returns:
-        list: A list of dictionaries containing product information.
-    """
-    
-    # Select the correct scraper for the chosen distributor
-    scrapper = SuperuScraper(ConnectorNodriver())
-    page_htmls: List[str] = scrapper.get_pages(product, n_pages=1)
-    data: List[Dict] = [data for page_html in page_htmls for data in scrapper.parse_data(page_html)]
-    # Deduplicate
-    data: List[Dict] = [dict(t) for t in {tuple(sorted(d.items())) for d in data}]
-    return data
-
-# def main() -> None:
-#     """
-#     Entry point of the superu Data Collector command-line tool.
-#     """
-
-#     args = __get_arg_parser().parse_args()
-#     log_level = DEBUG if args.debug else INFO
-#     __set_up_root_logger(level=log_level)
-
-#     logger = getLogger(__name__)
-#     logger.info("Program started")
-
-#     # Whether product name are passed by positional arguments or
-#     # via a text file.
-#     if args.ref_file is not None:
-#         logger.info(f"Reading references from '{args.ref_file}'")
-
-#         with open(args.ref_file, "r") as reader:
-#             references = reader.read().splitlines()
-#     else:
-#         logger.info("Reading references from CLI arguments")
-#         references = args.references
-
-#     logger.info(f"Processing {len(references)} references")
-
-#     logger.debug("Setting up SuperU scraper for product")
-#     for reference in references:
-#         data: List[Dict] = __scrape_product(reference)
-#         print(data)
-
-#     logger.info("Program ended")
-
 def main() -> None: 
      """ 
-     Entry point of the scraper for Auchan. 
+     Entry point of the scraper for SuperU. 
      """ 
   
      args = __get_arg_parser().parse_args() 
@@ -110,7 +74,7 @@ def main() -> None:
      crawler = CrawlerProcess( 
          settings={ 
              "AUTOTHROTTLE_ENABLED": True, 
-             "BOT_NAME": SUPERU_BOT_NAME, 
+             "BOT_NAME": BOT_NAME, 
              "FEED_EXPORT_ENCODING": "utf-8", 
              "ITEM_PIPELINES": { 
                  "scraper_superu.pipeline_rdbms.ProductPipeline": 300, 
@@ -121,7 +85,7 @@ def main() -> None:
          } 
      ) 
      crawler.crawl( 
-         SuperuProductsSpider, **{"query": args.query, "journey_id": args.journey_id} 
+         SuperUProductsSpider, **{"query": args.query, "store_cp": args.store_cp} 
      ) 
      crawler.start() 
   
