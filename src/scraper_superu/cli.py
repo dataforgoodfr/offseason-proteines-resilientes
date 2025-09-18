@@ -1,3 +1,4 @@
+
 from argparse import ArgumentParser
 from logging import getLogger, Formatter, Logger, StreamHandler
 from logging import DEBUG, INFO
@@ -9,7 +10,7 @@ from scrapy.crawler import CrawlerProcess
 BOT_NAME = "proteines_resilientes"
 # The default storeID sets the location to SuperU Drive La Riche
 # (Tours).
-DEFAULT_STORE_CP = "37005"
+DEFAULT_STORE_ID = "37005"
 
 
 def __get_arg_parser() -> ArgumentParser:
@@ -28,8 +29,8 @@ def __get_arg_parser() -> ArgumentParser:
     )
 
     arg_parser.add_argument(
-        "--store_cp",
-        default=DEFAULT_STORE_CP,
+        "--store_id",
+        default=DEFAULT_STORE_ID,
         help="The store ID to send as cookie",
     )
 
@@ -76,6 +77,10 @@ def main() -> None:
              "AUTOTHROTTLE_ENABLED": True, 
              "BOT_NAME": BOT_NAME, 
              "FEED_EXPORT_ENCODING": "utf-8", 
+             "PLAYWRIGHT_LAUNCH_OPTIONS" : {
+                "headless": False,
+                "timeout": 20 * 1000,  # 20 seconds
+            },
              "ITEM_PIPELINES": { 
                  "scraper_superu.pipeline_rdbms.ProductPipeline": 300, 
              }, 
@@ -85,7 +90,7 @@ def main() -> None:
          } 
      ) 
      crawler.crawl( 
-         SuperUProductsSpider, **{"query": args.query, "store_cp": args.store_cp} 
+         SuperUProductsSpider, **{"query": args.query, "store_id": args.store_id} 
      ) 
      crawler.start() 
   

@@ -1,7 +1,11 @@
+import asyncio
+import scrapy
 from scrapy import Request, Spider
 from urllib.parse import quote_plus
+from typing import Dict
 
 from .items import ProductItem
+from playwright.async_api import async_playwright
 
 # Name of the cookie used to specify the "journey" ID.
 #
@@ -10,7 +14,7 @@ from .items import ProductItem
 #
 # See https://github.com/dataforgoodfr/offseason-proteines-resilientes/issues/2
 # for more information.
-JOURNEY_COOKIE_NAME = "lark-journey"
+JOURNEY_COOKIE_NAME = "storeId"
 
 
 class SuperUProductsSpider(Spider):
@@ -20,76 +24,24 @@ class SuperUProductsSpider(Spider):
 
     name = "superu_products"
     allowed_domains = ["www.coursesu.com"]
-
+    start_urls = ["data:,"]
     custom_settings = {}
+    
 
-    async def start(self):
-        query = getattr(self, "query", None)
-        journey_id = getattr(self, "journey_id", None)
-
+    def start(self):
+        query: str = getattr(self, "query", None)
+        
         if query is None:
             raise AttributeError("Missing 'query' argument")
-        if journey_id is None:
-            raise AttributeError("Missing 'journey_id' argument")
-
-        query = quote_plus(query).replace(' ', '+')
-        url = f"https://www.coursesu.com/recherche?q={query}"
-
-        yield Request(
-            url=url, cookies={JOURNEY_COOKIE_NAME: journey_id}, callback=self.parse
+        
+        yield scrapy.Request("https://httpbin.org/get", meta={"playwright": True})
+        # POST request
+        yield scrapy.FormRequest(
+            url="https://httpbin.org/post",
+            formdata={"foo": "bar"},
+            meta={"playwright": True},
         )
 
-    def parse(self, response):
-        product_links = response.css("a.product-tile__details-wrapper")
-        yield from response.follow_all(product_links, callback=self.parse_product)
-
-        next_button = response.css("a.pagination-adjacent__link span.next").get()
-
-        if next_button is not None:
-            self.log(f"Next button detected: {next_button}")
-
-            yield from response.follow_all(
-                css="a.pagination-adjacent__link::attr(href)", callback=self.parse
-            )
-
-    def parse_product(self, response):
-        item = ProductItem()
-
-        item["name"] = response.xpath(
-            "//div[@itemtype='https://schema.org/Product']/meta[@itemprop='name']/@content"
-        ).get()
-        item["brand"] = response.xpath("//meta[@itemprop='brand']/@content").get()
-        item["eans"] = self.extract_eans(response)
-        item["price"] = self.extract_price(response)
-        item["url"] = response.url
-
-        yield item
-
-    @staticmethod
-    def extract_eans(response) -> list[str]:
-        content_wrappers = response.css(
-            ".product-description__feature-wrapper .product-description__feature-group-wrapper"
-        )
-
-        for content_wrapper in content_wrappers:
-            label = content_wrapper.css(
-                ".product-description__feature-label::text"
-            ).get()
-
-            if label == "Réf / EAN :":
-                eans = content_wrapper.css(
-                    ".product-description__feature-values::text"
-                ).re("(\d{13})")
-
-                return eans
-
-    @staticmethod
-    def extract_price(response) -> float:
-        """
-        Extracts the price from the response and turns it from the string
-        pattern 'X,YY€' into a float.
-        """
-
-        value = response.css(".product-price::text").get()
-
-        return float(value.replace("€", "").replace(",", ".").strip())
+    def parse(self, response, **kwargs):
+        # 'response' contains the page as seen by the browser
+        return {"url": response.url}
