@@ -11,7 +11,7 @@ from logging import INFO
 class ConnectorNodriver:
     def __init__(self):
         self.cookies_file = self.__get_cookies_file()
-        
+
         self.nodriver_logger = getLogger(__name__)
         self.nodriver_logger.setLevel(INFO)
         self.nodriver_logger.addHandler(StreamHandler())
@@ -21,16 +21,12 @@ class ConnectorNodriver:
         cookies_dir = script_dir / "cookies"
         cookies_dir.mkdir(exist_ok=True)
         return cookies_dir / "superu.dat"
-    
-    async def get_page(
-        self, url: str, headless: bool = False
-    ) -> str:
+
+    async def get_page(self, url: str, headless: bool = False) -> str:
         self.nodriver_logger.info(f"Getting page: {url}")
         return await self._get_page_async(url, headless)
 
-    async def _get_page_async(
-        self, url: str, headless: bool = False
-    ) -> str:
+    async def _get_page_async(self, url: str, headless: bool = False) -> str:
         """Fetches the HTML content of a page using Playwright.
         Args:
             url (str): The URL of the page to fetch.
@@ -43,7 +39,7 @@ class ConnectorNodriver:
             await self._load_cookies(browser)
             content = await self._scrape_page(browser, url)
             await self._save_cookies(browser)
-            
+
             return content
         except (json.JSONDecodeError, ValueError) as e:
             print(f"Failed to load cookies: {e}")
@@ -96,5 +92,3 @@ class ConnectorNodriver:
             self.nodriver_logger.info(f"Cookies saved to: {self.cookies_file}")
         except Exception as e:
             self.nodriver_logger.error(f"Failed to save cookies: {e}")
-
-    
