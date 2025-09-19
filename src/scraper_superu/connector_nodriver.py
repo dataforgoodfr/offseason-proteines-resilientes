@@ -41,31 +41,16 @@ class ConnectorNodriver:
         """
         try:
             browser = await nodriver.start(headless=headless)
-
-            # we need to load cookies from file to indicate geolocation and avoid being blocked
-            # price are indicated by geolocation
-            self.nodriver_logger.info(f"Checking for cookies file: {self.cookies_file}")
-            if self.cookies_file.exists():
-                self.nodriver_logger.info(f"Loading cookies from: {self.cookies_file}")
-                try:
-                    await browser.cookies.load(self.cookies_file)
-                    self.nodriver_logger.info("Cookies loaded successfully")
-                except Exception as e:
-                    self.nodriver_logger.error(f"Failed to load cookies: {e}")
-            else:
-                self.nodriver_logger.warning(f"Cookies file not found: {self.cookies_file}")
-            await asyncio.sleep(5)
-            page: tab.Tab = await browser.get(url)
-            await asyncio.sleep(10)
-
-            # after scrap we store new cookies
-            try:
-                await browser.cookies.save(self.cookies_file)
-                self.nodriver_logger.info(f"Cookies saved to: {self.cookies_file}")
-            except Exception as e:
-                self.nodriver_logger.error(f"Failed to save cookies: {e}")
-            content = await page.get_content()
-            await page.close()
+            
+            # Gestion des cookies
+            await self._load_cookies(browser)
+            
+            # Scraping de la page
+            content = await self._scrape_page(browser, url, need_scroll_down)
+            
+            # Sauvegarde des cookies après le scraping
+            await self._save_cookies(browser)
+            
             return content
         except (json.JSONDecodeError, ValueError) as e:
             print(f"Failed to load cookies: {e}")
@@ -75,29 +60,77 @@ class ConnectorNodriver:
             self.nodriver_logger.error(f"Error getting page: {e}")
             return []
 
-    def slow_scroll_down(self, page: tab.Tab) -> None:
-        """Scrolls down the page slowly to allow content to load.
-        Needed in Lidl's website to load all products.
+    async def _load_cookies(self, browser) -> None:
+        """Charge les cookies depuis le fichier pour indiquer la géolocalisation et éviter d'être bloqué.
+        Les prix sont indiqués par géolocalisation.
         Args:
-            page: The Playwright page object.
+            browser: L'instance du navigateur nodriver.
+        """
+        self.nodriver_logger.info(f"Checking for cookies file: {self.cookies_file}")
+        if self.cookies_file.exists():
+            self.nodriver_logger.info(f"Loading cookies from: {self.cookies_file}")
+            try:
+                await browser.cookies.load(self.cookies_file)
+                self.nodriver_logger.info("Cookies loaded successfully")
+            except Exception as e:
+                self.nodriver_logger.error(f"Failed to load cookies: {e}")
+        else:
+            self.nodriver_logger.warning(f"Cookies file not found: {self.cookies_file}")
+
+    async def _scrape_page(self, browser, url: str, need_scroll_down: bool = False) -> str:
+        """Effectue le scraping de la page web.
+        Args:
+            browser: L'instance du navigateur nodriver.
+            url (str): L'URL de la page à scraper.
+            need_scroll_down (bool): Si True, fait défiler la page pour charger tout le contenu.
         Returns:
-            None
+            str: Le contenu HTML de la page.
+        """
+        await asyncio.sleep(5)
+        page: tab.Tab = await browser.get(url)
+        await asyncio.sleep(10)
+
+        if need_scroll_down:
+            self.slow_scroll_down(page)
+
+        content = await page.get_content()
+        await page.close()
+        return content
+
+    async def _save_cookies(self, browser) -> None:
+        """Sauvegarde les cookies après le scraping.
+        Args:
+            browser: L'instance du navigateur nodriver.
         """
         try:
-            self.nodriver_logger.info("Scrolling down the page to load all content...")
-            # Get total page height
-            scroll_height = page.evaluate("() => document.body.scrollHeight")
-
-            # Scroll in steps
-            step_size = 500  # pixels per step
-            pause = 0.3  # seconds to wait between steps
-
-            for position in range(0, scroll_height, step_size):
-                page.evaluate(f"window.scrollTo(0, {position})")
-                time.sleep(pause)  # Let content load
+            await browser.cookies.save(self.cookies_file)
+            self.nodriver_logger.info(f"Cookies saved to: {self.cookies_file}")
         except Exception as e:
-            self.nodriver_logger.error(f"Error scrolling down the page: {e}")
-            return
+            self.nodriver_logger.error(f"Failed to save cookies: {e}")
+
+    # def slow_scroll_down(self, page: tab.Tab) -> None:
+    #     """Scrolls down the page slowly to allow content to load.
+    #     Needed in Lidl's website to load all products.
+    #     Args:
+    #         page: The Playwright page object.
+    #     Returns:
+    #         None
+    #     """
+    #     try:
+    #         self.nodriver_logger.info("Scrolling down the page to load all content...")
+    #         # Get total page height
+    #         scroll_height = page.evaluate("() => document.body.scrollHeight")
+
+    #         # Scroll in steps
+    #         step_size = 500  # pixels per step
+    #         pause = 0.3  # seconds to wait between steps
+
+    #         for position in range(0, scroll_height, step_size):
+    #             page.evaluate(f"window.scrollTo(0, {position})")
+    #             time.sleep(pause)  # Let content load
+    #     except Exception as e:
+    #         self.nodriver_logger.error(f"Error scrolling down the page: {e}")
+    #         return
     
-    def request(self, url: str, method: str, headers: dict = {}, data: dict = {}) -> str:
-        raise NotImplementedError()
+    # def request(self, url: str, method: str, headers: dict = {}, data: dict = {}) -> str:
+    #     raise NotImplementedError()
