@@ -22,11 +22,11 @@ class ConnectorNodriver:
         cookies_dir.mkdir(exist_ok=True)
         return cookies_dir / "superu.dat"
     
-    def get_page(
+    async def get_page(
         self, url: str, headless: bool = False, need_scroll_down=False
     ) -> str:
         self.nodriver_logger.info(f"Getting page: {url}")
-        return asyncio.run(self._get_page_async(url, headless, need_scroll_down))
+        return await self._get_page_async(url, headless, need_scroll_down)
 
     async def _get_page_async(
         self, url: str, headless: bool = False, need_scroll_down=False
