@@ -1,4 +1,3 @@
-import time
 import json
 import asyncio
 import nodriver
@@ -23,23 +22,20 @@ class ConnectorNodriver:
         return cookies_dir / "superu.dat"
 
     async def get_page(self, url: str, headless: bool = False) -> str:
-        self.nodriver_logger.info(f"Getting page: {url}")
-        return await self._get_page_async(url, headless)
-
-    async def _get_page_async(self, url: str, headless: bool = False) -> str:
-        """Fetches the HTML content of a page using Playwright.
+        """Get the HTML content of a page using Nodriver.
+        It also loads the cookies from the file to indicate the geolocation and avoid being blocked.
         Args:
             url (str): The URL of the page to fetch.
             headless (bool): Whether to run the browser in headless mode. Defaults to True.
         Returns:
-            str: A list of HTML content strings for each page.
+            str: The HTML content of the page.
         """
         try:
+            self.nodriver_logger.info(f"Getting page: {url}")
             browser = await nodriver.start(headless=headless)
             await self._load_cookies(browser)
             content = await self._scrape_page(browser, url)
             await self._save_cookies(browser)
-
             return content
         except (json.JSONDecodeError, ValueError) as e:
             print(f"Failed to load cookies: {e}")
@@ -55,16 +51,18 @@ class ConnectorNodriver:
         Args:
             browser: The nodriver browser instance.
         """
-        self.nodriver_logger.info(f"Checking for cookies file: {self.cookies_file}")
-        if self.cookies_file.exists():
-            self.nodriver_logger.info(f"Loading cookies from: {self.cookies_file}")
-            try:
+        try:
+            self.nodriver_logger.info(f"Checking for cookies file: {self.cookies_file}")
+            if self.cookies_file.exists():
+                self.nodriver_logger.info(f"Loading cookies from: {self.cookies_file}")
                 await browser.cookies.load(self.cookies_file)
                 self.nodriver_logger.info("Cookies loaded successfully")
-            except Exception as e:
-                self.nodriver_logger.error(f"Failed to load cookies: {e}")
-        else:
-            self.nodriver_logger.warning(f"Cookies file not found: {self.cookies_file}")
+            else:
+                self.nodriver_logger.warning(
+                    f"Cookies file not found: {self.cookies_file}"
+                )
+        except Exception as e:
+            self.nodriver_logger.error(f"Failed to load cookies: {e}")
 
     async def _scrape_page(self, browser, url: str) -> str:
         """Scrape the web page.
@@ -74,13 +72,17 @@ class ConnectorNodriver:
         Returns:
             str: The HTML content of the page.
         """
-        await asyncio.sleep(5)
-        page: tab.Tab = await browser.get(url)
-        await asyncio.sleep(10)
-
-        content = await page.get_content()
-        await page.close()
-        return content
+        try:
+            self.nodriver_logger.info(f"Scraping page: {url}")
+            await asyncio.sleep(2)
+            page: tab.Tab = await browser.get(url)
+            await asyncio.sleep(5)
+            content = await page.get_content()
+            await page.close()
+            return content
+        except Exception as e:
+            self.nodriver_logger.error(f"Failed to scrape page: {e}")
+            return []
 
     async def _save_cookies(self, browser) -> None:
         """Save cookies after scraping.
