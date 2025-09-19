@@ -27,7 +27,6 @@ pr-scraper-superu = "scraper_superu.cli:main"
 
 [tool.poetry]
 packages = [
-    {include = "abstract", from = "src"},
     {include = "models", from = "src"},
     {include = "off_data_collector", from = "src"},
     {include = "scraper_auchan", from = "src"},
