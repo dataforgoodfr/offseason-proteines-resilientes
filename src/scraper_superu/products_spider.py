@@ -8,25 +8,12 @@ from .connector_nodriver import ConnectorNodriver
 from logging import getLogger
 logger = getLogger(__name__)
 
-# Name of the cookie used to specify the "journey" ID.
-#
-# A journey ID is required to get the price on the product pages as it is tied
-# to a physical store.
-#
-# See https://github.com/dataforgoodfr/offseason-proteines-resilientes/issues/2
-# for more information.
-
-
 
 class SuperUProductsSpider:
     """
-    Scrapy Spider for the products of the SuperU retail website.
+    Spider for the products of the SuperU retail website.
     """
 
-    name = "superu_products"
-    allowed_domains = ["www.coursesu.com"]
-    start_urls = ["data:,"]
-    custom_settings = {}
     connector: ConnectorNodriver = ConnectorNodriver()
 
     async def start(self, query: str):
