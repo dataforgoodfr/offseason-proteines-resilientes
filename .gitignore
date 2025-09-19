@@ -71,8 +71,10 @@ venv.bak/
 # Output data files
 *.json
 *.sqlite
+src/scraper_superu/cookies/superu.dat
 
 # Text editors
 *~
 *.sw[nop]
 .fetch-client/*
+
