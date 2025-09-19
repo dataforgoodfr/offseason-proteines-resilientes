@@ -1,6 +1,3 @@
-import asyncio
-import scrapy
-from scrapy import Request, Spider
 from urllib.parse import quote_plus
 from typing import Dict, List
 from bs4 import BeautifulSoup
@@ -9,7 +6,6 @@ import json
 from .items import ProductItem
 from .connector_nodriver import ConnectorNodriver
 from logging import getLogger
-from .pipeline_rdbms import ProductPipeline
 logger = getLogger(__name__)
 
 # Name of the cookie used to specify the "journey" ID.
@@ -33,7 +29,7 @@ class SuperUProductsSpider:
     custom_settings = {}
     connector: ConnectorNodriver = ConnectorNodriver()
 
-    async def start(self, query: str, store_id: str):
+    async def start(self, query: str):
         # query: str = getattr(self, "query", None)
         
         if query is None:
