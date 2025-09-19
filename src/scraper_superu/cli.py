@@ -61,7 +61,7 @@ def main() -> None:
     logger.info("Program started")
     loop = asyncio.get_event_loop()
     loop.run_until_complete(
-        SuperUProductsSpider().start(query=args.query, store_id=args.store_id)
+        SuperUProductsSpider().start(query=args.query)
     )
 
     logger.info("Program ended")
