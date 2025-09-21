@@ -71,6 +71,7 @@ class Source(Base):
     __tablename__ = "source"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    origin: Mapped["Origin"] = mapped_column(index=True)
     url: Mapped[str] = mapped_column(String(URL_MAX_LENGTH))
     seen_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
