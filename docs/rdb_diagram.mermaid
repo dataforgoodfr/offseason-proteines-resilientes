@@ -12,6 +12,7 @@ erDiagram
     Source {
         int source_id PK
 
+        enum origin "INDEX, e.g. OpenFoodFacts, Auchan"
         string url "Max 8000 characters"
         datetime seen_at
 

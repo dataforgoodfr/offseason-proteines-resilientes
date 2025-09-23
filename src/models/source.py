@@ -1,4 +1,5 @@
 import datetime
+from enum import StrEnum, unique
 from typing import Optional
 from typing import TYPE_CHECKING
 
@@ -24,6 +25,41 @@ if TYPE_CHECKING:
 URL_MAX_LENGTH = 8000
 
 
+@unique
+class Origin(StrEnum):
+    """
+    The origin is used to filter the
+    """
+
+    AUCHAN = "Auchan"
+    BIOCOOP = "Biocoop"
+    CARREFOUR = "Carrefour"
+    CASINO = "Casino"
+    ELECLERC = "E.Leclerc"
+    LA_VIE_CLAIRE = "La Vie Claire"
+    INTERMARCHE = "Intermarché"
+    LIDL = "Lidl"
+    OPEN_FOOD_FACTS = "OpenFoodFacts"
+    PICARD = "Picard"
+
+    @classmethod
+    def _missing_(cls, value):
+        """
+        Invoked when the value is not found in the enum. It is used here to
+        accept values in a case-insensitive way.
+
+        See https://docs.python.org/3/library/enum.html#enum.Enum._missing_.
+        """
+
+        value = value.upper()
+
+        for member in cls:
+            if member.value.upper() == value:
+                return member
+
+        return None
+
+
 class Source(Base):
     """
     Represents a source in the RDBMS.
@@ -35,6 +71,7 @@ class Source(Base):
     __tablename__ = "source"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    origin: Mapped["Origin"] = mapped_column(index=True)
     url: Mapped[str] = mapped_column(String(URL_MAX_LENGTH))
     seen_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
