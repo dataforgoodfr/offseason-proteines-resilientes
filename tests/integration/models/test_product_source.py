@@ -11,7 +11,7 @@ from models.base import Base
 from models.nutrition_facts import NutritionFacts, NutriScore, NovaScore
 from models.price import Price
 from models.product import Product
-from models.source import Source
+from models.source import Source, Origin
 
 
 class TestProductSource(unittest.TestCase):
@@ -35,6 +35,7 @@ class TestProductSource(unittest.TestCase):
                 brand="Brand A",
                 sources=[
                     Source(
+                        origin=Origin.AUCHAN,
                         url="https://www.store-a.com",
                         nutrition_facts=NutritionFacts(
                             nutriscore=NutriScore.A,
@@ -50,6 +51,7 @@ class TestProductSource(unittest.TestCase):
                         ),
                     ),
                     Source(
+                        origin=Origin.BIOCOOP,
                         url="https://www.store-b.com",
                         price=Price(
                             amount=3.62,
@@ -63,6 +65,7 @@ class TestProductSource(unittest.TestCase):
                 brand="Brand B",
                 sources=[
                     Source(
+                        origin=Origin.CARREFOUR,
                         url="https://www.store-a.com",
                     ),
                 ],
@@ -78,6 +81,7 @@ class TestProductSource(unittest.TestCase):
             self.assertEqual(result.ean_13, product_a.ean_13)
             self.assertEqual(result.name, product_a.name)
             self.assertEqual(len(result.sources), 2)
+            self.assertEqual(result.sources[0].origin, product_a.sources[0].origin)
             self.assertEqual(result.sources[0].url, product_a.sources[0].url)
             self.assertEqual(
                 result.sources[0].nutrition_facts.fat_100g,
