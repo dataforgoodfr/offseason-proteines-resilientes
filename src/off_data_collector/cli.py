@@ -12,7 +12,7 @@ from .api import FIELDS
 from models.base import Base
 from models.nutrition_facts import NutritionFacts, NutriScore, NovaScore
 from models.product import Product
-from models.source import Source
+from models.source import Source, Origin
 from utils.database import DEFAULT_DATABASE_URL
 
 
@@ -237,6 +237,7 @@ def __create_new_source(reference: str, data: JSONType) -> Source:
     """
 
     return Source(
+        origin=Origin.OPEN_FOOD_FACTS,
         url=f"https://world.openfoodfacts.org/product/{reference}/",
         nutrition_facts=NutritionFacts(
             nutriscore=NutriScore(data["nutrition_grade_fr"])
