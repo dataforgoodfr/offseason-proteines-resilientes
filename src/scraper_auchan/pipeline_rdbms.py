@@ -12,7 +12,7 @@ from .items import ProductItem
 from models.base import Base
 from models.price import Price
 from models.product import Product
-from models.source import Source
+from models.source import Source, Origin
 from utils.database import DEFAULT_DATABASE_URL
 
 
@@ -52,7 +52,11 @@ class ProductPipeline:
 
                     logger.debug(f"Adding new source to product {ean}")
                     existing_product.sources.append(
-                        Source(url=item["url"], price=Price(amount=item["price"]))
+                        Source(
+                            origin=Origin.AUCHAN,
+                            url=item["url"],
+                            price=Price(amount=item["price"]),
+                        )
                     )
                 else:
                     logger.debug(f"Adding new product {ean}")
@@ -61,7 +65,11 @@ class ProductPipeline:
                         name=item["name"],
                         brand=item["brand"],
                         sources=[
-                            Source(url=item["url"], price=Price(amount=item["price"]))
+                            Source(
+                                origin=Origin.AUCHAN,
+                                url=item["url"],
+                                price=Price(amount=item["price"]),
+                            )
                         ],
                     )
 
