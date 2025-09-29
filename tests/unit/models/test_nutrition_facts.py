@@ -23,6 +23,11 @@ class TestNutriScore(unittest.TestCase):
         self.assertIsInstance(nutriscore, NutriScore)
         self.assertIs(nutriscore, NutriScore.B)
 
+        with self.assertRaises(ValueError):
+            nutriscore = NutriScore("G")
+
+            self.assertIsInstance(nutriscore, NutriScore)
+
 
 class TestNovaScore(unittest.TestCase):
     """
@@ -39,6 +44,11 @@ class TestNovaScore(unittest.TestCase):
 
         self.assertIsInstance(novascore, NovaScore)
         self.assertIs(novascore, NovaScore.Group3)
+
+        with self.assertRaises(ValueError):
+            novascore = NovaScore(7)
+
+            self.assertIsInstance(novascore, NovaScore)
 
 
 if __name__ == "__main__":
