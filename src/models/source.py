@@ -10,6 +10,7 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 
 from .base import Base
+from .environmental_facts import EnvironmentalFacts
 from .nutrition_facts import NutritionFacts
 from .price import Price
 
@@ -71,6 +72,7 @@ class Source(Base):
     __tablename__ = "source"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+
     origin: Mapped["Origin"] = mapped_column(index=True)
     url: Mapped[str] = mapped_column(String(URL_MAX_LENGTH))
     seen_at: Mapped[datetime.datetime] = mapped_column(
@@ -78,7 +80,9 @@ class Source(Base):
     )
 
     product_id: Mapped[int] = mapped_column(ForeignKey("product.id"))
-
+    environmental_facts: Mapped[Optional["EnvironmentalFacts"]] = relationship(
+        back_populates="source"
+    )
     nutrition_facts: Mapped[Optional["NutritionFacts"]] = relationship(
         back_populates="source"
     )
