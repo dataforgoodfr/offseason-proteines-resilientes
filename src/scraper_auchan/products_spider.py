@@ -60,6 +60,12 @@ class AuchanProductsSpider(Spider):
         item["eans"] = self.extract_eans(response)
         item["price"] = self.extract_price(response)
         item["url"] = response.url
+        item["discounted"] = (
+            response.xpath('//div[@class="discount-end-date"]/p/text()').re_first(
+                r"Promotion valable"
+            )
+            is not None
+        )
 
         yield item
 
@@ -88,6 +94,13 @@ class AuchanProductsSpider(Spider):
         pattern 'X,YY€' into a float.
         """
 
-        value = response.css(".product-price::text").get()
+        # The price before the discount.
+        old_price = response.css(".product-price--old::text").get()
+
+        # The presence of an "old price" means that there is a discount.
+        if old_price is not None:
+            value = response.css(".product-price::text").getall()[1]
+        else:
+            value = response.css(".product-price::text").get()
 
         return float(value.replace("€", "").replace(",", ".").strip())

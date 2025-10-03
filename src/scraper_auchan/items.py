@@ -21,5 +21,8 @@ class ProductItem(scrapy.Item):
     # The price of the product.
     price = scrapy.Field()
 
+    # Whether or not the price is discounted.
+    discounted = scrapy.Field()
+
     # The URL of the product.
     url = scrapy.Field()
