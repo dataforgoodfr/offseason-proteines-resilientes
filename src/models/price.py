@@ -1,7 +1,7 @@
 from typing import Optional
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey, String, Boolean 
+from sqlalchemy import ForeignKey, String, Boolean
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
