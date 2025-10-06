@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from .api import FIELDS
 from models.base import Base
+from models.environmental_facts import EnvironmentalFacts, GreenScore
 from models.nutrition_facts import NutritionFacts, NutriScore, NovaScore
 from models.product import Product
 from models.source import Source, Origin
@@ -236,6 +237,39 @@ def __create_new_source(reference: str, data: JSONType) -> Source:
     from OpenFoodFacts given as parameters.
     """
 
+    environmental_facts = EnvironmentalFacts()
+
+    if (
+        data.get("ecoscore_grade")
+        and data["ecoscore_grade"] != "unknown"
+        and data["ecoscore_grade"] != "not-applicable"
+    ):
+        environmental_facts.green_score = GreenScore(data["ecoscore_grade"])
+
+    if data.get("ecoscore_data"):
+        if data["ecoscore_data"].get("agribalyse"):
+            environmental_facts.co2_agriculture = float(
+                data["ecoscore_data"]["agribalyse"].get("co2_agriculture")
+            )
+            environmental_facts.co2_consumption = float(
+                data["ecoscore_data"]["agribalyse"].get("co2_consumption")
+            )
+            environmental_facts.co2_distribution = float(
+                data["ecoscore_data"]["agribalyse"].get("co2_distribution")
+            )
+            environmental_facts.co2_packaging = float(
+                data["ecoscore_data"]["agribalyse"].get("co2_packaging")
+            )
+            environmental_facts.co2_processing = float(
+                data["ecoscore_data"]["agribalyse"].get("co2_processing")
+            )
+            environmental_facts.co2_total = float(
+                data["ecoscore_data"]["agribalyse"].get("co2_total")
+            )
+            environmental_facts.co2_transportation = float(
+                data["ecoscore_data"]["agribalyse"].get("co2_transportation")
+            )
+
     return Source(
         origin=Origin.OPEN_FOOD_FACTS,
         url=f"https://world.openfoodfacts.org/product/{reference}/",
@@ -263,4 +297,5 @@ def __create_new_source(reference: str, data: JSONType) -> Source:
             else None,
             salt_100g=float(data["salt_100g"]) if data.get("salt_100g") else None,
         ),
+        environmental_facts=environmental_facts,
     )
