@@ -48,7 +48,24 @@ erDiagram
         int source_id FK
     }
 
+    EnvironmentalFacts {
+        int environmental_facts_id PK
+
+        enum green_scrore "Allowed values: A+, A, B, C, D, E, F"
+
+        decimal co2_agriculture
+        decimal co2_consumption
+        decimal co2_distribution
+        decimal co2_packaging
+        decimal co2_processing
+        decimal co2_total
+        decimal co2_transportation
+
+        int source_id FK
+    }
+
     Product 1--1+ Source : "has been seen at"
 
     Source 1--one or zero NutritionFacts : "has"
     Source 1--one or zero Price : "has"
+    Source 1--one or zero EnvironmentalFacts : "has"
