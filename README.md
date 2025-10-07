@@ -139,6 +139,10 @@ when scraping the product pages:
 
 ### Testing
 
+The project includes both unit and integration tests. They are
+located respectively in the [`./tests/unit`](./tests/unit) and
+[`./tests/integration`](./tests/integration) folders.
+
 To run all the tests:
 
     $ python -m unittest discover
