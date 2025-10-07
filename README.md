@@ -147,6 +147,25 @@ To run all the tests:
 
     $ python -m unittest discover
 
+### Linting & Formatting
+
+[Ruff][ruff] is used to lint and format the Python source code. It is part of
+the development dependencies which are, by default, automatically installed when
+running `poetry install`.
+
+To lint and format the Python source code with Ruff:
+
+```bash
+# Lint the Python source code.
+$ ruff check
+
+# Format the Python source code.
+$ ruff format
+```
+
+These tasks can be automatically run upon commit via Git pre-commit hooks
+installed with [pre-commit][pre-commit].
+
 ### Database Migrations
 
 [Alembic][alembic] is used to manage the database migrations. It is part of the
@@ -189,3 +208,5 @@ For instance, to generate an SVG image of the relational database diagram:
  [mermaid]: http://mermaid.js.org/ "Mermaid website"
  [off]: https://world.openfoodfacts.org/ "Open Food Facts"
  [poetry]: https://python-poetry.org "Poetry website"
+ [pre-commit]: https://pre-commit.com/ "pre-commit website"
+ [ruff]: https://docs.astral.sh/ruff/ "Ruff website"
