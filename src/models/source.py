@@ -39,6 +39,7 @@ class Origin(StrEnum):
     LIDL = "Lidl"
     OPEN_FOOD_FACTS = "OpenFoodFacts"
     PICARD = "Picard"
+    SUPER_U = "Super U"
 
     @classmethod
     def _missing_(cls, value):
