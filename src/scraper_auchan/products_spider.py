@@ -58,14 +58,15 @@ class AuchanProductsSpider(Spider):
         ).get()
         item["brand"] = response.xpath("//meta[@itemprop='brand']/@content").get()
         item["eans"] = self.extract_eans(response)
-        item["price"] = self.extract_price(response)
         item["url"] = response.url
-        item["discounted"] = (
-            response.xpath('//div[@class="discount-end-date"]/p/text()').re_first(
-                r"Promotion valable"
-            )
-            is not None
+
+        (discounted, price, discounted_price) = self.extract_discount_and_prices(
+            response
         )
+        item["price"] = price
+        item["discounted"] = discounted
+        if discounted:
+            item["discounted_price"] = discounted_price
 
         yield item
 
@@ -88,19 +89,19 @@ class AuchanProductsSpider(Spider):
                 return eans
 
     @staticmethod
-    def extract_price(response) -> float:
+    def extract_discount_and_prices(response) -> float:
         """
-        Extracts the price from the response and turns it from the string
-        pattern 'X,YY€' into a float.
+        Extracts wether or not the product is discounted and its both prices
+        (normal and discounted) from the response.
         """
 
-        # The price before the discount.
-        old_price = response.css(".product-price--old::text").get()
+        basePrice = float(response.css("script::text").re_first(r'"price": ?([.0-9]+)'))
+        currentPrice = float(response.xpath("//meta[@itemprop='price']/@content").get())
 
-        # The presence of an "old price" means that there is a discount.
-        if old_price is not None:
-            value = response.css(".product-price::text").getall()[1]
-        else:
-            value = response.css(".product-price::text").get()
+        is_discounted = basePrice - currentPrice > 0
 
-        return float(value.replace("€", "").replace(",", ".").strip())
+        return (
+            is_discounted,
+            basePrice,
+            currentPrice if is_discounted else None,
+        )

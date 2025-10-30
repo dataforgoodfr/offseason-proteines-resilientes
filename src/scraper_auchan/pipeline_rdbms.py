@@ -55,7 +55,13 @@ class ProductPipeline:
                         Source(
                             origin=Origin.AUCHAN,
                             url=item["url"],
-                            price=Price(amount=item["price"]),
+                            price=Price(
+                                amount=item["price"],
+                                discounted=item["discounted"],
+                                discounted_amount=item.get("discounted_price"),
+                            )
+                            if item["price"] is not None
+                            else None,
                         )
                     )
                 else:
@@ -68,7 +74,13 @@ class ProductPipeline:
                             Source(
                                 origin=Origin.AUCHAN,
                                 url=item["url"],
-                                price=Price(amount=item["price"]),
+                                price=Price(
+                                    amount=item["price"],
+                                    discounted=item["discounted"],
+                                    discounted_amount=item.get("discounted_price"),
+                                )
+                                if item["price"] is not None
+                                else None,
                             )
                         ],
                     )
