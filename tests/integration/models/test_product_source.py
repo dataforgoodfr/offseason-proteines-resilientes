@@ -55,6 +55,8 @@ class TestProductSource(unittest.TestCase):
                         url="https://www.store-b.com",
                         price=Price(
                             amount=3.62,
+                            discounted=True,
+                            discounted_amount=1.62,
                         ),
                     ),
                 ],
