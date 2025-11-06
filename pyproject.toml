@@ -11,12 +11,14 @@ dependencies = [
     "sqlalchemy (>=2.0.41,<3.0.0)",
     "openfoodfacts (>=2.6.1,<3.0.0)",
     "scrapy (>=2.13.3,<3.0.0)",
+    "scrapy-playwright (>=0.0.44,<0.0.45)",
 ]
 
 [project.scripts]
 pr-offdc = "off_data_collector.cli:main"
 pr-scraper-auchan = "scraper_auchan.cli:main"
 pr-scraper-biocoop = "scraper_biocoop.cli:main"
+pr-scraper-carrefour = "scraper_carrefour.cli:main"
 
 [tool.poetry]
 packages = [
@@ -24,6 +26,7 @@ packages = [
     {include = "off_data_collector", from = "src"},
     {include = "scraper_auchan", from = "src"},
     {include = "scraper_biocoop", from = "src"},
+    {include = "scraper_carrefour", from = "src"},
     {include = "utils", from = "src"},
 ]
 
