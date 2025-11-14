@@ -10,6 +10,16 @@ erDiagram
 
         decimal quantity "Quantity of food product"
         enum quantity_unit "Either a weight or a volume"
+
+        int category_id FK
+    }
+
+    Category {
+        int category_id PK
+
+        enum name
+
+        int parent_id FK "ID of the parent category"
     }
 
     Source {
@@ -69,6 +79,9 @@ erDiagram
     }
 
     Product 1--1+ Source : "has been seen at"
+    Product 0+--1 Category : "has"
+
+    Category 1--one or zero Category : "has as parent"
 
     Source 1--one or zero NutritionFacts : "has"
     Source 1--one or zero Price : "has"

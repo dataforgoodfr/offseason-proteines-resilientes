@@ -8,6 +8,7 @@ from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
 from models.base import Base
+from models.category import Category, CategoryValues
 from models.nutrition_facts import NovaScore, NutriScore, NutritionFacts
 from models.price import Price
 from models.product import Product, QuantityUnit
@@ -33,6 +34,7 @@ class TestProductSource(unittest.TestCase):
                 ean_13="7622300336738",
                 name="Product A",
                 brand="Brand A",
+                category=Category(name=CategoryValues.FALAFELS),
                 quantity=0.5,
                 quantity_unit=QuantityUnit.KILOGRAM,
                 sources=[
@@ -67,6 +69,7 @@ class TestProductSource(unittest.TestCase):
                 ean_13="8625503639758",
                 name="Product B",
                 brand="Brand B",
+                category=Category(name=CategoryValues.BARRES_PROTEINEES),
                 quantity=1.5,
                 quantity_unit=QuantityUnit.LITRE,
                 sources=[
@@ -86,6 +89,7 @@ class TestProductSource(unittest.TestCase):
             result = session.scalars(query).one()
             self.assertEqual(result.ean_13, product_a.ean_13)
             self.assertEqual(result.name, product_a.name)
+            self.assertEqual(result.category.name, product_a.category.name)
             self.assertEqual(result.quantity, product_a.quantity)
             self.assertEqual(result.quantity_unit, product_a.quantity_unit)
             self.assertEqual(len(result.sources), 2)

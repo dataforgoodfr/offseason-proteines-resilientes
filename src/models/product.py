@@ -1,10 +1,12 @@
 from enum import StrEnum, unique
 from typing import List, Optional
 
-from sqlalchemy import Boolean, Enum, String
+from sqlalchemy import Boolean, Enum, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import false
 from sqlalchemy.types import Numeric
+
+from models.category import Category
 
 from .base import Base
 from .source import Source
@@ -64,4 +66,7 @@ class Product(Base):
         server_default=QuantityUnit.KILOGRAM,
     )
 
+    category_id: Mapped[int] = mapped_column(ForeignKey("category.id"))
+
+    category: Mapped["Category"] = relationship(back_populates="products")
     sources: Mapped[List["Source"]] = relationship(back_populates="product")
