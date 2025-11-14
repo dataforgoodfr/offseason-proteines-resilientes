@@ -70,6 +70,8 @@ class ProductPipeline:
                         ean_13=ean,
                         name=item["name"],
                         brand=item["brand"],
+                        quantity=item["quantity"],
+                        quantity_unit=item["quantity_unit"],
                         sources=[
                             Source(
                                 origin=Origin.AUCHAN,
