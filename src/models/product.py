@@ -42,6 +42,73 @@ class QuantityUnit(StrEnum):
         return None
 
 
+@unique
+class Category(StrEnum):
+    """
+    The normalised category of the product.
+    """
+
+    VIANDE = "Viandes"
+    POISSON = "Poissons et fruits de mer"
+    LAITIER = "Œufs et produits laitiers"
+    LEGUMINEUSE = "Légumineuses"
+    SOJA = "Produits à base de soja"
+    ASSIMILE = "Légumes et assimilés"
+    CEREALE = "Céréales et pseudo-céréales"
+    NOIX = "Noix et graines"
+    POUDRE = "Poudres protéinées"
+    ALTERNATIVE = "Alternatives végétales"
+
+    @classmethod
+    def _missing_(cls, value):
+        """
+        Invoked when the value is not found in the enum. It is used here to
+        accept values in a case-insensitive way.
+
+        See https://docs.python.org/3/library/enum.html#enum.Enum._missing_.
+        """
+
+        value = value.upper()
+
+        for member in cls:
+            if member.value.upper() == value:
+                return member
+
+        return None
+
+
+@unique
+class Department(StrEnum):
+    """
+    The store main department of the product.
+    """
+
+    LAITIER = "Produits laitiers, oeufs, fromages"
+    VIANDE = "Boucherie, volaille, poissonnerie"
+    CHARCUTERIE = "Charcuterie, traiteur"
+    FRAIS = "Marché frais"
+    EPICERIE = "Epicerie salée"
+    FRUIT_LEGUME = "Fruits, légumes"
+    SURGELE = "Surgelés"
+
+    @classmethod
+    def _missing_(cls, value):
+        """
+        Invoked when the value is not found in the enum. It is used here to
+        accept values in a case-insensitive way.
+
+        See https://docs.python.org/3/library/enum.html#enum.Enum._missing_.
+        """
+
+        value = value.upper()
+
+        for member in cls:
+            if member.value.upper() == value:
+                return member
+
+        return None
+
+
 class Product(Base):
     """
     Represents the product table in the RDBMS.
@@ -65,6 +132,22 @@ class Product(Base):
             values_callable=lambda e: [x.value for x in e],
         ),
         server_default=QuantityUnit.KILOGRAM,
+    )
+
+    category: Mapped["Category"] = mapped_column(
+        Enum(
+            Category,
+            native_enum=False,
+            values_callable=lambda e: [x.value for x in e],
+        ),
+    )
+
+    department: Mapped["Department"] = mapped_column(
+        Enum(
+            Department,
+            native_enum=False,
+            values_callable=lambda e: [x.value for x in e],
+        ),
     )
 
     sources: Mapped[List["Source"]] = relationship(back_populates="product")

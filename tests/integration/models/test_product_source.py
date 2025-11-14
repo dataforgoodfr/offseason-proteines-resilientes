@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from models.base import Base
 from models.nutrition_facts import NutritionFacts, NutriScore, NovaScore
 from models.price import Price
-from models.product import Product, QuantityUnit
+from models.product import Product, QuantityUnit, Category, Department
 from models.source import Source, Origin
 
 
@@ -35,6 +35,8 @@ class TestProductSource(unittest.TestCase):
                 brand="Brand A",
                 quantity=0.5,
                 quantity_unit=QuantityUnit.KILOGRAM,
+                category=Category.VIANDE,
+                department=Department.VIANDE,
                 sources=[
                     Source(
                         origin=Origin.AUCHAN,
@@ -69,6 +71,8 @@ class TestProductSource(unittest.TestCase):
                 brand="Brand B",
                 quantity=1.5,
                 quantity_unit=QuantityUnit.LITRE,
+                category=Category.LAITIER,
+                department=Department.LAITIER,
                 sources=[
                     Source(
                         origin=Origin.CARREFOUR,
