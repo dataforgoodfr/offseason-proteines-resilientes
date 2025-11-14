@@ -27,5 +27,11 @@ class ProductItem(scrapy.Item):
     # The discounted price of the product.
     discounted_price = scrapy.Field()
 
+    # Quantity of food product.
+    quantity = scrapy.Field()
+
+    # Quantity unit (either a weight or a volume).
+    quantity_unit = scrapy.Field()
+
     # The URL of the product.
     url = scrapy.Field()

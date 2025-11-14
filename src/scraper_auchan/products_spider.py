@@ -1,6 +1,9 @@
+from re import match, IGNORECASE
+
 from scrapy import Request, Spider
 
 from .items import ProductItem
+from models.product import QuantityUnit
 
 # Name of the cookie used to specify the "journey" ID.
 #
@@ -68,6 +71,10 @@ class AuchanProductsSpider(Spider):
         if discounted:
             item["discounted_price"] = discounted_price
 
+        quantity, quantity_unit = self.extract_quantity(response)
+        item["quantity"] = quantity
+        item["quantity_unit"] = quantity_unit
+
         yield item
 
     @staticmethod
@@ -105,3 +112,48 @@ class AuchanProductsSpider(Spider):
             basePrice,
             currentPrice if is_discounted else None,
         )
+
+    @staticmethod
+    def extract_quantity(response) -> tuple[float, QuantityUnit] | None:
+        """
+        Extracts the product quantity and its unit from the response, and
+        normalises it into either kg or L.
+        """
+
+        product_attributes = response.css(
+            ".offer-selector__attributes span.product-attribute"
+        )
+
+        for product_attribute in product_attributes:
+            m = match(
+                "Contenance : (\\d+x)?([.0-9]+)(ml|cl|L|kg|g)",
+                product_attribute.attrib["aria-label"],
+                IGNORECASE,
+            )
+
+            if m is not None:
+                multiplier = m.group(1)  # None or 2x, 6x
+                raw_quantity = m.group(2)  # 200, 1,5
+                raw_quantity_unit = m.group(3)  # g, kg, L, l, cl, ml
+
+                quantity = float(raw_quantity.replace(",", "."))
+                quantity_unit = raw_quantity_unit
+
+                match raw_quantity_unit.lower():
+                    case "g":
+                        quantity = quantity / 1000
+                        quantity_unit = QuantityUnit.KILOGRAM
+                    case "l":
+                        quantity_unit = QuantityUnit.LITRE
+                    case "cl":
+                        quantity = quantity / 100
+                        quantity_unit = QuantityUnit.LITRE
+                    case "ml":
+                        quantity = quantity / 1000
+                        quantity_unit = QuantityUnit.LITRE
+
+                if multiplier is None:
+                    return (quantity, quantity_unit)
+                else:
+                    nb = int("".join(filter(str.isdigit, multiplier)))
+                    return (quantity * nb, quantity_unit)
