@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from models.base import Base
 from models.nutrition_facts import NutritionFacts, NutriScore, NovaScore
 from models.price import Price
-from models.product import Product
+from models.product import Product, QuantityUnit
 from models.source import Source, Origin
 
 
@@ -33,6 +33,8 @@ class TestProductSource(unittest.TestCase):
                 ean_13="7622300336738",
                 name="Product A",
                 brand="Brand A",
+                quantity=0.5,
+                quantity_unit=QuantityUnit.KILOGRAM,
                 sources=[
                     Source(
                         origin=Origin.AUCHAN,
@@ -65,6 +67,8 @@ class TestProductSource(unittest.TestCase):
                 ean_13="8625503639758",
                 name="Product B",
                 brand="Brand B",
+                quantity=1.5,
+                quantity_unit=QuantityUnit.LITRE,
                 sources=[
                     Source(
                         origin=Origin.CARREFOUR,
@@ -82,6 +86,8 @@ class TestProductSource(unittest.TestCase):
             result = session.scalars(query).one()
             self.assertEqual(result.ean_13, product_a.ean_13)
             self.assertEqual(result.name, product_a.name)
+            self.assertEqual(result.quantity, product_a.quantity)
+            self.assertEqual(result.quantity_unit, product_a.quantity_unit)
             self.assertEqual(len(result.sources), 2)
             self.assertEqual(result.sources[0].origin, product_a.sources[0].origin)
             self.assertEqual(result.sources[0].url, product_a.sources[0].url)
