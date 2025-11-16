@@ -83,13 +83,14 @@ class Department(StrEnum):
     The store main department of the product.
     """
 
-    LAITIER = "Produits laitiers, oeufs, fromages"
-    VIANDE = "Boucherie, volaille, poissonnerie"
-    CHARCUTERIE = "Charcuterie, traiteur"
-    FRAIS = "Marché frais"
-    EPICERIE = "Epicerie salée"
-    FRUIT_LEGUME = "Fruits, légumes"
-    SURGELE = "Surgelés"
+    LAITIER = "Produits laitiers, oeufs, fromages"  # cn01
+    VIANDE = "Boucherie, volaille, poissonnerie"  # cn02
+    CHARCUTERIE = "Charcuterie, traiteur"  # cn12
+    FRAIS = "Marché frais"  # cb19
+    EPICERIE = "Epicerie salée"  # cn06
+    SUCRE = "Epicerie sucrée"  # cn05
+    FRUIT_LEGUME = "Fruits, légumes"  # cn03
+    SURGELE = "Surgelés"  # cn04
 
     @classmethod
     def _missing_(cls, value):
