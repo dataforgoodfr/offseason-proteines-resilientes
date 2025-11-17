@@ -1,5 +1,5 @@
 from re import match, IGNORECASE
-from logging import DEBUG, getLogger
+from logging import getLogger
 
 from scrapy import Request, Spider
 
