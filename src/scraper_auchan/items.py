@@ -35,3 +35,9 @@ class ProductItem(scrapy.Item):
 
     # The URL of the product.
     url = scrapy.Field()
+
+    # Normalised category of the product.
+    category = scrapy.Field()
+
+    # Store main department of the product.
+    department = scrapy.Field()

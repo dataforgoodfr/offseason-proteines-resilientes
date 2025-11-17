@@ -72,6 +72,8 @@ class ProductPipeline:
                         brand=item["brand"],
                         quantity=item["quantity"],
                         quantity_unit=item["quantity_unit"],
+                        category=item["category"],
+                        department=item["department"],
                         sources=[
                             Source(
                                 origin=Origin.AUCHAN,
