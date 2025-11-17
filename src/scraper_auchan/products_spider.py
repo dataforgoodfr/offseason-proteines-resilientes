@@ -260,7 +260,11 @@ class AuchanProductsSpider(Spider):
             or "beurre de cacahuète" in name.lower()
         ):
             categorie = Category.NOIX
-        elif "Barres de céréales" in breadcrumbs:
+        elif (
+            "Barres de céréales" in breadcrumbs
+            or "whey" in name.lower()
+            or "caséine" in name.lower()
+        ):
             categorie = Category.POUDRE
         else:
             categorie = None
