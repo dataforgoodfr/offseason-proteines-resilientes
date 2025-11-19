@@ -1,10 +1,11 @@
+from enum import StrEnum, unique
 from re import match, IGNORECASE
 from logging import getLogger
 
 from scrapy import Request, Spider
 
 from .items import ProductItem
-from models.product import QuantityUnit, Category, Department
+from models.product import QuantityUnit, Category
 
 # Name of the cookie used to specify the "journey" ID.
 #
@@ -14,6 +15,39 @@ from models.product import QuantityUnit, Category, Department
 # See https://github.com/dataforgoodfr/offseason-proteines-resilientes/issues/2
 # for more information.
 JOURNEY_COOKIE_NAME = "lark-journey"
+
+
+@unique
+class Department(StrEnum):
+    """
+    The main store department of the product.
+    """
+
+    LAITIER = "Produits laitiers, oeufs, fromages"  # cn01
+    VIANDE = "Boucherie, volaille, poissonnerie"  # cn02
+    CHARCUTERIE = "Charcuterie, traiteur"  # cn12
+    FRAIS = "Marché frais"  # cb19
+    EPICERIE = "Epicerie salée"  # cn06
+    SUCRE = "Epicerie sucrée"  # cn05
+    FRUIT_LEGUME = "Fruits, légumes"  # cn03
+    SURGELE = "Surgelés"  # cn04
+
+    @classmethod
+    def _missing_(cls, value):
+        """
+        Invoked when the value is not found in the enum. It is used here to
+        accept values in a case-insensitive way.
+
+        See https://docs.python.org/3/library/enum.html#enum.Enum._missing_.
+        """
+
+        value = value.upper()
+
+        for member in cls:
+            if member.value.upper() == value:
+                return member
+
+        return None
 
 
 class AuchanProductsSpider(Spider):
@@ -29,6 +63,8 @@ class AuchanProductsSpider(Spider):
     async def start(self):
         query = getattr(self, "query", None)
         journey_id = getattr(self, "journey_id", None)
+        category = Category(getattr(self, "category", "Unknown"))
+        aliment = getattr(self, "aliment", "Unknown")
 
         if query is None:
             raise AttributeError("Missing 'query' argument")
@@ -71,7 +107,6 @@ class AuchanProductsSpider(Spider):
             "boisson",
             "alcools",
             "glaces",
-            "biscuits",
         )
         if Department(breadcrumbs[1]) is None or [
             excl for excl in exclusion_list for s in breadcrumbs if excl in s.lower()
@@ -95,15 +130,8 @@ class AuchanProductsSpider(Spider):
             item["eans"] = self.extract_eans(response)
             item["url"] = response.url
 
-            item["department"] = Department(breadcrumbs[1])
-            category_found = self.normalised_category(breadcrumbs, item["name"])
-            if category_found is None:
-                logger.debug(
-                    f"{item['name']},{item['eans']},{breadcrumbs[1]} NO CATEGORY FOUND"
-                )
-                pass
-            else:
-                item["category"] = category_found
+            item["category"] = self.category
+            item["aliment"] = self.aliment
 
             (discounted, price, discounted_price) = self.extract_discount_and_prices(
                 response
@@ -199,74 +227,3 @@ class AuchanProductsSpider(Spider):
                 else:
                     nb = int("".join(filter(str.isdigit, multiplier)))
                     return (quantity * nb, quantity_unit)
-
-    @staticmethod
-    def normalised_category(breadcrumbs, name) -> Category:
-        """
-        Get the normalised category from the breadcrumbs.
-        """
-        main_dpt = breadcrumbs[1]
-
-        if Department(main_dpt) == Department.LAITIER:
-            categorie = Category.LAITIER
-        elif (
-            "Conserves de poisson" in breadcrumbs
-            or "Poissons, crustacés" in breadcrumbs
-            or "Poissons, fruits de mer" in breadcrumbs
-            or "Marée du jour" in breadcrumbs
-            or "Traiteur de la mer" in breadcrumbs
-        ):
-            categorie = Category.POISSON
-        elif (
-            (
-                Department(main_dpt) == Department.VIANDE
-                or Department(main_dpt) == Department.CHARCUTERIE
-                or "La boucherie à la coupe" in breadcrumbs
-                or "La charcuterie à la coupe" in breadcrumbs
-                or "Viandes" in breadcrumbs
-            )
-            and "Simili-carnés, tofu" not in breadcrumbs
-            and "Panés végétaux" not in breadcrumbs
-        ):
-            categorie = Category.VIANDE
-        elif (
-            "Lentilles, pois chiches" in breadcrumbs
-            or "Haricots, flageolets" in breadcrumbs
-            or "Lentilles, légumes secs" in breadcrumbs
-            or "lupin" in name.lower()
-            or "fèves" in name.lower()
-            or "falafel" in name.lower()
-        ):
-            categorie = Category.LEGUMINEUSE
-        elif (
-            "Simili-carnés, tofu" in breadcrumbs or "Epicerie salée" in breadcrumbs
-        ) and ("tofu" in name.lower() or "soja" in name.lower()):
-            categorie = Category.SOJA
-        elif "Simili-carnés, tofu" in breadcrumbs or "Panés végétaux" in breadcrumbs:
-            categorie = Category.ALTERNATIVE
-        elif (
-            "Céréales, galettes, quinoa" in breadcrumbs
-            or "Céréales adultes" in breadcrumbs
-            or "quinoa" in name.lower()
-        ) and ("chia" not in name.lower() or "courge" not in name.lower()):
-            categorie = Category.CEREALE
-        elif (
-            "Mélanges, graines, fruits exotiques" in breadcrumbs
-            or "Légumes secs, graines" in breadcrumbs
-            or "Cacahuètes, pistaches, mélanges" in breadcrumbs
-            or "Noix, noisettes" in breadcrumbs
-            or "chia" in name.lower()
-            or "courge" in name.lower()
-            or "beurre de cacahuète" in name.lower()
-        ):
-            categorie = Category.NOIX
-        elif (
-            "Barres de céréales" in breadcrumbs
-            or "whey" in name.lower()
-            or "caséine" in name.lower()
-        ):
-            categorie = Category.POUDRE
-        else:
-            categorie = None
-
-        return categorie

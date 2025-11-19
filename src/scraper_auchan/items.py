@@ -39,5 +39,5 @@ class ProductItem(scrapy.Item):
     # Normalised category of the product.
     category = scrapy.Field()
 
-    # Store main department of the product.
-    department = scrapy.Field()
+    # Subcategory of the product.
+    aliment = scrapy.Field()

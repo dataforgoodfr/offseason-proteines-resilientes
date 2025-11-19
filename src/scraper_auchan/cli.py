@@ -44,6 +44,18 @@ def __get_arg_parser() -> ArgumentParser:
     )
 
     arg_parser.add_argument(
+        "--category",
+        default="Unknown",
+        help="The category of the product",
+    )
+
+    arg_parser.add_argument(
+        "--aliment",
+        default="Unknown",
+        help="The aliment (subcategory) of the product",
+    )
+
+    arg_parser.add_argument(
         "query",
         help="Query to be used in Auchan's search engine",
     )
@@ -97,7 +109,13 @@ def main() -> None:
         }
     )
     crawler.crawl(
-        AuchanProductsSpider, **{"query": args.query, "journey_id": args.journey_id}
+        AuchanProductsSpider,
+        **{
+            "query": args.query,
+            "journey_id": args.journey_id,
+            "category": args.category,
+            "aliment": args.aliment,
+        },
     )
     crawler.start()
 

@@ -1,4 +1,4 @@
-"""Add 'category' and 'department' to 'Product' table
+"""Add 'category' and 'aliment' to 'Product' table
 
 Revision ID: 0ea78d81a3aa
 Revises: b13c7ee298c7
@@ -11,7 +11,7 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 
-from models.product import Category, Department
+from models.product import Category
 
 
 # revision identifiers, used by Alembic.
@@ -31,29 +31,18 @@ def upgrade() -> None:
     )
     category_type.create(bind, checkfirst=True)
 
-    department_type = sa.Enum(
-        Department, native_enum=False, values_callable=lambda e: [x.value for x in e]
-    )
-    department_type.create(bind, checkfirst=True)
-
     op.add_column(
         "product",
-        sa.Column(
-            "category",
-            category_type,
-        ),
+        sa.Column("category", category_type, server_default=Category.UNKNOWN),
     )
     op.add_column(
         "product",
-        sa.Column(
-            "department",
-            department_type,
-        ),
+        sa.Column("aliment", str, server_default="Unknown"),
     )
 
 
 def downgrade() -> None:
     """Downgrade schema."""
 
-    op.drop_column("product", "department")
     op.drop_column("product", "category")
+    op.drop_column("product", "aliment")

@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from models.base import Base
 from models.nutrition_facts import NutritionFacts, NutriScore, NovaScore
 from models.price import Price
-from models.product import Product, QuantityUnit, Category, Department
+from models.product import Product, QuantityUnit, Category
 from models.source import Source, Origin
 
 
@@ -36,7 +36,7 @@ class TestProductSource(unittest.TestCase):
                 quantity=0.5,
                 quantity_unit=QuantityUnit.KILOGRAM,
                 category=Category.VIANDE,
-                department=Department.VIANDE,
+                aliment="Aliment A",
                 sources=[
                     Source(
                         origin=Origin.AUCHAN,
@@ -72,7 +72,7 @@ class TestProductSource(unittest.TestCase):
                 quantity=1.5,
                 quantity_unit=QuantityUnit.LITRE,
                 category=Category.LAITIER,
-                department=Department.LAITIER,
+                aliment="Aliment B",
                 sources=[
                     Source(
                         origin=Origin.CARREFOUR,
@@ -92,6 +92,8 @@ class TestProductSource(unittest.TestCase):
             self.assertEqual(result.name, product_a.name)
             self.assertEqual(result.quantity, product_a.quantity)
             self.assertEqual(result.quantity_unit, product_a.quantity_unit)
+            self.assertEqual(result.category, product_a.category)
+            self.assertEqual(result.aliment, product_a.aliment)
             self.assertEqual(len(result.sources), 2)
             self.assertEqual(result.sources[0].origin, product_a.sources[0].origin)
             self.assertEqual(result.sources[0].url, product_a.sources[0].url)

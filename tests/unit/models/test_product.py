@@ -4,7 +4,7 @@ Unit tests for the 'models.product' module.
 
 import unittest
 
-from models.product import QuantityUnit, Category, Department
+from models.product import QuantityUnit, Category
 
 
 class TestQuantityUnit(unittest.TestCase):
@@ -41,6 +41,10 @@ class TestCategory(unittest.TestCase):
 
     def test_string_to_enum(self):
         category = Category("Viandes")
+        self.assertIsInstance(category, Category)
+        self.assertIs(category, Category.VIANDE)
+
+        category = Category("ViAnDes")
         self.assertIsInstance(category, Category)
         self.assertIs(category, Category.VIANDE)
 
@@ -84,46 +88,6 @@ class TestCategory(unittest.TestCase):
             category = Category("XYZ")
 
             self.assertIsInstance(category, Category)
-
-
-class TestDepartment(unittest.TestCase):
-    """
-    Tests the 'Department' class.
-    """
-
-    def test_string_to_enum(self):
-        department = Department("Produits laitiers, oeufs, fromages")
-        self.assertIsInstance(department, Department)
-        self.assertIs(department, Department.LAITIER)
-
-        department = Department("Boucherie, volaille, poissonnerie")
-        self.assertIsInstance(department, Department)
-        self.assertIs(department, Department.VIANDE)
-
-        department = Department("Charcuterie, traiteur")
-        self.assertIsInstance(department, Department)
-        self.assertIs(department, Department.CHARCUTERIE)
-
-        department = Department("Marché frais")
-        self.assertIsInstance(department, Department)
-        self.assertIs(department, Department.FRAIS)
-
-        department = Department("Epicerie salée")
-        self.assertIsInstance(department, Department)
-        self.assertIs(department, Department.EPICERIE)
-
-        department = Department("Fruits, légumes")
-        self.assertIsInstance(department, Department)
-        self.assertIs(department, Department.FRUIT_LEGUME)
-
-        department = Department("Surgelés")
-        self.assertIsInstance(department, Department)
-        self.assertIs(department, Department.SURGELE)
-
-        with self.assertRaises(ValueError):
-            department = Department("XYZ")
-
-            self.assertIsInstance(department, Department)
 
 
 if __name__ == "__main__":

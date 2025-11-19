@@ -73,7 +73,7 @@ class ProductPipeline:
                         quantity=item["quantity"],
                         quantity_unit=item["quantity_unit"],
                         category=item["category"],
-                        department=item["department"],
+                        aliment=item["aliment"],
                         sources=[
                             Source(
                                 origin=Origin.AUCHAN,

@@ -58,39 +58,7 @@ class Category(StrEnum):
     NOIX = "Noix et graines"
     POUDRE = "Poudres protéinées"
     ALTERNATIVE = "Alternatives végétales"
-
-    @classmethod
-    def _missing_(cls, value):
-        """
-        Invoked when the value is not found in the enum. It is used here to
-        accept values in a case-insensitive way.
-
-        See https://docs.python.org/3/library/enum.html#enum.Enum._missing_.
-        """
-
-        value = value.upper()
-
-        for member in cls:
-            if member.value.upper() == value:
-                return member
-
-        return None
-
-
-@unique
-class Department(StrEnum):
-    """
-    The store main department of the product.
-    """
-
-    LAITIER = "Produits laitiers, oeufs, fromages"  # cn01
-    VIANDE = "Boucherie, volaille, poissonnerie"  # cn02
-    CHARCUTERIE = "Charcuterie, traiteur"  # cn12
-    FRAIS = "Marché frais"  # cb19
-    EPICERIE = "Epicerie salée"  # cn06
-    SUCRE = "Epicerie sucrée"  # cn05
-    FRUIT_LEGUME = "Fruits, légumes"  # cn03
-    SURGELE = "Surgelés"  # cn04
+    UNKNOWN = "Unknown"
 
     @classmethod
     def _missing_(cls, value):
@@ -143,12 +111,6 @@ class Product(Base):
         ),
     )
 
-    department: Mapped["Department"] = mapped_column(
-        Enum(
-            Department,
-            native_enum=False,
-            values_callable=lambda e: [x.value for x in e],
-        ),
-    )
+    aliment: Mapped[str] = mapped_column(String(50))
 
     sources: Mapped[List["Source"]] = relationship(back_populates="product")
