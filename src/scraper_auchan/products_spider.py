@@ -63,13 +63,17 @@ class AuchanProductsSpider(Spider):
     async def start(self):
         query = getattr(self, "query", None)
         journey_id = getattr(self, "journey_id", None)
-        category = Category(getattr(self, "category", "Unknown"))
-        aliment = getattr(self, "aliment", "Unknown")
+        category = getattr(self, "category", None)
+        aliment = getattr(self, "aliment", None)
 
         if query is None:
             raise AttributeError("Missing 'query' argument")
         if journey_id is None:
             raise AttributeError("Missing 'journey_id' argument")
+        if category is None:
+            category = Category.UNKNOWN
+        if aliment is None:
+            aliment = "Unknown"
 
         url = f"https://www.auchan.fr/recherche?text={query}&categorylevel1=produits20laitiers2c20oeufs2c20fromages&categorylevel1=boucherie2c20volaille2c20poissonnerie&categorylevel1=fruits2c20le9gumes&categorylevel1=surgele9s&categorylevel1=epicerie20sucre9e&categorylevel1=epicerie20sale9e&categorylevel1=charcuterie2c20traiteur"
 
