@@ -1,6 +1,6 @@
+from logging import DEBUG
 from enum import StrEnum, unique
 from re import match, IGNORECASE
-from logging import getLogger
 
 from scrapy import Request, Spider
 
@@ -95,8 +95,6 @@ class AuchanProductsSpider(Spider):
             )
 
     def parse_product(self, response):
-        logger = getLogger(__name__)
-
         item = ProductItem()
 
         breadcrumbs = response.xpath(
@@ -112,20 +110,16 @@ class AuchanProductsSpider(Spider):
             "alcools",
             "glaces",
         )
-        if Department(breadcrumbs[1]) is None or [
-            excl for excl in exclusion_list for s in breadcrumbs if excl in s.lower()
-        ]:
-            if Department(breadcrumbs[1]) is None:
-                logger.debug(f"Dept {breadcrumbs[1]} skipped")
-            else:
-                excluded = [
-                    s
-                    for excl in exclusion_list
-                    for s in breadcrumbs
-                    if excl in s.lower()
-                ]
-                logger.debug(f"Product {excluded} skipped")
-            pass
+        any_exclusion = [
+            s for excl in exclusion_list for s in breadcrumbs if excl in s.lower()
+        ]
+
+        if Department(breadcrumbs[1]) is None:
+            self.log(f"Not a valid food dept: {breadcrumbs[1]}. Skipping...", DEBUG)
+            return
+        elif any_exclusion:
+            self.log(f"Not an accepted product: {any_exclusion}. Skipping...", DEBUG)
+            return
         else:
             item["name"] = response.xpath(
                 "//div[@itemtype='https://schema.org/Product']/meta[@itemprop='name']/@content"

@@ -8,6 +8,10 @@ from .products_spider import CarrefourProductsSpider
 from utils.database import DEFAULT_DATABASE_URL
 
 
+# The User-Agent HTTP header used by Scrapy for the crawling requests.
+BOT_NAME = "proteines_resilientes"
+
+
 def __get_arg_parser() -> ArgumentParser:
     """
     Returns the argument parser.
@@ -27,6 +31,18 @@ def __get_arg_parser() -> ArgumentParser:
         action="store_true",
         default=False,
         help="Enable the debug mode",
+    )
+
+    arg_parser.add_argument(
+        "--category",
+        default="Unknown",
+        help="The category of the product",
+    )
+
+    arg_parser.add_argument(
+        "--aliment",
+        default="Unknown",
+        help="The aliment (subcategory) of the product",
     )
 
     arg_parser.add_argument(
@@ -71,7 +87,7 @@ def main() -> None:
     crawler = CrawlerProcess(
         settings={
             "AUTOTHROTTLE_ENABLED": True,
-            "BOT_NAME": None,
+            "BOT_NAME": BOT_NAME,
             "DATABASE_URL": args.database,
             "DOWNLOAD_HANDLERS": {
                 "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
@@ -92,7 +108,14 @@ def main() -> None:
             "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
         }
     )
-    crawler.crawl(CarrefourProductsSpider, **{"query": args.query})
+    crawler.crawl(
+        CarrefourProductsSpider,
+        **{
+            "query": args.query,
+            "category": args.category,
+            "aliment": args.aliment,
+        },
+    )
     crawler.start()
 
     logger.info("Program ended")

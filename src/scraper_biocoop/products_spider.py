@@ -1,10 +1,42 @@
 from logging import DEBUG
 import re
+from enum import StrEnum, unique
 
 from scrapy import Request, Spider
 
 from .items import ProductItem
-from models.product import QuantityUnit
+from models.product import QuantityUnit, Category
+
+
+@unique
+class Department(StrEnum):
+    """
+    The main store department of the product.
+    """
+
+    LAITIER = "Crémerie"
+    VIANDE = "Traiteur, Boucherie, Poissonnerie"
+    EPICERIE = "Epicerie Salée"
+    SUCRE = "Epicerie Sucrée"
+    FRUIT_LEGUME = "Fruits et Légumes"
+    SURGELE = "Surgelés"
+    VRAC = "Vrac"
+
+    @classmethod
+    def _missing_(cls, value):
+        """
+        Invoked when the value is not found in the enum. It is used here to
+        accept values in a case-insensitive way.
+        See https://docs.python.org/3/library/enum.html#enum.Enum._missing_.
+        """
+
+        value = value.upper()
+
+        for member in cls:
+            if member.value.upper() == value:
+                return member
+
+        return None
 
 
 class BiocoopProductsSpider(Spider):
@@ -19,9 +51,15 @@ class BiocoopProductsSpider(Spider):
 
     async def start(self):
         query = getattr(self, "query", None)
+        category = getattr(self, "category", None)
+        aliment = getattr(self, "aliment", None)
 
         if query is None:
             raise AttributeError("Missing 'query' argument")
+        if category is None:
+            category = Category.UNKNOWN
+        if aliment is None:
+            aliment = "Unknown"
 
         url = f"https://www.biocoop.fr/magasin-biocoop_biocite/catalogsearch/result/?q={query}&p=1"
 
@@ -55,29 +93,54 @@ class BiocoopProductsSpider(Spider):
             self.log("No EAN found. Skipping...", DEBUG)
             return
 
-        item["name"] = response.xpath("//span[@itemprop='name']/text()").get()
-        item["brand"] = response.xpath("//span[@class='brand value']/text()").get()
-        item["url"] = response.url
-        item["ean"] = ean
+        breadcrumbs = response.xpath(
+            "//div[@class='breadcrumbs']/ul/li/a/text()"
+        ).getall()
 
-        discounted, basePrice, discountedPrice = self.extract_discount_and_prices(
-            response
+        exclusion_list = (
+            "préparés",
+            "bébé",
+            "pizza",
+            "bouillon",
+            "boisson",
+            "alcools",
+            "glaces",
+            "apéritif",
         )
-        item["price"] = basePrice
-        item["discounted"] = discounted
-        if discounted:
-            item["discounted_price"] = discountedPrice
+        any_exclusion = [
+            s for excl in exclusion_list for s in breadcrumbs if excl in s.lower()
+        ]
 
-        quantity, quantity_unit = self.extract_quantity(response) or (None, None)
-
-        if quantity is None:
-            self.log(f"Product {ean} has no quantity. Skipping...", DEBUG)
+        if Department(breadcrumbs[1]) is None:
+            self.log(f"Not a valid food dept: {breadcrumbs[1]}. Skipping...", DEBUG)
             return
+        elif any_exclusion:
+            self.log(f"Not an accepted product: {any_exclusion}. Skipping...", DEBUG)
+            return
+        else:
+            item["name"] = response.xpath("//span[@itemprop='name']/text()").get()
+            item["brand"] = response.xpath("//span[@class='brand value']/text()").get()
+            item["url"] = response.url
+            item["ean"] = ean
 
-        item["quantity"] = quantity
-        item["quantity_unit"] = quantity_unit
+            discounted, basePrice, discountedPrice = self.extract_discount_and_prices(
+                response
+            )
+            item["price"] = basePrice
+            item["discounted"] = discounted
+            if discounted:
+                item["discounted_price"] = discountedPrice
 
-        yield item
+            quantity, quantity_unit = self.extract_quantity(response) or (None, None)
+
+            if quantity is None:
+                self.log(f"Product {ean} has no quantity. Skipping...", DEBUG)
+                return
+
+            item["quantity"] = quantity
+            item["quantity_unit"] = quantity_unit
+
+            yield item
 
     @staticmethod
     def extract_discount_and_prices(response) -> tuple[bool, float, float | None]:

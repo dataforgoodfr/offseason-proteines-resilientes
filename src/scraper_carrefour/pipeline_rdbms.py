@@ -73,6 +73,8 @@ class ProductPipeline:
                     brand=item["brand"],
                     quantity=item["quantity"],
                     quantity_unit=item["quantity_unit"],
+                    category=item["category"],
+                    aliment=item["aliment"],
                     sources=[
                         Source(
                             origin=Origin.CARREFOUR,

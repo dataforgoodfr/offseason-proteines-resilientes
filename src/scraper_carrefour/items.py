@@ -32,3 +32,9 @@ class ProductItem(scrapy.Item):
 
     # The URL of the product.
     url = scrapy.Field()
+
+    # Normalised category of the product.
+    category = scrapy.Field()
+
+    # Subcategory of the product.
+    aliment = scrapy.Field()
