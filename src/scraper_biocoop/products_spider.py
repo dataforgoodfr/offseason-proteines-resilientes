@@ -142,7 +142,6 @@ class BiocoopProductsSpider(Spider):
                     raw_quantity_unit = m.group(2)  # g, kg, L, l, cl
 
                     quantity = float(raw_quantity.replace(",", "."))
-                    quantity_unit = raw_quantity_unit
 
                     match raw_quantity_unit.lower():
                         case "g":
@@ -156,5 +155,7 @@ class BiocoopProductsSpider(Spider):
                         case "ml":
                             quantity = quantity / 1000
                             quantity_unit = QuantityUnit.LITRE
+                        case _:
+                            return
 
                     return (quantity, quantity_unit)
