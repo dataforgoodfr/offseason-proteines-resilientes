@@ -61,7 +61,7 @@ class ProductPipeline:
                                 discounted=item["discounted"],
                                 discounted_amount=item.get("discounted_price"),
                             )
-                            if item["price"] is not None
+                            if item.get("price") is not None
                             else None,
                         )
                     )
@@ -82,7 +82,7 @@ class ProductPipeline:
                                     discounted=item["discounted"],
                                     discounted_amount=item.get("discounted_price"),
                                 )
-                                if item["price"] is not None
+                                if item.get("price") is not None
                                 else None,
                             )
                         ],
