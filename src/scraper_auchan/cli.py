@@ -1,12 +1,11 @@
 from argparse import ArgumentParser
-from logging import getLogger, Formatter, Logger, StreamHandler
-from logging import DEBUG, INFO
+from logging import DEBUG, INFO, Formatter, Logger, StreamHandler, getLogger
 
 from scrapy.crawler import CrawlerProcess
 
-from .products_spider import AuchanProductsSpider
 from utils.database import DEFAULT_DATABASE_URL
 
+from .products_spider import AuchanProductsSpider
 
 # The User-Agent HTTP header used by Scrapy for the crawling requests.
 BOT_NAME = "proteines_resilientes"

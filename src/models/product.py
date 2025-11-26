@@ -1,11 +1,8 @@
 from enum import StrEnum, unique
-from typing import List
-from typing import Optional
+from typing import List, Optional
 
 from sqlalchemy import Boolean, Enum, String
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import false
 from sqlalchemy.types import Numeric
 
