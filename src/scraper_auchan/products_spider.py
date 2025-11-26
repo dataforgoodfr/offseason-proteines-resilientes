@@ -62,14 +62,20 @@ class AuchanProductsSpider(Spider):
             "//div[@itemtype='https://schema.org/Product']/meta[@itemprop='name']/@content"
         ).get()
         item["brand"] = response.xpath("//meta[@itemprop='brand']/@content").get()
-        item["eans"] = self.extract_eans(response)
         item["url"] = response.url
 
-        (discounted, price, discounted_price) = self.extract_discount_and_prices(
-            response
-        )
+        eans = self.extract_eans(response)
+
+        if eans is None:
+            self.log("No EAN found. Skipping...", DEBUG)
+            return
+
+        item["eans"] = eans
+
+        discounted, price, discounted_price = self.extract_discount_and_prices(response)
         item["price"] = price
         item["discounted"] = discounted
+
         if discounted:
             item["discounted_price"] = discounted_price
 
@@ -85,7 +91,7 @@ class AuchanProductsSpider(Spider):
         yield item
 
     @staticmethod
-    def extract_eans(response) -> list[str]:
+    def extract_eans(response) -> list[str] | None:
         content_wrappers = response.css(
             ".product-description__feature-wrapper .product-description__feature-group-wrapper"
         )
