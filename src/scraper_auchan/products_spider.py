@@ -1,3 +1,4 @@
+from logging import DEBUG
 from re import IGNORECASE, match
 
 from scrapy import Request, Spider
@@ -72,7 +73,12 @@ class AuchanProductsSpider(Spider):
         if discounted:
             item["discounted_price"] = discounted_price
 
-        quantity, quantity_unit = self.extract_quantity(response)
+        quantity, quantity_unit = self.extract_quantity(response) or (None, None)
+
+        if quantity is None:
+            self.log(f"Product {item['eans'][0]} has no quantity. Skipping...", DEBUG)
+            return
+
         item["quantity"] = quantity
         item["quantity_unit"] = quantity_unit
 
@@ -138,7 +144,6 @@ class AuchanProductsSpider(Spider):
                 raw_quantity_unit = m.group(3)  # g, kg, L, l, cl, ml
 
                 quantity = float(raw_quantity.replace(",", "."))
-                quantity_unit = raw_quantity_unit
 
                 match raw_quantity_unit.lower():
                     case "g":
@@ -152,6 +157,8 @@ class AuchanProductsSpider(Spider):
                     case "ml":
                         quantity = quantity / 1000
                         quantity_unit = QuantityUnit.LITRE
+                    case _:
+                        return
 
                 if multiplier is None:
                     return (quantity, quantity_unit)
