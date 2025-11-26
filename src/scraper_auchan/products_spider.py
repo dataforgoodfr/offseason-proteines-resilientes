@@ -92,7 +92,7 @@ class AuchanProductsSpider(Spider):
             if label == "Réf / EAN :":
                 eans = content_wrapper.css(
                     ".product-description__feature-values::text"
-                ).re("(\d{13})")
+                ).re(r"(\d{13})")
 
                 return eans
 
