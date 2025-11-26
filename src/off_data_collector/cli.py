@@ -1,6 +1,5 @@
 from argparse import ArgumentParser
-from logging import getLogger, Formatter, Logger, StreamHandler
-from logging import DEBUG, INFO
+from logging import DEBUG, INFO, Formatter, Logger, StreamHandler, getLogger
 from pathlib import Path
 
 from openfoodfacts import API as off_api
@@ -8,14 +7,14 @@ from openfoodfacts.types import JSONType
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
-from .api import FIELDS
 from models.base import Base
 from models.environmental_facts import EnvironmentalFacts, GreenScore
-from models.nutrition_facts import NutritionFacts, NutriScore, NovaScore
+from models.nutrition_facts import NovaScore, NutriScore, NutritionFacts
 from models.product import Product
-from models.source import Source, Origin
+from models.source import Origin, Source
 from utils.database import DEFAULT_DATABASE_URL
 
+from .api import FIELDS
 
 # The country code used to restrict OpenFoodFacts results to that specific
 # country.

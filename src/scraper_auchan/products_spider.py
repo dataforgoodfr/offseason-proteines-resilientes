@@ -1,9 +1,10 @@
-from re import match, IGNORECASE
+from re import IGNORECASE, match
 
 from scrapy import Request, Spider
 
-from .items import ProductItem
 from models.product import QuantityUnit
+
+from .items import ProductItem
 
 # Name of the cookie used to specify the "journey" ID.
 #

@@ -1,11 +1,12 @@
-from logging import DEBUG
 import json
 import re
+from logging import DEBUG
 
 from scrapy import Request, Spider
 
-from .items import ProductItem
 from models.product import QuantityUnit
+
+from .items import ProductItem
 
 
 class CarrefourProductsSpider(Spider):

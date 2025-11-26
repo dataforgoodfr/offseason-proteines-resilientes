@@ -8,10 +8,10 @@ from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
 from models.base import Base
-from models.nutrition_facts import NutritionFacts, NutriScore, NovaScore
+from models.nutrition_facts import NovaScore, NutriScore, NutritionFacts
 from models.price import Price
 from models.product import Product, QuantityUnit
-from models.source import Source, Origin
+from models.source import Origin, Source
 
 
 class TestProductSource(unittest.TestCase):

@@ -4,7 +4,7 @@ Unit tests for the 'models.nutrition_facts' module.
 
 import unittest
 
-from models.nutrition_facts import NutriScore, NovaScore
+from models.nutrition_facts import NovaScore, NutriScore
 
 
 class TestNutriScore(unittest.TestCase):

@@ -8,12 +8,13 @@ from scrapy.spiders import Spider
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from .items import ProductItem
 from models.base import Base
 from models.price import Price
 from models.product import Product
-from models.source import Source, Origin
+from models.source import Origin, Source
 from utils.database import DEFAULT_DATABASE_URL
+
+from .items import ProductItem
 
 
 class ProductPipeline:
