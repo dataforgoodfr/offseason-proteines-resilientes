@@ -61,13 +61,13 @@ class BiocoopProductsSpider(Spider):
         item["url"] = response.url
         item["ean"] = ean
 
-        discounted, basePrice, discountedPrice = self.extract_discount_and_prices(
+        discounted, base_price, discounted_price = self.extract_discount_and_prices(
             response
         )
-        item["price"] = basePrice
+        item["price"] = base_price
         item["discounted"] = discounted
         if discounted:
-            item["discounted_price"] = discountedPrice
+            item["discounted_price"] = discounted_price
 
         quantity, quantity_unit = self.extract_quantity(response) or (None, None)
 
@@ -88,7 +88,7 @@ class BiocoopProductsSpider(Spider):
         """
 
         # Current price, could be the discounted one.
-        currentPrice = float(
+        current_price = float(
             response.xpath("//meta[@property='product:price:amount']/@content").get()
         )
 
@@ -102,14 +102,14 @@ class BiocoopProductsSpider(Spider):
             ).get()
 
             if old_price is not None:
-                basePrice = float(
+                base_price = float(
                     re.match("([.,0-9]+)", old_price).group(1).replace(",", ".")
                 )
             else:
-                basePrice = currentPrice
-            return (is_discounted, basePrice, currentPrice)
+                base_price = current_price
+            return (is_discounted, base_price, current_price)
         else:
-            return (is_discounted, currentPrice, None)
+            return (is_discounted, current_price, None)
 
     @staticmethod
     def extract_quantity(response) -> tuple[float, QuantityUnit] | None:
