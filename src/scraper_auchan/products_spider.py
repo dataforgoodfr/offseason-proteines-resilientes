@@ -115,15 +115,19 @@ class AuchanProductsSpider(Spider):
         (normal and discounted) from the response.
         """
 
-        basePrice = float(response.css("script::text").re_first(r'"price": ?([.0-9]+)'))
-        currentPrice = float(response.xpath("//meta[@itemprop='price']/@content").get())
+        base_price = float(
+            response.css("script::text").re_first(r'"price": ?([.0-9]+)')
+        )
+        current_price = float(
+            response.xpath("//meta[@itemprop='price']/@content").get()
+        )
 
-        is_discounted = basePrice - currentPrice > 0
+        is_discounted = base_price - current_price > 0
 
         return (
             is_discounted,
-            basePrice,
-            currentPrice if is_discounted else None,
+            base_price,
+            current_price if is_discounted else None,
         )
 
     @staticmethod

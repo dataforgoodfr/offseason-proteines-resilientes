@@ -89,17 +89,17 @@ class CarrefourProductsSpider(Spider):
         item["ean"] = product_data["gtin13"]
         item["url"] = response.url
 
-        basePrice = float(
+        base_price = float(
             response.css("script::text").re_first(r'"product_basePrice":([.0-9]+)')
         )
-        currentPrice = float(
+        current_price = float(
             response.css("script::text").re_first(r'"product_price":([.0-9]+)')
         )
-        discounted = basePrice - currentPrice > 0
-        item["price"] = basePrice
+        discounted = base_price - current_price > 0
+        item["price"] = base_price
         item["discounted"] = discounted
         if discounted:
-            item["discounted_price"] = currentPrice
+            item["discounted_price"] = current_price
 
         quantity, quantity_unit = self.extract_quantity(
             product_data["description"]
