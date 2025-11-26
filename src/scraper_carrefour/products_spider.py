@@ -131,7 +131,6 @@ class CarrefourProductsSpider(Spider):
         raw_quantity_unit = m.group(3)  # g, kg, L, l, cl
 
         quantity = float(raw_quantity.replace(",", "."))
-        quantity_unit = raw_quantity_unit
 
         match raw_quantity_unit.lower():
             case "g":
@@ -145,6 +144,8 @@ class CarrefourProductsSpider(Spider):
             case "ml":
                 quantity = quantity / 1000
                 quantity_unit = QuantityUnit.LITRE
+            case _:
+                return
 
         is_coef = filter(str.isdigit, multiplier)
 
