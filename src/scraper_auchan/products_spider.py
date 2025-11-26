@@ -72,12 +72,16 @@ class AuchanProductsSpider(Spider):
 
         item["eans"] = eans
 
-        discounted, price, discounted_price = self.extract_discount_and_prices(response)
-        item["price"] = price
-        item["discounted"] = discounted
+        discounted, price, discounted_price = self.extract_discount_and_prices(
+            response
+        ) or (None, None, None)
 
-        if discounted:
-            item["discounted_price"] = discounted_price
+        if price is not None:
+            item["price"] = price
+            item["discounted"] = discounted
+
+            if discounted:
+                item["discounted_price"] = discounted_price
 
         quantity, quantity_unit = self.extract_quantity(response) or (None, None)
 
@@ -109,15 +113,23 @@ class AuchanProductsSpider(Spider):
                 return eans
 
     @staticmethod
-    def extract_discount_and_prices(response) -> tuple[bool, float, float | None]:
+    def extract_discount_and_prices(
+        response,
+    ) -> tuple[bool, float, float | None] | None:
         """
         Extracts wether or not the product is discounted and its both prices
         (normal and discounted) from the response.
+
+        Returns None if no price can be found.
         """
 
-        base_price = float(
-            response.css("script::text").re_first(r'"price": ?([.0-9]+)')
-        )
+        page_scripts = response.css("script::text")
+        raw_base_price = page_scripts.re_first(r'"price": ?([.0-9]+)')
+
+        if raw_base_price is None:
+            return None
+
+        base_price = float(raw_base_price)
         current_price = float(
             response.xpath("//meta[@itemprop='price']/@content").get()
         )
