@@ -12,6 +12,9 @@ class ProductItem(scrapy.Item):
     # The brand of the product.
     brand = scrapy.Field()
 
+    # The normalised category of the product.
+    category = scrapy.Field()
+
     # The EAN-13 reference of the product.
     ean = scrapy.Field()
 

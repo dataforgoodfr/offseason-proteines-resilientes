@@ -5,10 +5,11 @@ from itemadapter import ItemAdapter
 from scrapy import Item
 from scrapy.exceptions import DropItem
 from scrapy.spiders import Spider
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
 from models.base import Base
+from models.category import Category
 from models.price import Price
 from models.product import Product
 from models.source import Origin, Source
@@ -68,10 +69,15 @@ class ProductPipeline:
                 )
             else:
                 logger.debug(f"Adding new product {ean}")
+
+                query = select(Category).where(Category.name == item["category"])
+                category = self.db_session.scalars(query).one()
+
                 product = Product(
                     ean_13=ean,
                     name=item["name"],
                     brand=item["brand"],
+                    category=category,
                     quantity=item["quantity"],
                     quantity_unit=item["quantity_unit"],
                     sources=[
