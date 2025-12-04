@@ -3,6 +3,7 @@ from logging import DEBUG
 
 from scrapy import Request, Spider
 
+from models.category import CategoryValues
 from models.product import QuantityUnit
 
 from .items import ProductItem
@@ -23,6 +24,10 @@ class BiocoopProductsSpider(Spider):
 
         if query is None:
             raise AttributeError("Missing 'query' argument")
+
+        self.category: CategoryValues = getattr(
+            self, "category", CategoryValues.UNKNOWN
+        )
 
         url = f"https://www.biocoop.fr/magasin-biocoop_biocite/catalogsearch/result/?q={query}&p=1"
 
@@ -58,6 +63,7 @@ class BiocoopProductsSpider(Spider):
 
         item["name"] = response.xpath("//span[@itemprop='name']/text()").get()
         item["brand"] = response.xpath("//span[@class='brand value']/text()").get()
+        item["category"] = self.category
         item["url"] = response.url
         item["ean"] = ean
 
