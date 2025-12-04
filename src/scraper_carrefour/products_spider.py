@@ -4,6 +4,7 @@ from logging import DEBUG
 
 from scrapy import Request, Spider
 
+from models.category import CategoryValues
 from models.product import QuantityUnit
 
 from .items import ProductItem
@@ -40,6 +41,9 @@ class CarrefourProductsSpider(Spider):
             raise AttributeError("Missing 'query' argument")
 
         self.query = query
+        self.category: CategoryValues = getattr(
+            self, "category", CategoryValues.UNKNOWN
+        )
 
         yield Request(
             url=self.__get_next_page(),
@@ -86,6 +90,7 @@ class CarrefourProductsSpider(Spider):
 
         item["name"] = product_data["name"]
         item["brand"] = product_data["brand"]["name"]
+        item["category"] = self.category
         item["ean"] = product_data["gtin13"]
         item["url"] = response.url
 
