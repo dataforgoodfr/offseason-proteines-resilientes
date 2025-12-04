@@ -19,6 +19,7 @@ pr-offdc = "off_data_collector.cli:main"
 pr-scraper-auchan = "scraper_auchan.cli:main"
 pr-scraper-biocoop = "scraper_biocoop.cli:main"
 pr-scraper-carrefour = "scraper_carrefour.cli:main"
+pr-scraper-intermarche = "scraper_intermarche.cli:main"
 
 [tool.poetry]
 packages = [
@@ -27,6 +28,7 @@ packages = [
     {include = "scraper_auchan", from = "src"},
     {include = "scraper_biocoop", from = "src"},
     {include = "scraper_carrefour", from = "src"},
+    {include = "scraper_intermarche", from = "src"},
     {include = "utils", from = "src"},
 ]
 
