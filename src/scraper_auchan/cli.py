@@ -3,6 +3,7 @@ from logging import DEBUG, INFO, Formatter, Logger, StreamHandler, getLogger
 
 from scrapy.crawler import CrawlerProcess
 
+from models.category import CategoryValues
 from utils.database import DEFAULT_DATABASE_URL
 
 from .products_spider import AuchanProductsSpider
@@ -26,6 +27,13 @@ def __get_arg_parser() -> ArgumentParser:
         "--database",
         default=DEFAULT_DATABASE_URL,
         help=f"Database URL to use (defaults to {DEFAULT_DATABASE_URL})",
+    )
+
+    arg_parser.add_argument(
+        "--category",
+        required=True,
+        type=CategoryValues,
+        help="The category the scraped products should be assigned to",
     )
 
     arg_parser.add_argument(
@@ -96,7 +104,12 @@ def main() -> None:
         }
     )
     crawler.crawl(
-        AuchanProductsSpider, **{"query": args.query, "journey_id": args.journey_id}
+        AuchanProductsSpider,
+        **{
+            "query": args.query,
+            "category": args.category,
+            "journey_id": args.journey_id,
+        },
     )
     crawler.start()
 

@@ -3,6 +3,7 @@ from re import IGNORECASE, match
 
 from scrapy import Request, Spider
 
+from models.category import CategoryValues
 from models.product import QuantityUnit
 
 from .items import ProductItem
@@ -36,6 +37,10 @@ class AuchanProductsSpider(Spider):
         if journey_id is None:
             raise AttributeError("Missing 'journey_id' argument")
 
+        self.category: CategoryValues = getattr(
+            self, "category", CategoryValues.UNKNOWN
+        )
+
         url = f"https://www.auchan.fr/recherche?text={query}&page=1"
 
         yield Request(
@@ -62,6 +67,7 @@ class AuchanProductsSpider(Spider):
             "//div[@itemtype='https://schema.org/Product']/meta[@itemprop='name']/@content"
         ).get()
         item["brand"] = response.xpath("//meta[@itemprop='brand']/@content").get()
+        item["category"] = self.category
         item["url"] = response.url
 
         eans = self.extract_eans(response)
