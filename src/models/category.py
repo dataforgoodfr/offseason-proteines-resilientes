@@ -20,28 +20,32 @@ class CategoryValues(StrEnum):
     The normalised categories of the product.
     """
 
-    # Root categories.
-    ALTERNATIVE = "Alternatives végétales"
-    CEREALE = "Céréales et pseudo-céréales"
-    LAITIER = "Œufs et produits laitiers"
-    LEGUME = "Légumes et assimilés"
-    LEGUMINEUSE = "Légumineuses"
+    # ----------------------------------------------------------------------
+    # Root categories
+    # ----------------------------------------------------------------------
+    ALTERNATIVES = "Alternatives végétales"
+    CEREALES = "Céréales et pseudo-céréales"
+    LEGUMES = "Légumes et assimilés"
+    LEGUMINEUSES = "Légumineuses"
     NOIX = "Noix et graines"
-    POISSON = "Poissons et fruits de mer"
-    POUDRE = "Poudres protéinées"
+    OEUFS_PRODUITS_LAITIERS = "Œufs et produits laitiers"
+    POISSONS = "Poissons et fruits de mer"
+    POUDRES = "Poudres protéinées"
     SOJA = "Produits à base de soja"
-    VIANDE = "Viandes"
     UNKNOWN = "Unknown"
+    VIANDES = "Viandes"
 
+    # ----------------------------------------------------------------------
     # Viandes
+    # ----------------------------------------------------------------------
     AGNEAU = "Agneau"
     AIGUILLETTES_DINDE = "Aiguillettes de dinde"
     BLANC_DE_DINDE_TRANCHES = "Blanc de dinde (tranches)"
     CHIPOLATAS = "Chipolatas"
     CONFIT_DE_CANARD = "Confit de canard"
-    CORDONS_BLEUS = "Cordons bleus"
+    CORDON_BLEU = "Cordon bleu"
     COTES_DE_PORC = "Côtes de porc"
-    CUISSE_POULET = "Cuisse poulet"
+    CUISSE_POULET = "Cuisse de poulet"
     ENTRECOTE_BOEUF = "Entrecôte bœuf"
     ESCALOPES_DE_DINDE = "Escalopes de dinde"
     ESCALOPE_DE_VEAU = "Escalope de veau"
@@ -55,7 +59,7 @@ class CategoryValues(StrEnum):
     NUGGETS = "Nuggets"
     POITRINE_FUMEE_BACON = "Poitrine fumée / bacon"
     POULET_FERMIER = "Poulet fermier"
-    POULET_FILET = "Filet / escalope (poulet)"
+    POULET_FILET = "Filet de poulet"
     RILLETTES = "Rillettes"
     ROTI_DE_BOEUF = "Rôti de bœuf"
     ROTI_DE_PORC = "Rôti de porc"
@@ -65,22 +69,29 @@ class CategoryValues(StrEnum):
     STEAK_HACHE_BOEUF = "Steak haché bœuf"
     TOURNEDOS_BOEUF = "Tournedos bœuf"
 
+    # ----------------------------------------------------------------------
     # Poissons et fruits de mer
+    # ----------------------------------------------------------------------
     ANCHOIS = "Anchois"
-    CABILLAUD = "Cabillaud"
+    CABILLAUD = "Dos de cabillaud"
     COLIN_PANE = "Colin pané"
-    CREVETTES = "Crevettes"
-    LIMANDE = "Limande"
-    MAQUEREAU = "Maquereau"
-    NOIX_DE_SAINT_JACQUES = "Noix de Saint-Jacques"
-    SARDINES = "Sardines"
-    SAUMON = "Saumon"
+    CREVETTES = "Crevettes entières"
+    LIMANDE = "Filet de limande"
+    MAQUEREAU_CONSERVE = "Maquereau (conserve)"
+    MAQUEREAU_FRAIS = "Maquereau frais"
+    NOIX_DE_SAINT_JACQUES = "Noix de saint-jacques"
+    SARDINES = "Sardines (conserve)"
+    SARDINES_FRAICHES = "Sardines fraiches"
+    SAUMON = "Pavé de saumon"
     SAUMON_FUME = "Saumon fumé"
-    SURIMI = "Surimi"
-    THON = "Thon"
+    SURIMI = "Bâtonnets de surimi"
+    THON = "Thon (conserve)"
+    THON_FRAIS = "Thon frais"
     TRUITE_FUMEE = "Truité fumée"
 
+    # ----------------------------------------------------------------------
     # Œufs et produits laitiers
+    # ----------------------------------------------------------------------
     BRIE = "Brie"
     BUCHE_DE_CHEVRE = "Bûche de chèvre"
     CAMEMBERT = "Camembert"
@@ -88,49 +99,64 @@ class CategoryValues(StrEnum):
     COULOMMIERS = "Coulommiers"
     EMMENTAL = "Emmental"
     FETA = "Feta"
-    FROMAGE_A_RACLETTE = "Fromage à raclette"
-    FROMAGE_BLANC = "Fromage blanc"
+    FROMAGE_BLANC = "Fromage blanc nature"
     FROMAGE_FRAIS = "Fromage frais"
-    LAIT_DEMI_ECREME = "Lait demi ecrémé"
+    FROMAGE_RACLETTE = "Fromage à raclette"
+    LAIT_DEMI_ECREME = "Lait demi écrémé"
     LAIT_ENTIER = "Lait entier"
     MOZZARELLA = "Mozzarella"
     OEUFS = "Œufs"
     PARMESAN_RAPE = "Parmesan rapé"
-    PETITS_SUISSES = "Petits-suisses"
+    PETITS_SUISSES = "Petits‑suisses"
     ROQUEFORT = "Roquefort"
     SKYR = "Skyr"
-    YAOURT_AROMATISE = "Yaourt aromatisé"
+    YAOURT_AROMATISE_FRUITS = "Yaourt aromatisé aux fruits"
     YAOURT_NATURE_0 = "Yaourt nature 0%"
 
+    # ----------------------------------------------------------------------
     # Légumineuses
+    # ----------------------------------------------------------------------
     FALAFELS = "Falafels"
-    FEVEROLES = "Féveroles"
+    FALAFELS_POUDRE = "Falafels (poudre)"
     FEVES = "Fèves"
     FLAGEOLETS = "Flageolets"
+    FLAGEOLETS_CONSERVE = "Flageolets (conserve)"
     GALETTES_DE_LEGUMINEUSES = "Galettes de légumineuses"
     HARICOTS_BLANCS = "Haricots blancs"
+    HARICOTS_BLANCS_CONSERVE = "Haricots blancs (conserve)"
     HARICOTS_NOIRS = "Haricots noirs"
+    HARICOTS_NOIRS_CONSERVE = "Haricots noirs (conserve)"
     HARICOTS_ROUGES = "Haricots rouges"
+    HARICOTS_ROUGES_CONSERVE = "Haricots rouges (conserve)"
     LENTILLES_BLONDES = "Lentilles blondes"
+    LENTILLES_BLONDES_CONSERVE = "Lentilles blondes (conserve)"
     LENTILLES_CORAIL = "Lentilles corail"
     LENTILLES_VERTES = "Lentilles vertes"
-    LUPIN = "Lupin"
+    LENTILLES_VERTES_CONSERVE = "Lentilles vertes (conserve)"
+    LUPIN = "Lupin (conserve)"
     POIS_CASSES = "Pois cassés"
     POIS_CHICHES = "Pois chiches"
+    POIS_CHICHES_CONSERVE = "Pois chiches (conserve)"
 
+    # ----------------------------------------------------------------------
     # Produits à base de soja
-    PROTEINES_DE_SOJA_TEXTUREES = "Protéines de soja texturées"
+    # ----------------------------------------------------------------------
+    PROTEINES_SOJA_TEXTUREES = "Protéines de soja texturées"
     TEMPEH = "Tempeh"
-    TOFU_FUME = "Tofu fumé"
-    TOFU_NATURE = "Tofu nature"
+    TOFU_FUME = "Tofu (ferme) fumé"
+    TOFU_NATURE = "Tofu (ferme) nature"
 
+    # ----------------------------------------------------------------------
     # Légumes et assimilés
+    # ----------------------------------------------------------------------
     FRUIT_DU_JACQUER = "Fruit du jacquier"
 
+    # ----------------------------------------------------------------------
     # Céréales et pseudo‑céréales
+    # ----------------------------------------------------------------------
     AMARANTE = "Amarante"
     BLE_COMPLET = "Blé complet"
-    FLOCON_DAVOINE = "Flocon d'avoine"
+    FLOCON_DAVOINE = "Avoine (flocons)"
     GERME_DE_BLE = "Germe de blé"
     QUINOA = "Quinoa"
     SARRASIN = "Sarrasin"
@@ -138,36 +164,52 @@ class CategoryValues(StrEnum):
     SEITAN = "Seitan"
     SON_DAVOINE = "Son d'avoine"
 
+    # ----------------------------------------------------------------------
     # Noix et graines
+    # ----------------------------------------------------------------------
     AMANDES = "Amandes"
     BEURRE_DE_CACAHUETE = "Beurre de cacahuète"
     CACAHUETES = "Cacahuètes"
-    GRAINES_DE_CHIA = "Graines de chia"
-    GRAINES_DE_COURRE = "Graines de courge"
-    GRAINES_DE_LIN = "Graines de lin"
-    GRAINES_DE_TOURNESOL = "Graines de tournesol"
+    GRANES_CHIA = "Graines de chia"
+    GRANES_COURGE = "Graines de courge"
+    GRANES_LIN = "Graines de lin"
+    GRANES_TOURNESOL = "Graines de tournesol"
     NOISETTES = "Noisettes"
-    NOIX_DE_CAJOUS = "Noix de cajou"
-    PINCONS_DE_PIN = "Pignons de pin"
+    NOIX_CAJOUS = "Noix de cajou"
+    PIGNONS_PIN = "Pignons de pin"
     PISTACHES = "Pistaches"
 
+    # ----------------------------------------------------------------------
     # Poudres protéinées
+    # ----------------------------------------------------------------------
     BARRES_PROTEINEES = "Barres protéinées"
     CASEINE = "Caséine"
-    ISOLAT_DE_WHEY = "Isolat de whey"
-    PROTEINES_VEGETALES_POIS_RIZ = "Protéines végétales (pois, riz)"
+    ISOLAT_WHEY = "Isolat de whey"
+    PROTEINES_VEGETALES_POUDRE = "Protéines végétales poudre"
 
+    # ----------------------------------------------------------------------
     # Alternatives végétales
+    # ----------------------------------------------------------------------
     AIGUILLETTES_VEGETALES = "Aiguillettes végétales"
-    BASTONETS_POISSON_VEGETAUX = "Bâtonnets poisson végétaux"
+    BASTONETS_POISSON_VEGETAUX = 'Bâtonnets "poisson" panés végétaux'
+    BASTONETS_POISSON_VEGETAUX_CONSERVE = (
+        'Bâtonnets "poisson" panés végétaux (conserve)'
+    )
     BOULETTES_VEGETALES = "Boulettes végétales"
+    BOULETTES_VEGETALES_SURGELE = "Boulettes végétales (surgelé)"
     ESCALOPES_VEGETALES_PANEES = "Escalopes végétales panées"
+    GALETTE_VEGETALE_CEREALES = "Galette végétale (céréales)"
+    GALETTE_VEGETALE_CEREALES_SURGELE = "Galette végétale (céréales) (surgelé)"
     JAMBON_VEGETAL = "Jambon végétal"
+    KNAX_VEGETALES = "Knax végétales"
     LARDONS_VEGETAUX = "Lardons végétaux"
-    NUGGETS_VEGETAUX = "Nuggets végétales"
+    NUGGETS_VEGETAUX = "Nuggets végétaux"
+    NUGGETS_VEGETAUX_SURGELE = "Nuggets végétaux (surgelé)"
     SAUCISSES_VEGETALES = "Saucisses végétales"
     SIMILI_THON = "Simili thon"
-    STEAKS_VEGETAUX = "Steaks végétaux"
+    STEAK_VEGETAL = "Steak végétal"
+    STEAK_VEGETAL_SURGELE = "Steak végétal surgelé"
+    SUPREME_FAUX_POULET = "Suprème de faux poulet"
 
     @classmethod
     def _missing_(cls, value):
@@ -192,132 +234,170 @@ class CategoryValues(StrEnum):
 # If a category is not present in this dictionary, it is considered as a root
 # category.
 CATEGORY_SUBCATEGORY_MAP: Dict[CategoryValues, CategoryValues] = {
+    # ----------------------------------------------------------------------
     # Viandes
-    CategoryValues.AGNEAU: CategoryValues.VIANDE,
-    CategoryValues.AIGUILLETTES_DINDE: CategoryValues.VIANDE,
-    CategoryValues.BLANC_DE_DINDE_TRANCHES: CategoryValues.VIANDE,
-    CategoryValues.CHIPOLATAS: CategoryValues.VIANDE,
-    CategoryValues.CONFIT_DE_CANARD: CategoryValues.VIANDE,
-    CategoryValues.CORDONS_BLEUS: CategoryValues.VIANDE,
-    CategoryValues.COTES_DE_PORC: CategoryValues.VIANDE,
-    CategoryValues.CUISSE_POULET: CategoryValues.VIANDE,
-    CategoryValues.ENTRECOTE_BOEUF: CategoryValues.VIANDE,
-    CategoryValues.ESCALOPES_DE_DINDE: CategoryValues.VIANDE,
-    CategoryValues.ESCALOPE_DE_VEAU: CategoryValues.VIANDE,
-    CategoryValues.FILET_MIGNON_DE_PORC: CategoryValues.VIANDE,
-    CategoryValues.JAMBON_BLANC: CategoryValues.VIANDE,
-    CategoryValues.JAMBON_CRU: CategoryValues.VIANDE,
-    CategoryValues.LAPIN: CategoryValues.VIANDE,
-    CategoryValues.LARDONS: CategoryValues.VIANDE,
-    CategoryValues.MAGRET_DE_CANARD: CategoryValues.VIANDE,
-    CategoryValues.MERGUEZ: CategoryValues.VIANDE,
-    CategoryValues.NUGGETS: CategoryValues.VIANDE,
-    CategoryValues.POITRINE_FUMEE_BACON: CategoryValues.VIANDE,
-    CategoryValues.POULET_FERMIER: CategoryValues.VIANDE,
-    CategoryValues.POULET_FILET: CategoryValues.VIANDE,
-    CategoryValues.RILLETTES: CategoryValues.VIANDE,
-    CategoryValues.ROTI_DE_BOEUF: CategoryValues.VIANDE,
-    CategoryValues.ROTI_DE_PORC: CategoryValues.VIANDE,
-    CategoryValues.SAUCISSE_DE_STRASBOURG_KNACKI: CategoryValues.VIANDE,
-    CategoryValues.SAUCISSON_SEC: CategoryValues.VIANDE,
-    CategoryValues.SAUTE_DE_VEAU: CategoryValues.VIANDE,
-    CategoryValues.STEAK_HACHE_BOEUF: CategoryValues.VIANDE,
-    CategoryValues.TOURNEDOS_BOEUF: CategoryValues.VIANDE,
+    # ----------------------------------------------------------------------
+    CategoryValues.AGNEAU: CategoryValues.VIANDES,
+    CategoryValues.AIGUILLETTES_DINDE: CategoryValues.VIANDES,
+    CategoryValues.BLANC_DE_DINDE_TRANCHES: CategoryValues.VIANDES,
+    CategoryValues.CHIPOLATAS: CategoryValues.VIANDES,
+    CategoryValues.CONFIT_DE_CANARD: CategoryValues.VIANDES,
+    CategoryValues.CORDON_BLEU: CategoryValues.VIANDES,
+    CategoryValues.COTES_DE_PORC: CategoryValues.VIANDES,
+    CategoryValues.CUISSE_POULET: CategoryValues.VIANDES,
+    CategoryValues.ENTRECOTE_BOEUF: CategoryValues.VIANDES,
+    CategoryValues.ESCALOPES_DE_DINDE: CategoryValues.VIANDES,
+    CategoryValues.ESCALOPE_DE_VEAU: CategoryValues.VIANDES,
+    CategoryValues.FILET_MIGNON_DE_PORC: CategoryValues.VIANDES,
+    CategoryValues.JAMBON_BLANC: CategoryValues.VIANDES,
+    CategoryValues.JAMBON_CRU: CategoryValues.VIANDES,
+    CategoryValues.LAPIN: CategoryValues.VIANDES,
+    CategoryValues.LARDONS: CategoryValues.VIANDES,
+    CategoryValues.MAGRET_DE_CANARD: CategoryValues.VIANDES,
+    CategoryValues.MERGUEZ: CategoryValues.VIANDES,
+    CategoryValues.NUGGETS: CategoryValues.VIANDES,
+    CategoryValues.POITRINE_FUMEE_BACON: CategoryValues.VIANDES,
+    CategoryValues.POULET_FERMIER: CategoryValues.VIANDES,
+    CategoryValues.POULET_FILET: CategoryValues.VIANDES,
+    CategoryValues.RILLETTES: CategoryValues.VIANDES,
+    CategoryValues.ROTI_DE_BOEUF: CategoryValues.VIANDES,
+    CategoryValues.ROTI_DE_PORC: CategoryValues.VIANDES,
+    CategoryValues.SAUCISSE_DE_STRASBOURG_KNACKI: CategoryValues.VIANDES,
+    CategoryValues.SAUCISSON_SEC: CategoryValues.VIANDES,
+    CategoryValues.SAUTE_DE_VEAU: CategoryValues.VIANDES,
+    CategoryValues.STEAK_HACHE_BOEUF: CategoryValues.VIANDES,
+    CategoryValues.TOURNEDOS_BOEUF: CategoryValues.VIANDES,
+    # ----------------------------------------------------------------------
     # Poissons et fruits de mer
-    CategoryValues.ANCHOIS: CategoryValues.POISSON,
-    CategoryValues.CABILLAUD: CategoryValues.POISSON,
-    CategoryValues.COLIN_PANE: CategoryValues.POISSON,
-    CategoryValues.CREVETTES: CategoryValues.POISSON,
-    CategoryValues.LIMANDE: CategoryValues.POISSON,
-    CategoryValues.MAQUEREAU: CategoryValues.POISSON,
-    CategoryValues.NOIX_DE_SAINT_JACQUES: CategoryValues.POISSON,
-    CategoryValues.SARDINES: CategoryValues.POISSON,
-    CategoryValues.SAUMON: CategoryValues.POISSON,
-    CategoryValues.SAUMON_FUME: CategoryValues.POISSON,
-    CategoryValues.SURIMI: CategoryValues.POISSON,
-    CategoryValues.THON: CategoryValues.POISSON,
-    CategoryValues.TRUITE_FUMEE: CategoryValues.POISSON,
+    # ----------------------------------------------------------------------
+    CategoryValues.ANCHOIS: CategoryValues.POISSONS,
+    CategoryValues.CABILLAUD: CategoryValues.POISSONS,
+    CategoryValues.COLIN_PANE: CategoryValues.POISSONS,
+    CategoryValues.CREVETTES: CategoryValues.POISSONS,
+    CategoryValues.LIMANDE: CategoryValues.POISSONS,
+    CategoryValues.MAQUEREAU_CONSERVE: CategoryValues.POISSONS,
+    CategoryValues.MAQUEREAU_FRAIS: CategoryValues.POISSONS,
+    CategoryValues.NOIX_DE_SAINT_JACQUES: CategoryValues.POISSONS,
+    CategoryValues.SARDINES: CategoryValues.POISSONS,
+    CategoryValues.SARDINES_FRAICHES: CategoryValues.POISSONS,
+    CategoryValues.SAUMON: CategoryValues.POISSONS,
+    CategoryValues.SAUMON_FUME: CategoryValues.POISSONS,
+    CategoryValues.SURIMI: CategoryValues.POISSONS,
+    CategoryValues.THON: CategoryValues.POISSONS,
+    CategoryValues.THON_FRAIS: CategoryValues.POISSONS,
+    CategoryValues.TRUITE_FUMEE: CategoryValues.POISSONS,
+    # ----------------------------------------------------------------------
     # Œufs et produits laitiers
-    CategoryValues.BRIE: CategoryValues.LAITIER,
-    CategoryValues.BUCHE_DE_CHEVRE: CategoryValues.LAITIER,
-    CategoryValues.CAMEMBERT: CategoryValues.LAITIER,
-    CategoryValues.COMTE: CategoryValues.LAITIER,
-    CategoryValues.COULOMMIERS: CategoryValues.LAITIER,
-    CategoryValues.EMMENTAL: CategoryValues.LAITIER,
-    CategoryValues.FETA: CategoryValues.LAITIER,
-    CategoryValues.FROMAGE_A_RACLETTE: CategoryValues.LAITIER,
-    CategoryValues.FROMAGE_BLANC: CategoryValues.LAITIER,
-    CategoryValues.FROMAGE_FRAIS: CategoryValues.LAITIER,
-    CategoryValues.LAIT_DEMI_ECREME: CategoryValues.LAITIER,
-    CategoryValues.LAIT_ENTIER: CategoryValues.LAITIER,
-    CategoryValues.MOZZARELLA: CategoryValues.LAITIER,
-    CategoryValues.OEUFS: CategoryValues.LAITIER,
-    CategoryValues.PARMESAN_RAPE: CategoryValues.LAITIER,
-    CategoryValues.PETITS_SUISSES: CategoryValues.LAITIER,
-    CategoryValues.ROQUEFORT: CategoryValues.LAITIER,
-    CategoryValues.SKYR: CategoryValues.LAITIER,
-    CategoryValues.YAOURT_AROMATISE: CategoryValues.LAITIER,
-    CategoryValues.YAOURT_NATURE_0: CategoryValues.LAITIER,
+    # ----------------------------------------------------------------------
+    CategoryValues.BRIE: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.BUCHE_DE_CHEVRE: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.CAMEMBERT: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.COMTE: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.COULOMMIERS: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.EMMENTAL: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.FETA: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.FROMAGE_BLANC: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.FROMAGE_FRAIS: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.FROMAGE_RACLETTE: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.LAIT_DEMI_ECREME: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.LAIT_ENTIER: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.MOZZARELLA: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.OEUFS: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.PARMESAN_RAPE: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.PETITS_SUISSES: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.ROQUEFORT: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.SKYR: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.YAOURT_AROMATISE_FRUITS: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    CategoryValues.YAOURT_NATURE_0: CategoryValues.OEUFS_PRODUITS_LAITIERS,
+    # ----------------------------------------------------------------------
     # Légumineuses
-    CategoryValues.FALAFELS: CategoryValues.LEGUMINEUSE,
-    CategoryValues.FEVEROLES: CategoryValues.LEGUMINEUSE,
-    CategoryValues.FEVES: CategoryValues.LEGUMINEUSE,
-    CategoryValues.FLAGEOLETS: CategoryValues.LEGUMINEUSE,
-    CategoryValues.GALETTES_DE_LEGUMINEUSES: CategoryValues.LEGUMINEUSE,
-    CategoryValues.HARICOTS_BLANCS: CategoryValues.LEGUMINEUSE,
-    CategoryValues.HARICOTS_NOIRS: CategoryValues.LEGUMINEUSE,
-    CategoryValues.HARICOTS_ROUGES: CategoryValues.LEGUMINEUSE,
-    CategoryValues.LENTILLES_BLONDES: CategoryValues.LEGUMINEUSE,
-    CategoryValues.LENTILLES_CORAIL: CategoryValues.LEGUMINEUSE,
-    CategoryValues.LENTILLES_VERTES: CategoryValues.LEGUMINEUSE,
-    CategoryValues.LUPIN: CategoryValues.LEGUMINEUSE,
-    CategoryValues.POIS_CASSES: CategoryValues.LEGUMINEUSE,
-    CategoryValues.POIS_CHICHES: CategoryValues.LEGUMINEUSE,
+    # ----------------------------------------------------------------------
+    CategoryValues.FALAFELS: CategoryValues.LEGUMINEUSES,
+    CategoryValues.FALAFELS_POUDRE: CategoryValues.LEGUMINEUSES,
+    CategoryValues.FEVES: CategoryValues.LEGUMINEUSES,
+    CategoryValues.FLAGEOLETS: CategoryValues.LEGUMINEUSES,
+    CategoryValues.FLAGEOLETS_CONSERVE: CategoryValues.LEGUMINEUSES,
+    CategoryValues.GALETTES_DE_LEGUMINEUSES: CategoryValues.LEGUMINEUSES,
+    CategoryValues.HARICOTS_BLANCS: CategoryValues.LEGUMINEUSES,
+    CategoryValues.HARICOTS_BLANCS_CONSERVE: CategoryValues.LEGUMINEUSES,
+    CategoryValues.HARICOTS_NOIRS: CategoryValues.LEGUMINEUSES,
+    CategoryValues.HARICOTS_NOIRS_CONSERVE: CategoryValues.LEGUMINEUSES,
+    CategoryValues.HARICOTS_ROUGES: CategoryValues.LEGUMINEUSES,
+    CategoryValues.HARICOTS_ROUGES_CONSERVE: CategoryValues.LEGUMINEUSES,
+    CategoryValues.LENTILLES_BLONDES: CategoryValues.LEGUMINEUSES,
+    CategoryValues.LENTILLES_BLONDES_CONSERVE: CategoryValues.LEGUMINEUSES,
+    CategoryValues.LENTILLES_CORAIL: CategoryValues.LEGUMINEUSES,
+    CategoryValues.LENTILLES_VERTES: CategoryValues.LEGUMINEUSES,
+    CategoryValues.LENTILLES_VERTES_CONSERVE: CategoryValues.LEGUMINEUSES,
+    CategoryValues.LUPIN: CategoryValues.LEGUMINEUSES,
+    CategoryValues.POIS_CASSES: CategoryValues.LEGUMINEUSES,
+    CategoryValues.POIS_CHICHES: CategoryValues.LEGUMINEUSES,
+    CategoryValues.POIS_CHICHES_CONSERVE: CategoryValues.LEGUMINEUSES,
+    # ----------------------------------------------------------------------
     # Produits à base de soja
-    CategoryValues.PROTEINES_DE_SOJA_TEXTUREES: CategoryValues.SOJA,
+    # ----------------------------------------------------------------------
+    CategoryValues.PROTEINES_SOJA_TEXTUREES: CategoryValues.SOJA,
     CategoryValues.TEMPEH: CategoryValues.SOJA,
     CategoryValues.TOFU_FUME: CategoryValues.SOJA,
     CategoryValues.TOFU_NATURE: CategoryValues.SOJA,
+    # ----------------------------------------------------------------------
     # Légumes et assimilés
-    CategoryValues.FRUIT_DU_JACQUER: CategoryValues.LEGUME,
+    # ----------------------------------------------------------------------
+    CategoryValues.FRUIT_DU_JACQUER: CategoryValues.LEGUMES,
+    # ----------------------------------------------------------------------
     # Céréales et pseudo‑céréales
-    CategoryValues.AMARANTE: CategoryValues.CEREALE,
-    CategoryValues.BLE_COMPLET: CategoryValues.CEREALE,
-    CategoryValues.FLOCON_DAVOINE: CategoryValues.CEREALE,
-    CategoryValues.GERME_DE_BLE: CategoryValues.CEREALE,
-    CategoryValues.QUINOA: CategoryValues.CEREALE,
-    CategoryValues.SARRASIN: CategoryValues.CEREALE,
-    CategoryValues.SEIGLE: CategoryValues.CEREALE,
-    CategoryValues.SEITAN: CategoryValues.CEREALE,
-    CategoryValues.SON_DAVOINE: CategoryValues.CEREALE,
+    # ----------------------------------------------------------------------
+    CategoryValues.AMARANTE: CategoryValues.CEREALES,
+    CategoryValues.BLE_COMPLET: CategoryValues.CEREALES,
+    CategoryValues.FLOCON_DAVOINE: CategoryValues.CEREALES,
+    CategoryValues.GERME_DE_BLE: CategoryValues.CEREALES,
+    CategoryValues.QUINOA: CategoryValues.CEREALES,
+    CategoryValues.SARRASIN: CategoryValues.CEREALES,
+    CategoryValues.SEIGLE: CategoryValues.CEREALES,
+    CategoryValues.SEITAN: CategoryValues.CEREALES,
+    CategoryValues.SON_DAVOINE: CategoryValues.CEREALES,
+    # ----------------------------------------------------------------------
     # Noix et graines
+    # ----------------------------------------------------------------------
     CategoryValues.AMANDES: CategoryValues.NOIX,
     CategoryValues.BEURRE_DE_CACAHUETE: CategoryValues.NOIX,
     CategoryValues.CACAHUETES: CategoryValues.NOIX,
-    CategoryValues.GRAINES_DE_CHIA: CategoryValues.NOIX,
-    CategoryValues.GRAINES_DE_COURRE: CategoryValues.NOIX,
-    CategoryValues.GRAINES_DE_LIN: CategoryValues.NOIX,
-    CategoryValues.GRAINES_DE_TOURNESOL: CategoryValues.NOIX,
+    CategoryValues.GRANES_CHIA: CategoryValues.NOIX,
+    CategoryValues.GRANES_COURGE: CategoryValues.NOIX,
+    CategoryValues.GRANES_LIN: CategoryValues.NOIX,
+    CategoryValues.GRANES_TOURNESOL: CategoryValues.NOIX,
     CategoryValues.NOISETTES: CategoryValues.NOIX,
-    CategoryValues.NOIX_DE_CAJOUS: CategoryValues.NOIX,
-    CategoryValues.PINCONS_DE_PIN: CategoryValues.NOIX,
+    CategoryValues.NOIX_CAJOUS: CategoryValues.NOIX,
+    CategoryValues.PIGNONS_PIN: CategoryValues.NOIX,
     CategoryValues.PISTACHES: CategoryValues.NOIX,
+    # ----------------------------------------------------------------------
     # Poudres protéinées
-    CategoryValues.BARRES_PROTEINEES: CategoryValues.POUDRE,
-    CategoryValues.CASEINE: CategoryValues.POUDRE,
-    CategoryValues.ISOLAT_DE_WHEY: CategoryValues.POUDRE,
-    CategoryValues.PROTEINES_VEGETALES_POIS_RIZ: CategoryValues.POUDRE,
+    # ----------------------------------------------------------------------
+    CategoryValues.BARRES_PROTEINEES: CategoryValues.POUDRES,
+    CategoryValues.CASEINE: CategoryValues.POUDRES,
+    CategoryValues.ISOLAT_WHEY: CategoryValues.POUDRES,
+    CategoryValues.PROTEINES_VEGETALES_POUDRE: CategoryValues.POUDRES,
+    # ----------------------------------------------------------------------
     # Alternatives végétales
-    CategoryValues.AIGUILLETTES_VEGETALES: CategoryValues.ALTERNATIVE,
-    CategoryValues.BASTONETS_POISSON_VEGETAUX: CategoryValues.ALTERNATIVE,
-    CategoryValues.BOULETTES_VEGETALES: CategoryValues.ALTERNATIVE,
-    CategoryValues.ESCALOPES_VEGETALES_PANEES: CategoryValues.ALTERNATIVE,
-    CategoryValues.JAMBON_VEGETAL: CategoryValues.ALTERNATIVE,
-    CategoryValues.LARDONS_VEGETAUX: CategoryValues.ALTERNATIVE,
-    CategoryValues.NUGGETS_VEGETAUX: CategoryValues.ALTERNATIVE,
-    CategoryValues.SAUCISSES_VEGETALES: CategoryValues.ALTERNATIVE,
-    CategoryValues.SIMILI_THON: CategoryValues.ALTERNATIVE,
-    CategoryValues.STEAKS_VEGETAUX: CategoryValues.ALTERNATIVE,
+    # ----------------------------------------------------------------------
+    CategoryValues.AIGUILLETTES_VEGETALES: CategoryValues.ALTERNATIVES,
+    CategoryValues.BASTONETS_POISSON_VEGETAUX: CategoryValues.ALTERNATIVES,
+    CategoryValues.BASTONETS_POISSON_VEGETAUX_CONSERVE: CategoryValues.ALTERNATIVES,
+    CategoryValues.BOULETTES_VEGETALES: CategoryValues.ALTERNATIVES,
+    CategoryValues.BOULETTES_VEGETALES_SURGELE: CategoryValues.ALTERNATIVES,
+    CategoryValues.ESCALOPES_VEGETALES_PANEES: CategoryValues.ALTERNATIVES,
+    CategoryValues.GALETTE_VEGETALE_CEREALES: CategoryValues.ALTERNATIVES,
+    CategoryValues.GALETTE_VEGETALE_CEREALES_SURGELE: CategoryValues.ALTERNATIVES,
+    CategoryValues.JAMBON_VEGETAL: CategoryValues.ALTERNATIVES,
+    CategoryValues.KNAX_VEGETALES: CategoryValues.ALTERNATIVES,
+    CategoryValues.LARDONS_VEGETAUX: CategoryValues.ALTERNATIVES,
+    CategoryValues.NUGGETS_VEGETAUX: CategoryValues.ALTERNATIVES,
+    CategoryValues.NUGGETS_VEGETAUX_SURGELE: CategoryValues.ALTERNATIVES,
+    CategoryValues.SAUCISSES_VEGETALES: CategoryValues.ALTERNATIVES,
+    CategoryValues.SIMILI_THON: CategoryValues.ALTERNATIVES,
+    CategoryValues.STEAK_VEGETAL: CategoryValues.ALTERNATIVES,
+    CategoryValues.STEAK_VEGETAL_SURGELE: CategoryValues.ALTERNATIVES,
+    CategoryValues.SUPREME_FAUX_POULET: CategoryValues.ALTERNATIVES,
 }
 
 
