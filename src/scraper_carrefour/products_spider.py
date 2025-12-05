@@ -1,15 +1,17 @@
 import json
 import re
+from collections.abc import Generator
+from functools import lru_cache
 from logging import DEBUG
 
 from scrapy import Request, Spider
+from scrapy.http import Response
 
-from models.category import CategoryValues
 from models.product import QuantityUnit
-from utils.spider import ProductItem
+from utils.spider import ProductItem, ProductSpider
 
 
-class CarrefourProductsSpider(Spider):
+class CarrefourProductsSpider(Spider, ProductSpider):
     """
     Scrapy Spider for the products of the Carrefour retail website.
     """
@@ -40,9 +42,6 @@ class CarrefourProductsSpider(Spider):
             raise AttributeError("Missing 'query' argument")
 
         self.query = query
-        self.category: CategoryValues = getattr(
-            self, "category", CategoryValues.UNKNOWN
-        )
 
         yield Request(
             url=self.__get_next_page(),
@@ -53,7 +52,7 @@ class CarrefourProductsSpider(Spider):
             callback=self.parse,
         )
 
-    def parse(self, response):
+    def parse(self, response: Response):
         product_links = response.xpath(
             "//li[@class='product-list-grid__item']/article/div/div/div/a[contains(@class, 'product-card-click-wrapper')]/@href"
         ).getall()
@@ -77,20 +76,13 @@ class CarrefourProductsSpider(Spider):
                 callback=self.parse,
             )
 
-    def parse_product(self, response):
+    def parse_product(self, response: Response) -> Generator[ProductItem]:
         item = ProductItem()
 
-        microdata_content = response.xpath(
-            '//script[@type="application/ld+json"]/text()'
-        ).getall()
-        product_data = [
-            json.loads(data) for data in microdata_content if "Product" in data
-        ].pop()
-
-        item["name"] = product_data["name"]
-        item["brand"] = product_data["brand"]["name"]
-        item["category"] = self.category
-        item["ean"] = product_data["gtin13"]
+        item["name"] = self.get_name(response)
+        item["brand"] = self.get_brand(response)
+        item["category"] = self.get_category()
+        item["ean"] = self.get_ean13(response)
         item["url"] = response.url
 
         base_price = float(
@@ -105,9 +97,7 @@ class CarrefourProductsSpider(Spider):
         if discounted:
             item["discounted_price"] = current_price
 
-        quantity, quantity_unit = self.extract_quantity(
-            product_data["description"]
-        ) or (None, None)
+        quantity, quantity_unit = self.get_quantity(response) or (None, None)
 
         if quantity is None:
             self.log(f"Product {item['ean']} has no quantity. Skipping...", DEBUG)
@@ -116,14 +106,50 @@ class CarrefourProductsSpider(Spider):
         item["quantity"] = quantity
         item["quantity_unit"] = quantity_unit
 
+        self.log(f"Product cache info: {self.__get_product_info.cache_info()}")
+
         yield item
 
-    @staticmethod
-    def extract_quantity(raw_quantity) -> tuple[float, QuantityUnit] | None:
+    @lru_cache(maxsize=8, typed=True)
+    def __get_product_info(self, response: Response):
+        """
+        Extracts the product information from the response.
+
+        The product information is cached.
+        """
+
+        microdata_content = response.xpath(
+            '//script[@type="application/ld+json"]/text()'
+        ).getall()
+        product_data = [
+            json.loads(data) for data in microdata_content if "Product" in data
+        ]
+
+        return product_data.pop()
+
+    def get_name(self, response: Response) -> str:
+        product_info = self.__get_product_info(response)
+
+        return product_info["name"]
+
+    def get_brand(self, response: Response) -> str:
+        product_info = self.__get_product_info(response)
+
+        return product_info["brand"]["name"]
+
+    def get_ean13(self, response: Response) -> str:
+        product_info = self.__get_product_info(response)
+
+        return product_info["gtin13"]
+
+    def get_quantity(self, response: Response) -> tuple[float, QuantityUnit] | None:
         """
         Extracts the product quantity and its unit from the response, and
         normalises it into either kg or L.
         """
+
+        product_info = self.__get_product_info(response)
+        raw_quantity = product_info["description"]
 
         m = re.match("(.+) ([.0-9]+) ?(ml|cl|L|kg|g)", raw_quantity, re.IGNORECASE)
 

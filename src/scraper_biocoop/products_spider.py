@@ -1,14 +1,15 @@
 import re
+from collections.abc import Generator
 from logging import DEBUG
 
 from scrapy import Request, Spider
+from scrapy.http import Response
 
-from models.category import CategoryValues
 from models.product import QuantityUnit
-from utils.spider import ProductItem
+from utils.spider import ProductItem, ProductSpider
 
 
-class BiocoopProductsSpider(Spider):
+class BiocoopProductsSpider(Spider, ProductSpider):
     """
     Scrapy Spider for the products of the Biocoop retail website.
     """
@@ -24,15 +25,11 @@ class BiocoopProductsSpider(Spider):
         if query is None:
             raise AttributeError("Missing 'query' argument")
 
-        self.category: CategoryValues = getattr(
-            self, "category", CategoryValues.UNKNOWN
-        )
-
         url = f"https://www.biocoop.fr/magasin-biocoop_biocite/catalogsearch/result/?q={query}&p=1"
 
         yield Request(url=url, callback=self.parse)
 
-    def parse(self, response):
+    def parse(self, response: Response):
         product_links = response.xpath(
             "//div[@class='product-item-info']/a/@href"
         ).getall()
@@ -45,26 +42,20 @@ class BiocoopProductsSpider(Spider):
 
             yield response.follow(next_page_url, callback=self.parse)
 
-    def parse_product(self, response):
+    def parse_product(self, response: Response) -> Generator[ProductItem]:
         item = ProductItem()
 
-        ean = (
-            response.xpath("//meta[@itemprop='image']/@content")
-            .re_first(r"(https://.*\.jpeg)")
-            .split("/")
-            .pop()
-            .split("-")[1]
-        )
+        ean = self.get_ean13(response)
 
-        if len(ean) == 0:
-            self.log("No EAN found. Skipping...", DEBUG)
+        if ean is None:
+            self.log("No EAN-13 found. Skipping...", DEBUG)
             return
 
-        item["name"] = response.xpath("//span[@itemprop='name']/text()").get()
-        item["brand"] = response.xpath("//span[@class='brand value']/text()").get()
-        item["category"] = self.category
-        item["url"] = response.url
         item["ean"] = ean
+        item["name"] = self.get_name(response)
+        item["brand"] = self.get_brand(response)
+        item["category"] = self.get_category()
+        item["url"] = response.url
 
         discounted, base_price, discounted_price = self.extract_discount_and_prices(
             response
@@ -74,7 +65,7 @@ class BiocoopProductsSpider(Spider):
         if discounted:
             item["discounted_price"] = discounted_price
 
-        quantity, quantity_unit = self.extract_quantity(response) or (None, None)
+        quantity, quantity_unit = self.get_quantity(response) or (None, None)
 
         if quantity is None:
             self.log(f"Product {ean} has no quantity. Skipping...", DEBUG)
@@ -84,6 +75,30 @@ class BiocoopProductsSpider(Spider):
         item["quantity_unit"] = quantity_unit
 
         yield item
+
+    def get_name(self, response: Response) -> str:
+        name = response.xpath("//span[@itemprop='name']/text()").get()
+
+        return name
+
+    def get_brand(self, response: Response) -> str:
+        brand = response.xpath("//span[@class='brand value']/text()").get()
+
+        return brand
+
+    def get_ean13(self, response: Response) -> str | None:
+        ean: str = (
+            response.xpath("//meta[@itemprop='image']/@content")
+            .re_first(r"(https://.*\.jpeg)")
+            .split("/")
+            .pop()
+            .split("-")[1]
+        )
+
+        if not ean:
+            return
+
+        return ean
 
     @staticmethod
     def extract_discount_and_prices(response) -> tuple[bool, float, float | None]:
@@ -116,13 +131,7 @@ class BiocoopProductsSpider(Spider):
         else:
             return (is_discounted, current_price, None)
 
-    @staticmethod
-    def extract_quantity(response) -> tuple[float, QuantityUnit] | None:
-        """
-        Extracts the product quantity and its unit from the response, and
-        normalises it into either kg or L.
-        """
-
+    def get_quantity(self, response: Response) -> tuple[float, QuantityUnit] | None:
         is_vrac = (
             response.xpath("//div[@class='vrac-options-wrapper']").get() is not None
         )

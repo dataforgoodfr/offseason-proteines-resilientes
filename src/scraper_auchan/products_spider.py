@@ -1,10 +1,12 @@
+from collections.abc import Generator
 from logging import DEBUG
 from re import IGNORECASE, match
 
 from scrapy import Request, Spider
+from scrapy.http import Response
 
-from models.category import CategoryValues
 from models.product import QuantityUnit
+from utils.spider import ProductSpider
 
 from .items import ProductItem
 
@@ -18,7 +20,7 @@ from .items import ProductItem
 JOURNEY_COOKIE_NAME = "lark-journey"
 
 
-class AuchanProductsSpider(Spider):
+class AuchanProductsSpider(Spider, ProductSpider):
     """
     Scrapy Spider for the products of the Auchan retail website.
     """
@@ -37,17 +39,13 @@ class AuchanProductsSpider(Spider):
         if journey_id is None:
             raise AttributeError("Missing 'journey_id' argument")
 
-        self.category: CategoryValues = getattr(
-            self, "category", CategoryValues.UNKNOWN
-        )
-
         url = f"https://www.auchan.fr/recherche?text={query}&page=1"
 
         yield Request(
             url=url, cookies={JOURNEY_COOKIE_NAME: journey_id}, callback=self.parse
         )
 
-    def parse(self, response):
+    def parse(self, response: Response):
         product_links = response.css("a.product-thumbnail__details-wrapper")
         yield from response.follow_all(product_links, callback=self.parse_product)
 
@@ -60,17 +58,15 @@ class AuchanProductsSpider(Spider):
                 css="a.pagination-adjacent__link::attr(href)", callback=self.parse
             )
 
-    def parse_product(self, response):
+    def parse_product(self, response: Response) -> Generator[ProductItem]:
         item = ProductItem()
 
-        item["name"] = response.xpath(
-            "//div[@itemtype='https://schema.org/Product']/meta[@itemprop='name']/@content"
-        ).get()
-        item["brand"] = response.xpath("//meta[@itemprop='brand']/@content").get()
-        item["category"] = self.category
+        item["name"] = self.get_name(response)
+        item["brand"] = self.get_brand(response)
+        item["category"] = self.get_category()
         item["url"] = response.url
 
-        eans = self.extract_eans(response)
+        eans = self.get_ean13s(response)
 
         if eans is None:
             self.log("No EAN found. Skipping...", DEBUG)
@@ -89,7 +85,7 @@ class AuchanProductsSpider(Spider):
             if discounted:
                 item["discounted_price"] = discounted_price
 
-        quantity, quantity_unit = self.extract_quantity(response) or (None, None)
+        quantity, quantity_unit = self.get_quantity(response) or (None, None)
 
         if quantity is None:
             self.log(f"Product {item['eans'][0]} has no quantity. Skipping...", DEBUG)
@@ -100,8 +96,31 @@ class AuchanProductsSpider(Spider):
 
         yield item
 
+    def get_name(self, response: Response) -> str:
+        name = response.xpath(
+            "//div[@itemtype='https://schema.org/Product']/meta[@itemprop='name']/@content"
+        ).get()
+
+        return name
+
+    def get_brand(self, response: Response) -> str:
+        brand = response.xpath("//meta[@itemprop='brand']/@content").get()
+
+        return brand
+
+    def get_ean13(self, response: Response) -> str | None:
+        """
+        Unused.
+
+        Unlike other distributors, Auchan returns multiple EAN-13 per product
+        page. As such, the EAN-13s are returned by the 'get_ean13s' method
+        instead.
+        """
+
+        return
+
     @staticmethod
-    def extract_eans(response) -> list[str] | None:
+    def get_ean13s(response: Response) -> list[str] | None:
         content_wrappers = response.css(
             ".product-description__feature-wrapper .product-description__feature-group-wrapper"
         )
@@ -120,7 +139,7 @@ class AuchanProductsSpider(Spider):
 
     @staticmethod
     def extract_discount_and_prices(
-        response,
+        response: Response,
     ) -> tuple[bool, float, float | None] | None:
         """
         Extracts wether or not the product is discounted and its both prices
@@ -149,12 +168,7 @@ class AuchanProductsSpider(Spider):
         )
 
     @staticmethod
-    def extract_quantity(response) -> tuple[float, QuantityUnit] | None:
-        """
-        Extracts the product quantity and its unit from the response, and
-        normalises it into either kg or L.
-        """
-
+    def get_quantity(response: Response) -> tuple[float, QuantityUnit] | None:
         product_attributes = response.css(
             ".offer-selector__attributes span.product-attribute"
         )
