@@ -161,7 +161,7 @@ class AuchanProductsSpider(Spider):
 
         for product_attribute in product_attributes:
             m = match(
-                "Contenance : (\\d+x)?([.0-9]+)(ml|cl|L|kg|g)",
+                "Contenance : (\\d+x)?([.,0-9]+) ?(ml|cl|L|kg|g)",
                 product_attribute.attrib["aria-label"],
                 IGNORECASE,
             )
