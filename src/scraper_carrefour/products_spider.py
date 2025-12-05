@@ -6,8 +6,7 @@ from scrapy import Request, Spider
 
 from models.category import CategoryValues
 from models.product import QuantityUnit
-
-from .items import ProductItem
+from utils.spider import ProductItem
 
 
 class CarrefourProductsSpider(Spider):
