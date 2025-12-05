@@ -5,6 +5,7 @@ from scrapy.crawler import CrawlerProcess
 
 from models.category import CategoryValues
 from utils.database import DEFAULT_DATABASE_URL
+from utils.spider import BOT_NAME
 
 from .products_spider import CarrefourProductsSpider
 
@@ -79,7 +80,7 @@ def main() -> None:
     crawler = CrawlerProcess(
         settings={
             "AUTOTHROTTLE_ENABLED": True,
-            "BOT_NAME": None,
+            "BOT_NAME": BOT_NAME,
             "DATABASE_URL": args.database,
             "DOWNLOAD_HANDLERS": {
                 "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
