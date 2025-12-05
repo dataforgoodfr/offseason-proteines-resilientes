@@ -2,7 +2,6 @@ import json
 import re
 from collections.abc import Generator
 from functools import lru_cache
-from logging import DEBUG
 
 from scrapy import Request, Spider
 from scrapy.http import Response
@@ -100,7 +99,7 @@ class CarrefourProductsSpider(Spider, ProductSpider):
         quantity, quantity_unit = self.get_quantity(response) or (None, None)
 
         if quantity is None:
-            self.log(f"Product {item['ean']} has no quantity. Skipping...", DEBUG)
+            self.log(f"Product {item['ean']} has no quantity. Skipping...")
             return
 
         item["quantity"] = quantity

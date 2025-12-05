@@ -1,6 +1,5 @@
 import re
 from collections.abc import Generator
-from logging import DEBUG
 
 from scrapy import Request, Spider
 from scrapy.http import Response
@@ -48,7 +47,7 @@ class BiocoopProductsSpider(Spider, ProductSpider):
         ean = self.get_ean13(response)
 
         if ean is None:
-            self.log("No EAN-13 found. Skipping...", DEBUG)
+            self.log("No EAN-13 found. Skipping...")
             return
 
         item["ean"] = ean
@@ -68,7 +67,7 @@ class BiocoopProductsSpider(Spider, ProductSpider):
         quantity, quantity_unit = self.get_quantity(response) or (None, None)
 
         if quantity is None:
-            self.log(f"Product {ean} has no quantity. Skipping...", DEBUG)
+            self.log(f"Product {ean} has no quantity. Skipping...")
             return
 
         item["quantity"] = quantity

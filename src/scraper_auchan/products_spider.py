@@ -1,5 +1,4 @@
 from collections.abc import Generator
-from logging import DEBUG
 from re import IGNORECASE, match
 
 from scrapy import Request, Spider
@@ -69,7 +68,7 @@ class AuchanProductsSpider(Spider, ProductSpider):
         eans = self.get_ean13s(response)
 
         if eans is None:
-            self.log("No EAN found. Skipping...", DEBUG)
+            self.log("No EAN found. Skipping...")
             return
 
         item["eans"] = eans
@@ -88,7 +87,7 @@ class AuchanProductsSpider(Spider, ProductSpider):
         quantity, quantity_unit = self.get_quantity(response) or (None, None)
 
         if quantity is None:
-            self.log(f"Product {item['eans'][0]} has no quantity. Skipping...", DEBUG)
+            self.log(f"Product {item['eans'][0]} has no quantity. Skipping...")
             return
 
         item["quantity"] = quantity
