@@ -5,11 +5,9 @@ from scrapy.crawler import CrawlerProcess
 
 from models.category import CategoryValues
 from utils.database import DEFAULT_DATABASE_URL
+from utils.spider import BOT_NAME
 
 from .products_spider import AuchanProductsSpider
-
-# The User-Agent HTTP header used by Scrapy for the crawling requests.
-BOT_NAME = "proteines_resilientes"
 
 # The default journey ID sets the location to Auchan Drive Saint-Cyr-Sur-Loire
 # (Tours).
