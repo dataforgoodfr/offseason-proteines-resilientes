@@ -1,2 +1,36 @@
+import scrapy
+
 # The User-Agent HTTP header used by Scrapy for the crawling requests.
 BOT_NAME = "proteines_resilientes"
+
+
+class ProductItem(scrapy.Item):
+    # The name of the product.
+    name = scrapy.Field()
+
+    # The brand of the product.
+    brand = scrapy.Field()
+
+    # The normalised category of the product.
+    category = scrapy.Field()
+
+    # The EAN-13 reference of the product.
+    ean = scrapy.Field()
+
+    # The price of the product.
+    price = scrapy.Field()
+
+    # Whether or not the price is discounted.
+    discounted = scrapy.Field()
+
+    # The discounted price of the product.
+    discounted_price = scrapy.Field()
+
+    # Quantity of food product.
+    quantity = scrapy.Field()
+
+    # Quantity unit (either a weight or a volume).
+    quantity_unit = scrapy.Field()
+
+    # The URL of the product.
+    url = scrapy.Field()

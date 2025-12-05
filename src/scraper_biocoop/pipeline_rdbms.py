@@ -12,8 +12,7 @@ from models.price import Price
 from models.product import Product
 from models.source import Origin, Source
 from utils.database import RDBMSPipelineMixin
-
-from .items import ProductItem
+from utils.spider import ProductItem
 
 
 class ProductPipeline(RDBMSPipelineMixin):
