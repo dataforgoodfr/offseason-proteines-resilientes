@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from enum import StrEnum, unique
 from re import IGNORECASE, match
 
 from scrapy import Request, Spider
@@ -17,6 +18,50 @@ from .items import ProductItem
 # See https://github.com/dataforgoodfr/offseason-proteines-resilientes/issues/2
 # for more information.
 JOURNEY_COOKIE_NAME = "lark-journey"
+
+# List of store department that are not relevant.
+EXCLUSION_LIST = (
+    "cuisiné",
+    "bébé",
+    "pizza",
+    "bouillon",
+    "boisson",
+    "alcools",
+    "glaces",
+)
+
+
+@unique
+class Department(StrEnum):
+    """
+    The main store departments.
+    """
+
+    CHARCUTERIE = "Charcuterie, traiteur"  # cn12
+    EPICERIE = "Epicerie salée"  # cn06
+    FRAIS = "Marché frais"  # cb19
+    FRUITS_LEGUMES = "Fruits, légumes"  # cn03
+    OEUFS_PRODUITS_LAITIERS = "Produits laitiers, oeufs, fromages"  # cn01
+    SUCRE = "Epicerie sucrée"  # cn05
+    SURGELES = "Surgelés"  # cn04
+    VIANDES = "Boucherie, volaille, poissonnerie"  # cn02
+
+    @classmethod
+    def _missing_(cls, value):
+        """
+        Invoked when the value is not found in the enum. It is used here to
+        accept values in a case-insensitive way.
+
+        See https://docs.python.org/3/library/enum.html#enum.Enum._missing_.
+        """
+
+        value = value.upper()
+
+        for member in cls:
+            if member.value.upper() == value:
+                return member
+
+        return None
 
 
 class AuchanProductsSpider(Spider, ProductSpider):
@@ -38,7 +83,17 @@ class AuchanProductsSpider(Spider, ProductSpider):
         if journey_id is None:
             raise AttributeError("Missing 'journey_id' argument")
 
-        url = f"https://www.auchan.fr/recherche?text={query}&page=1"
+        url = (
+            f"https://www.auchan.fr/recherche?text={query}&page=1"
+            "&categorylevel1=produits20laitiers2c20oeufs2c20fromages"
+            "&categorylevel1=boucherie2c20volaille2c20poissonnerie"
+            "&categorylevel1=fruits2c20le9gumes"
+            "&categorylevel1=fruits2c20le9gumes"
+            "&categorylevel1=surgele9s"
+            "&categorylevel1=epicerie20sucre9e"
+            "&categorylevel1=epicerie20sale9e"
+            "&categorylevel1=charcuterie2c20traiteur"
+        )
 
         yield Request(
             url=url, cookies={JOURNEY_COOKIE_NAME: journey_id}, callback=self.parse
@@ -59,6 +114,10 @@ class AuchanProductsSpider(Spider, ProductSpider):
 
     def parse_product(self, response: Response) -> Generator[ProductItem]:
         item = ProductItem()
+
+        if not self.is_relevant(response):
+            self.log("Product is irrelevant. Skipping...")
+            return
 
         item["name"] = self.get_name(response)
         item["brand"] = self.get_brand(response)
@@ -94,6 +153,40 @@ class AuchanProductsSpider(Spider, ProductSpider):
         item["quantity_unit"] = quantity_unit
 
         yield item
+
+    def is_relevant(self, response: Response) -> bool:
+        """
+        Filters out irrelevant products based on the store department.
+        """
+
+        breadcrumbs = response.xpath(
+            "//span[@class='site-breadcrumb__item']/a/text()"
+        ).getall()
+
+        if len(breadcrumbs) == 0:
+            self.log("No breadcrumbs detected")
+            return False
+
+        self.log(f"Breadcrumbs on the page: {breadcrumbs}")
+
+        try:
+            main_department = breadcrumbs[1]
+            main_department = Department(main_department)
+        except ValueError:
+            self.log(
+                f"Main store department {main_department} is irrelevant. Skipping..."
+            )
+            return False
+
+        any_exclusion = [
+            s for excl in EXCLUSION_LIST for s in breadcrumbs if excl in s.lower()
+        ]
+
+        if any_exclusion:
+            self.log(f"Hit excluded store departments: {any_exclusion}. Skipping...")
+            return False
+
+        return True
 
     def get_name(self, response: Response) -> str:
         name = response.xpath(
