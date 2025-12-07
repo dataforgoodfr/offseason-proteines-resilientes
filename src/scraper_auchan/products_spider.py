@@ -155,10 +155,6 @@ class AuchanProductsSpider(Spider, ProductSpider):
         yield item
 
     def is_relevant(self, response: Response) -> bool:
-        """
-        Filters out irrelevant products based on the store department.
-        """
-
         breadcrumbs = response.xpath(
             "//span[@class='site-breadcrumb__item']/a/text()"
         ).getall()

@@ -57,6 +57,14 @@ class ProductSpider(ABC):
         pass
 
     @abstractmethod
+    def is_relevant(self, response: Response) -> bool:
+        """
+        Filters out irrelevant products.
+        """
+
+        return True
+
+    @abstractmethod
     def get_name(self, response: Response) -> str:
         """
         Extracts the product name from the response and returns it.
