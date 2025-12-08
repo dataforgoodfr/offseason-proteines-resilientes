@@ -1,5 +1,6 @@
 import re
 from collections.abc import Generator
+from enum import StrEnum, unique
 from functools import lru_cache
 
 from scrapy import Request, Spider
@@ -7,6 +8,52 @@ from scrapy.http import Response
 
 from models.product import QuantityUnit
 from utils.spider import ProductItem, ProductSpider
+
+# List of store department that are not relevant.
+EXCLUSION_LIST = (
+    "aides culinaires",
+    "alcools",
+    "boissons végétales",
+    "bouillon",
+    "bébé",
+    "cuisiné",
+    "glaces",
+    "pizza",
+)
+
+
+@unique
+class Department(StrEnum):
+    """
+    The main store departments.
+    """
+
+    ALTERNATIVES = "Alimentation alternative"
+    CHARCUTERIE = "Charcuterie Traiteur"
+    EPICERIE = "Epicerie salée"
+    FRUITS_LEGUMES = "Fruits Légumes"
+    OEUFS_PRODUITS_LAITIERS = "Laitier Oeufs Végétal"
+    SUCRE = "Epicerie sucrée"
+    SURGELES = "Surgelés"
+    VIANDES = "Viandes Poissons"
+
+    @classmethod
+    def _missing_(cls, value):
+        """
+        Invoked when the value is not found in the enum. It is used here to
+        accept values in a case-insensitive way.
+
+        See https://docs.python.org/3/library/enum.html#enum.Enum._missing_.
+        """
+
+        value = value.upper()
+
+        for member in cls:
+            if member.value.upper() == value:
+                return member
+
+        return None
+
 
 # Web cookies to send with each request.
 COOKIES = {
@@ -96,7 +143,33 @@ class LeclercProductsSpider(Spider, ProductSpider):
         yield item
 
     def is_relevant(self, response: Response) -> bool:
-        # Not yet implemented.
+        breadcrumbs = response.xpath(
+            "//ul[@class='ulWCAD307_FilAriane']/li/a/text()"
+        ).getall()
+
+        if len(breadcrumbs) == 0:
+            self.log("No breadcrumbs detected")
+            return False
+
+        self.log(f"Breadcrumbs on the page: {breadcrumbs}")
+
+        try:
+            main_department = breadcrumbs[2].strip()
+            main_department = Department(main_department)
+        except ValueError:
+            self.log(
+                f"Main store department {main_department} is irrelevant. Skipping..."
+            )
+            return False
+
+        any_exclusion = [
+            s for excl in EXCLUSION_LIST for s in breadcrumbs if excl in s.lower()
+        ]
+
+        if any_exclusion:
+            self.log(f"Hit excluded store departments: {any_exclusion}. Skipping...")
+            return False
+
         return True
 
     @lru_cache(maxsize=8, typed=True)
