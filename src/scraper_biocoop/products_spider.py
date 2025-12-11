@@ -167,18 +167,18 @@ class BiocoopProductsSpider(Spider, ProductSpider):
         return brand
 
     def get_ean13(self, response: Response) -> str | None:
-        ean: str = (
+        img_link_parts = (
             response.xpath("//meta[@itemprop='image']/@content")
-            .re_first(r"(https://.*\.jpeg)")
+            .re_first(r"(https://.*\.jpe?g)")
             .split("/")
             .pop()
-            .split("-")[1]
+            .split("-")
         )
 
-        if not ean:
+        if len(img_link_parts) < 3:
             return
 
-        return ean
+        return img_link_parts[1]
 
     @staticmethod
     def extract_discount_and_prices(response) -> tuple[bool, float, float | None]:
