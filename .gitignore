@@ -75,3 +75,10 @@ venv.bak/
 # Text editors
 *~
 *.sw[nop]
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
