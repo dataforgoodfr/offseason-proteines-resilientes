@@ -29,9 +29,7 @@ class TestMigrations(unittest.TestCase):
         sys.path.insert(0, str(self.project_root / "src"))
 
         # Create a temporary database file
-        self.temp_db = tempfile.NamedTemporaryFile(
-            suffix=".sqlite", delete=False
-        )
+        self.temp_db = tempfile.NamedTemporaryFile(suffix=".sqlite", delete=False)
         self.temp_db.close()
         self.db_url = f"sqlite:///{self.temp_db.name}"
 
@@ -42,15 +40,18 @@ class TestMigrations(unittest.TestCase):
         # This represents the state of the database before any migrations
         # These schemas reflect the original state before migrations were introduced
         with self.engine.begin() as conn:
-            conn.execute(sa.text("""
+            conn.execute(
+                sa.text("""
                 CREATE TABLE product (
                     id INTEGER PRIMARY KEY,
                     name TEXT,
                     brand TEXT,
                     url TEXT UNIQUE
                 )
-            """))
-            conn.execute(sa.text("""
+            """)
+            )
+            conn.execute(
+                sa.text("""
                 CREATE TABLE source (
                     id INTEGER PRIMARY KEY,
                     url TEXT NOT NULL,
@@ -58,8 +59,10 @@ class TestMigrations(unittest.TestCase):
                     product_id INTEGER NOT NULL,
                     FOREIGN KEY(product_id) REFERENCES product (id) ON DELETE CASCADE
                 )
-            """))
-            conn.execute(sa.text("""
+            """)
+            )
+            conn.execute(
+                sa.text("""
                 CREATE TABLE price (
                     id INTEGER PRIMARY KEY,
                     amount REAL NOT NULL,
@@ -67,8 +70,10 @@ class TestMigrations(unittest.TestCase):
                     source_id INTEGER NOT NULL,
                     FOREIGN KEY(source_id) REFERENCES source (id) ON DELETE CASCADE
                 )
-            """))
-            conn.execute(sa.text("""
+            """)
+            )
+            conn.execute(
+                sa.text("""
                 CREATE TABLE nutrition_facts (
                     id INTEGER PRIMARY KEY,
                     energy_kcal REAL,
@@ -83,8 +88,10 @@ class TestMigrations(unittest.TestCase):
                     source_id INTEGER UNIQUE NOT NULL,
                     FOREIGN KEY(source_id) REFERENCES source (id) ON DELETE CASCADE
                 )
-            """))
-            conn.execute(sa.text("""
+            """)
+            )
+            conn.execute(
+                sa.text("""
                 CREATE TABLE environmental_facts (
                     id INTEGER PRIMARY KEY,
                     co2_kg REAL,
@@ -94,7 +101,8 @@ class TestMigrations(unittest.TestCase):
                     source_id INTEGER UNIQUE NOT NULL,
                     FOREIGN KEY(source_id) REFERENCES source (id) ON DELETE CASCADE
                 )
-            """))
+            """)
+            )
 
         # Set up Alembic configuration
         self.alembic_cfg = Config(str(self.project_root / "alembic.ini"))
@@ -150,7 +158,13 @@ class TestMigrations(unittest.TestCase):
         tables = inspector.get_table_names()
 
         # Base tables should still exist after downgrade
-        base_tables = ["product", "source", "price", "nutrition_facts", "environmental_facts"]
+        base_tables = [
+            "product",
+            "source",
+            "price",
+            "nutrition_facts",
+            "environmental_facts",
+        ]
         for table in base_tables:
             self.assertIn(
                 table,
@@ -160,17 +174,31 @@ class TestMigrations(unittest.TestCase):
 
         # Verify that migration-added columns are removed
         product_columns = {col["name"] for col in inspector.get_columns("product")}
-        self.assertNotIn("disabled", product_columns, "disabled column should be removed")
-        self.assertNotIn("quantity", product_columns, "quantity column should be removed")
-        self.assertNotIn("quantity_unit", product_columns, "quantity_unit column should be removed")
-        self.assertNotIn("category_id", product_columns, "category_id column should be removed")
+        self.assertNotIn(
+            "disabled", product_columns, "disabled column should be removed"
+        )
+        self.assertNotIn(
+            "quantity", product_columns, "quantity column should be removed"
+        )
+        self.assertNotIn(
+            "quantity_unit", product_columns, "quantity_unit column should be removed"
+        )
+        self.assertNotIn(
+            "category_id", product_columns, "category_id column should be removed"
+        )
 
         source_columns = {col["name"] for col in inspector.get_columns("source")}
         self.assertNotIn("origin", source_columns, "origin column should be removed")
 
         price_columns = {col["name"] for col in inspector.get_columns("price")}
-        self.assertNotIn("discounted", price_columns, "discounted column should be removed")
-        self.assertNotIn("discounted_amount", price_columns, "discounted_amount column should be removed")
+        self.assertNotIn(
+            "discounted", price_columns, "discounted column should be removed"
+        )
+        self.assertNotIn(
+            "discounted_amount",
+            price_columns,
+            "discounted_amount column should be removed",
+        )
 
         # Category table should be removed (it was created by a migration)
         self.assertNotIn("category", tables, "category table should be removed")
@@ -220,9 +248,7 @@ class TestMigrations(unittest.TestCase):
         self.assertIn("parent_id", columns)
 
         # Check product table has category_id
-        product_columns = {
-            col["name"] for col in inspector.get_columns("product")
-        }
+        product_columns = {col["name"] for col in inspector.get_columns("product")}
         self.assertIn("category_id", product_columns)
 
     def test_migration_adds_disabled_field(self):
@@ -231,9 +257,7 @@ class TestMigrations(unittest.TestCase):
         command.upgrade(self.alembic_cfg, "74f8c9658d25")
 
         inspector = inspect(self.engine)
-        product_columns = {
-            col["name"] for col in inspector.get_columns("product")
-        }
+        product_columns = {col["name"] for col in inspector.get_columns("product")}
 
         self.assertIn("disabled", product_columns)
 
@@ -243,9 +267,7 @@ class TestMigrations(unittest.TestCase):
         command.upgrade(self.alembic_cfg, "b13c7ee298c7")
 
         inspector = inspect(self.engine)
-        product_columns = {
-            col["name"] for col in inspector.get_columns("product")
-        }
+        product_columns = {col["name"] for col in inspector.get_columns("product")}
 
         self.assertIn("quantity", product_columns)
         self.assertIn("quantity_unit", product_columns)
@@ -256,9 +278,7 @@ class TestMigrations(unittest.TestCase):
         command.upgrade(self.alembic_cfg, "d483c555d6d1")
 
         inspector = inspect(self.engine)
-        source_columns = {
-            col["name"] for col in inspector.get_columns("source")
-        }
+        source_columns = {col["name"] for col in inspector.get_columns("source")}
 
         self.assertIn("origin", source_columns)
 
@@ -268,9 +288,7 @@ class TestMigrations(unittest.TestCase):
         command.upgrade(self.alembic_cfg, "dd08dfad6653")
 
         inspector = inspect(self.engine)
-        price_columns = {
-            col["name"] for col in inspector.get_columns("price")
-        }
+        price_columns = {col["name"] for col in inspector.get_columns("price")}
 
         self.assertIn("discounted", price_columns)
 
@@ -278,9 +296,7 @@ class TestMigrations(unittest.TestCase):
         command.upgrade(self.alembic_cfg, "aaa4b447e0c5")
 
         inspector = inspect(self.engine)
-        price_columns = {
-            col["name"] for col in inspector.get_columns("price")
-        }
+        price_columns = {col["name"] for col in inspector.get_columns("price")}
 
         self.assertIn("discounted_amount", price_columns)
 
