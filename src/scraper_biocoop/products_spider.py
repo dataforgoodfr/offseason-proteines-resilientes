@@ -34,6 +34,7 @@ class Department(StrEnum):
     SUCRE = "Epicerie Sucrée"
     SURGELE = "Surgelés"
     VIANDES = "Traiteur, Boucherie, Poissonnerie"
+    SPORT = "Bien-être, Santé"
     VRAC = "Vrac"
 
     @classmethod
@@ -175,7 +176,7 @@ class BiocoopProductsSpider(Spider, ProductSpider):
             .split("-")
         )
 
-        if len(img_link_parts) < 3:
+        if len(img_link_parts) < 2 or len(img_link_parts[1]) != 13:
             return
 
         return img_link_parts[1]
