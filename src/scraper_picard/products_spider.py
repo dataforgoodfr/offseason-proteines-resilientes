@@ -1,5 +1,4 @@
 import json
-import re
 from collections.abc import Generator
 from enum import StrEnum, unique
 
