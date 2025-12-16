@@ -10,16 +10,15 @@ from utils.spider import ProductItem, ProductSpider
 
 # List of store department that are not relevant.
 EXCLUSION_LIST = (
-    "préparé",
-    "cuisiné",
-    "bébé",
-    "pizza",
-    "bouillon",
-    "alcools",
-    "glaces",
-    "apéritif",
-    "boissons végétales",
     "aides culinaires",
+    "alcools",
+    "boissons végétales",
+    "bébé",
+    "bouillon",
+    "cuisinés",
+    "glaces",
+    "pizza",
+    "préparés",
 )
 
 
