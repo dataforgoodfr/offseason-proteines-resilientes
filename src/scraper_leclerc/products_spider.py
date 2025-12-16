@@ -14,11 +14,12 @@ EXCLUSION_LIST = (
     "aides culinaires",
     "alcools",
     "boissons végétales",
-    "bouillon",
     "bébé",
-    "cuisiné",
+    "bouillon",
+    "cuisinés",
     "glaces",
     "pizza",
+    "préparés",
 )
 
 
