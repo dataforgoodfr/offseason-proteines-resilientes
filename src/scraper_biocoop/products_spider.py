@@ -12,10 +12,10 @@ from utils.spider import ProductItem, ProductSpider
 EXCLUSION_LIST = (
     "aides culinaires",
     "alcools",
-    "apéritif",
     "boissons végétales",
-    "bouillon",
     "bébé",
+    "bouillon",
+    "cuisinés",
     "glaces",
     "pizza",
     "préparés",
