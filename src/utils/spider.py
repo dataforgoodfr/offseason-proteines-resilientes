@@ -42,6 +42,9 @@ class ProductItem(Item):
     # The URL of the product.
     url = Field()
 
+    # Nutrition facts for the product.
+    nutrition_facts = Field()
+
 
 class ProductSpider(ABC):
     """
