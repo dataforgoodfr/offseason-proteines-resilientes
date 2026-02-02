@@ -1,4 +1,4 @@
-from logging import INFO, Formatter, Logger, StreamHandler, FileHandler, getLogger
+from logging import INFO, FileHandler, Formatter, Logger, StreamHandler, getLogger
 
 
 def set_up_root_logger(log_file=None, level=INFO) -> Logger:
@@ -14,7 +14,7 @@ def set_up_root_logger(log_file=None, level=INFO) -> Logger:
     console.setFormatter(formatter)
     root_logger.addHandler(console)
 
-    if log_file != None:
+    if log_file is not None:
         file = FileHandler(log_file, mode="w")
         file.setFormatter(formatter)
         root_logger.addHandler(file)
