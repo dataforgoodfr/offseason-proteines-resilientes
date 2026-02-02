@@ -85,10 +85,14 @@ class SuperUProductsSpider(Spider, ProductSpider):
 
     async def start(self):
         query = getattr(self, "query", None)
+        category = getattr(self, "category", None)
         store_id = getattr(self, "store_id", None)
 
         if query is None:
             raise AttributeError("Missing 'query' argument")
+        elif query == "NA":
+            query = category
+
         if store_id is None:
             raise AttributeError("Missing 'store_id' argument")
 

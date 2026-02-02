@@ -20,9 +20,12 @@ class BiocoopProductsSpider(Spider, ProductSpider):
 
     async def start(self):
         query = getattr(self, "query", None)
+        category = getattr(self, "category", None)
 
         if query is None:
             raise AttributeError("Missing 'query' argument")
+        elif query == "NA":
+            query = category
 
         url = f"https://www.biocoop.fr/magasin-biocoop_biocite/catalogsearch/result/?q={query}&p=1"
 

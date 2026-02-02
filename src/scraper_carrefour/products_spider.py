@@ -83,9 +83,12 @@ class CarrefourProductsSpider(Spider, ProductSpider):
 
     async def start(self):
         query = getattr(self, "query", None)
+        category = getattr(self, "category", None)
 
         if query is None:
             raise AttributeError("Missing 'query' argument")
+        elif query == "NA":
+            query = category
 
         self.query = query
 

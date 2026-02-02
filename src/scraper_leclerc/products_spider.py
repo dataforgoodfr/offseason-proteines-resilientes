@@ -78,9 +78,12 @@ class LeclercProductsSpider(Spider, ProductSpider):
 
     async def start(self):
         query = getattr(self, "query", None)
+        category = getattr(self, "category", None)
 
         if query is None:
             raise AttributeError("Missing 'query' argument")
+        elif query == "NA":
+            query = category
 
         url = f"https://fd14-courses.leclercdrive.fr/magasin-033701-033701-Tours-Nord/recherche.aspx?TexteRecherche={query}"
 

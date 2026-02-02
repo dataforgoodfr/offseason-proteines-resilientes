@@ -78,10 +78,13 @@ class AuchanProductsSpider(Spider, ProductSpider):
 
     async def start(self):
         query = getattr(self, "query", None)
+        category = getattr(self, "category", None)
         journey_id = getattr(self, "journey_id", None)
 
         if query is None:
             raise AttributeError("Missing 'query' argument")
+        elif query == "NA":
+            query = category
         if journey_id is None:
             raise AttributeError("Missing 'journey_id' argument")
 
