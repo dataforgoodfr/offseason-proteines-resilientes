@@ -1,19 +1,22 @@
-from logging import INFO, Formatter, Logger, StreamHandler, getLogger
+from logging import INFO, Formatter, Logger, StreamHandler, FileHandler, getLogger
 
 
-def set_up_root_logger(level=INFO) -> Logger:
+def set_up_root_logger(log_file=None, level=INFO) -> Logger:
     """
     Sets up the root logger.
     """
 
     root_logger = getLogger("")
     root_logger.setLevel(level)
+    formatter = Formatter("%(name)-12s: %(levelname)-8s %(message)s")
 
     console = StreamHandler()
-
-    console_formatter = Formatter("%(name)-12s: %(levelname)-8s %(message)s")
-    console.setFormatter(console_formatter)
-
+    console.setFormatter(formatter)
     root_logger.addHandler(console)
+
+    if log_file != None:
+        file = FileHandler(log_file, mode="w")
+        file.setFormatter(formatter)
+        root_logger.addHandler(file)
 
     return root_logger

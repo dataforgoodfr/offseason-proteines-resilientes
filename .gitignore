@@ -75,3 +75,6 @@ venv.bak/
 # Text editors
 *~
 *.sw[nop]
+
+# Logs
+logs/*.log
