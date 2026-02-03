@@ -78,9 +78,9 @@ class PicardProductsSpider(Spider, ProductSpider):
         )
 
     def parse(self, response: Response):
-        product_links = (
-            response.css("li.pi-ProductGrid-item").xpath(".//a/@href").getall()
-        )
+        product_links = response.xpath(
+            '//a[has-class("js-gtm-pi-product-link")]/@href'
+        ).getall()
         yield from response.follow_all(
             product_links, meta={"playwright": True}, callback=self.parse_product
         )
