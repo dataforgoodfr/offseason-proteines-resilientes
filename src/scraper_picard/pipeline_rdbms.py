@@ -1,4 +1,4 @@
-from logging import DEBUG, getLogger
+from logging import DEBUG, getLevelName, getLogger
 from typing import Optional
 
 from itemadapter import ItemAdapter
@@ -36,7 +36,10 @@ class ProductPipeline(RDBMSPipelineMixin):
                 logger.debug(f"Product {ean} already present in database")
 
                 if existing_product.disabled:
-                    raise DropItem(f"Product {ean} is disabled. Skipping...", DEBUG)
+                    raise DropItem(
+                        f"Product {ean} is disabled. Skipping...",
+                        getLevelName(DEBUG),
+                    )
 
                 logger.debug(f"Adding new source to product {ean}")
                 existing_product.sources.append(
@@ -46,10 +49,10 @@ class ProductPipeline(RDBMSPipelineMixin):
                         price=Price(
                             amount=item["price"],
                             discounted=item["discounted"],
-                            discounted_amount=item.get("discounted_price")
-                            if item["price"] is not None
-                            else None,
-                        ),
+                            discounted_amount=item.get("discounted_price"),
+                        )
+                        if item["price"] is not None
+                        else None,
                     )
                 )
             else:
