@@ -20,6 +20,7 @@ pr-scraper-biocoop = "scraper_biocoop.cli:main"
 pr-scraper-carrefour = "scraper_carrefour.cli:main"
 pr-scraper-intermarche = "scraper_intermarche.cli:main"
 pr-scraper-leclerc = "scraper_leclerc.cli:main"
+pr-scraper-picard = "scraper_picard.cli:main"
 pr-scraper-super-u = "scraper_super_u.cli:main"
 
 [tool.poetry]
@@ -31,6 +32,7 @@ packages = [
   { include = "scraper_carrefour", from = "src" },
   { include = "scraper_intermarche", from = "src" },
   { include = "scraper_leclerc", from = "src" },
+  { include = "scraper_picard", from = "src" },
   { include = "scraper_super_u", from = "src" },
   { include = "utils", from = "src" },
 ]
