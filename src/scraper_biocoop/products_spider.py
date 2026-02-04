@@ -1,11 +1,57 @@
 import re
 from collections.abc import Generator
+from enum import StrEnum, unique
 
 from scrapy import Request, Spider
 from scrapy.http import Response
 
 from models.product import QuantityUnit
 from utils.spider import ProductItem, ProductSpider
+
+# List of store department that are not relevant.
+EXCLUSION_LIST = (
+    "aides culinaires",
+    "alcools",
+    "boissons végétales",
+    "bébé",
+    "bouillon",
+    "cuisinés",
+    "glaces",
+    "pizza",
+    "préparés",
+)
+
+
+@unique
+class Department(StrEnum):
+    """
+    The main store departments.
+    """
+
+    EPICERIE = "Epicerie Salée"
+    FRUITS_LEGUMES = "Fruits et Légumes"
+    OEUFS_PRODUITS_LAITIERS = "Crémerie"
+    SUCRE = "Epicerie Sucrée"
+    SURGELE = "Surgelés"
+    VIANDES = "Traiteur, Boucherie, Poissonnerie"
+    SPORT = "Bien-être, Santé"
+    VRAC = "Vrac"
+
+    @classmethod
+    def _missing_(cls, value):
+        """
+        Invoked when the value is not found in the enum. It is used here to
+        accept values in a case-insensitive way.
+        See https://docs.python.org/3/library/enum.html#enum.Enum._missing_.
+        """
+
+        value = value.upper()
+
+        for member in cls:
+            if member.value.upper() == value:
+                return member
+
+        return None
 
 
 class BiocoopProductsSpider(Spider, ProductSpider):
@@ -44,6 +90,10 @@ class BiocoopProductsSpider(Spider, ProductSpider):
     def parse_product(self, response: Response) -> Generator[ProductItem]:
         item = ProductItem()
 
+        if not self.is_relevant(response):
+            self.log("Product is irrelevant. Skipping...")
+            return
+
         ean = self.get_ean13(response)
 
         if ean is None:
@@ -75,6 +125,38 @@ class BiocoopProductsSpider(Spider, ProductSpider):
 
         yield item
 
+    def is_relevant(self, response: Response) -> bool:
+        breadcrumbs = (
+            response.css("script::text")
+            .re_first(r"'product_category1': '(.+)'")
+            .split("/")
+        )
+
+        if len(breadcrumbs) == 0:
+            self.log("No breadcrumbs detected")
+            return False
+
+        self.log(f"Breadcrumbs on the page: {breadcrumbs}")
+
+        try:
+            main_department = breadcrumbs[0]
+            main_department = Department(main_department)
+        except ValueError:
+            self.log(
+                f"Main store department {main_department} is irrelevant. Skipping..."
+            )
+            return False
+
+        any_exclusion = [
+            s for excl in EXCLUSION_LIST for s in breadcrumbs if excl in s.lower()
+        ]
+
+        if any_exclusion:
+            self.log(f"Hit excluded store departments: {any_exclusion}. Skipping...")
+            return False
+
+        return True
+
     def get_name(self, response: Response) -> str:
         name = response.xpath("//span[@itemprop='name']/text()").get()
 
@@ -86,18 +168,18 @@ class BiocoopProductsSpider(Spider, ProductSpider):
         return brand
 
     def get_ean13(self, response: Response) -> str | None:
-        ean: str = (
+        img_link_parts = (
             response.xpath("//meta[@itemprop='image']/@content")
-            .re_first(r"(https://.*\.jpeg)")
+            .re_first(r"(https://.*\.jpe?g)")
             .split("/")
             .pop()
-            .split("-")[1]
+            .split("-")
         )
 
-        if not ean:
+        if len(img_link_parts) < 2 or len(img_link_parts[1]) != 13:
             return
 
-        return ean
+        return img_link_parts[1]
 
     @staticmethod
     def extract_discount_and_prices(response) -> tuple[bool, float, float | None]:
