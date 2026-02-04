@@ -232,7 +232,7 @@ class AuchanProductsSpider(Spider, ProductSpider):
         response: Response,
     ) -> tuple[bool, float, float | None] | None:
         """
-        Extracts wether or not the product is discounted and its both prices
+        Extracts whether or not the product is discounted and its both prices
         (normal and discounted) from the response.
 
         Returns None if no price can be found.

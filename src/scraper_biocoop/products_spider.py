@@ -184,7 +184,7 @@ class BiocoopProductsSpider(Spider, ProductSpider):
     @staticmethod
     def extract_discount_and_prices(response) -> tuple[bool, float, float | None]:
         """
-        Extracts wether or not the product is discounted and its both prices
+        Extracts whether or not the product is discounted and its both prices
         (normal and discounted) from the response.
         """
 

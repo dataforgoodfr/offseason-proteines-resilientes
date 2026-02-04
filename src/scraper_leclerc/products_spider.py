@@ -220,7 +220,7 @@ class LeclercProductsSpider(Spider, ProductSpider):
         self, response: Response
     ) -> tuple[bool, float, float | None]:
         """
-        Extracts wether or not the product is discounted and its both prices
+        Extracts whether or not the product is discounted and its both prices
         (normal and discounted) from the response.
         """
         product_info = self.__get_product_info(response)
