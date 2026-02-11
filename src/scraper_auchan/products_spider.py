@@ -209,8 +209,7 @@ class AuchanProductsSpider(Spider, ProductSpider):
 
         return
 
-    @staticmethod
-    def get_ean13s(response: Response) -> list[str] | None:
+    def get_ean13s(self, response: Response) -> list[str] | None:
         content_wrappers = response.css(
             ".product-description__feature-wrapper .product-description__feature-group-wrapper"
         )
@@ -257,8 +256,7 @@ class AuchanProductsSpider(Spider, ProductSpider):
             current_price if is_discounted else None,
         )
 
-    @staticmethod
-    def get_quantity(response: Response) -> tuple[float, QuantityUnit] | None:
+    def get_quantity(self, response: Response) -> tuple[float, QuantityUnit] | None:
         product_attributes = response.css(
             ".offer-selector__attributes span.product-attribute"
         )

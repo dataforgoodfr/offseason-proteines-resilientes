@@ -313,8 +313,7 @@ class IntermarcheProductsSpider(Spider, ProductSpider):
             discounted_price if is_discounted else None,
         )
 
-    @staticmethod
-    def get_quantity(response) -> tuple[float, QuantityUnit] | None:
+    def get_quantity(self, response: Response) -> tuple[float, QuantityUnit] | None:
         """
         Extracts the product quantity and its unit from the response, and
         normalises it into either kg or L.

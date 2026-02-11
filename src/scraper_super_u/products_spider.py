@@ -246,8 +246,7 @@ class SuperUProductsSpider(Spider, ProductSpider):
             current_price if is_discounted else None,
         )
 
-    @staticmethod
-    def get_quantity(response) -> tuple[float, QuantityUnit] | None:
+    def get_quantity(self, response) -> tuple[float, QuantityUnit] | None:
         poids_net = response.xpath(
             '//p[@class="pdp-description-text"]/text()'
         ).re_first(r"Poids net: (.+)")
