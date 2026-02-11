@@ -38,18 +38,19 @@ class CategoryValues(StrEnum):
     # ----------------------------------------------------------------------
     # Viandes
     # ----------------------------------------------------------------------
-    AGNEAU = "Agneau"
     AIGUILLETTES_DINDE = "Aiguillettes de dinde"
     BLANC_DE_DINDE_TRANCHES = "Blanc de dinde (tranches)"
     CHIPOLATAS = "Chipolatas"
     CONFIT_DE_CANARD = "Confit de canard"
     CORDON_BLEU = "Cordon bleu"
+    COTES_AGNEAU = "Côtes d'agneau"
     COTES_DE_PORC = "Côtes de porc"
     CUISSE_POULET = "Cuisse de poulet"
     ENTRECOTE_BOEUF = "Entrecôte bœuf"
     ESCALOPES_DE_DINDE = "Escalopes de dinde"
     ESCALOPE_DE_VEAU = "Escalope de veau"
     FILET_MIGNON_DE_PORC = "Filet mignon de porc"
+    GIGOT_AGNEAU = "Gigot d'agneau"
     JAMBON_BLANC = "Jambon blanc"
     JAMBON_CRU = "Jambon cru"
     LAPIN = "Lapin"
@@ -237,18 +238,19 @@ CATEGORY_SUBCATEGORY_MAP: Dict[CategoryValues, CategoryValues] = {
     # ----------------------------------------------------------------------
     # Viandes
     # ----------------------------------------------------------------------
-    CategoryValues.AGNEAU: CategoryValues.VIANDES,
     CategoryValues.AIGUILLETTES_DINDE: CategoryValues.VIANDES,
     CategoryValues.BLANC_DE_DINDE_TRANCHES: CategoryValues.VIANDES,
     CategoryValues.CHIPOLATAS: CategoryValues.VIANDES,
     CategoryValues.CONFIT_DE_CANARD: CategoryValues.VIANDES,
     CategoryValues.CORDON_BLEU: CategoryValues.VIANDES,
+    CategoryValues.COTES_AGNEAU: CategoryValues.VIANDES,
     CategoryValues.COTES_DE_PORC: CategoryValues.VIANDES,
     CategoryValues.CUISSE_POULET: CategoryValues.VIANDES,
     CategoryValues.ENTRECOTE_BOEUF: CategoryValues.VIANDES,
     CategoryValues.ESCALOPES_DE_DINDE: CategoryValues.VIANDES,
     CategoryValues.ESCALOPE_DE_VEAU: CategoryValues.VIANDES,
     CategoryValues.FILET_MIGNON_DE_PORC: CategoryValues.VIANDES,
+    CategoryValues.GIGOT_AGNEAU: CategoryValues.VIANDES,
     CategoryValues.JAMBON_BLANC: CategoryValues.VIANDES,
     CategoryValues.JAMBON_CRU: CategoryValues.VIANDES,
     CategoryValues.LAPIN: CategoryValues.VIANDES,
