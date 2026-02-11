@@ -38,7 +38,7 @@ class Department(StrEnum):
     VRAC = "Vrac"
 
     @classmethod
-    def _missing_(cls, value):
+    def _missing_(cls, value: str) -> str | None:
         """
         Invoked when the value is not found in the enum. It is used here to
         accept values in a case-insensitive way.
@@ -191,7 +191,9 @@ class BiocoopProductsSpider(Spider, ProductSpider):
         return img_link_parts[1]
 
     @staticmethod
-    def extract_discount_and_prices(response) -> tuple[bool, float, float | None]:
+    def extract_discount_and_prices(
+        response: Response,
+    ) -> tuple[bool, float, float | None]:
         """
         Extracts whether or not the product is discounted and its both prices
         (normal and discounted) from the response.

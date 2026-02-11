@@ -40,7 +40,7 @@ class Department(StrEnum):
     ALTERNATIVE = "Alimentation alternative"
 
     @classmethod
-    def _missing_(cls, value):
+    def _missing_(cls, value: str) -> str | None:
         """
         Invoked when the value is not found in the enum. It is used here to
         accept values in a case-insensitive way.
@@ -266,7 +266,7 @@ class IntermarcheProductsSpider(Spider, ProductSpider):
 
     @staticmethod
     def extract_discount_and_prices(
-        response,
+        response: Response,
     ) -> tuple[bool, float, float | None] | None:
         """
         Extracts whether or not the product is discounted and its both prices

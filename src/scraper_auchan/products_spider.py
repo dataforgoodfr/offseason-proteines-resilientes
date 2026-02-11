@@ -49,7 +49,7 @@ class Department(StrEnum):
     VIANDES = "Boucherie, volaille, poissonnerie"  # cn02
 
     @classmethod
-    def _missing_(cls, value):
+    def _missing_(cls, value: str) -> str | None:
         """
         Invoked when the value is not found in the enum. It is used here to
         accept values in a case-insensitive way.

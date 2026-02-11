@@ -42,7 +42,7 @@ class Department(StrEnum):
     VIANDES = "Viandes, poissons"
 
     @classmethod
-    def _missing_(cls, value):
+    def _missing_(cls, value: str) -> str | None:
         """
         Invoked when the value is not found in the enum. It is used here to
         accept values in a case-insensitive way.
@@ -208,7 +208,7 @@ class SuperUProductsSpider(Spider, ProductSpider):
 
     @staticmethod
     def extract_discount_and_prices(
-        response,
+        response: Response,
     ) -> tuple[bool, float, float | None] | None:
         """
         Extracts whether or not the product is discounted and its both prices
@@ -246,7 +246,7 @@ class SuperUProductsSpider(Spider, ProductSpider):
             current_price if is_discounted else None,
         )
 
-    def get_quantity(self, response) -> tuple[float, QuantityUnit] | None:
+    def get_quantity(self, response: Response) -> tuple[float, QuantityUnit] | None:
         poids_net = response.xpath(
             '//p[@class="pdp-description-text"]/text()'
         ).re_first(r"Poids net: (.+)")
