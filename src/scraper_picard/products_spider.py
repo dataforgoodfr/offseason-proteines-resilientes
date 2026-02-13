@@ -230,7 +230,7 @@ class PicardProductsSpider(Spider, ProductSpider):
         ).get()
         raw_quantity_unit = w.split().pop(-1)
         raw_quantity = w.split().pop(-2)
-        quantity = float(raw_quantity)
+        quantity = float(raw_quantity.replace(",", "."))
 
         match raw_quantity_unit.lower():
             case "kg":
