@@ -72,12 +72,22 @@ class BiocoopProductsSpider(Spider, ProductSpider):
 
         url = f"https://www.biocoop.fr/magasin-biocoop_biocite/catalogsearch/result/?q={query}&p=1"
 
-        yield Request(url=url, callback=self.parse)
+        yield Request(
+            url=url,
+            callback=self.parse,
+            meta={
+                "handle_httpstatus_list": [302],
+            },
+            dont_filter=True,
+        )
 
     def parse(self, response: Response):
-        product_links = response.xpath(
-            "//div[@class='product-item-info']/a/@href"
-        ).getall()
+        if response.status == 302:
+            product_links = [response.url]
+        else:
+            product_links = response.xpath(
+                "//div[@class='product-item-info']/a/@href"
+            ).getall()
         yield from response.follow_all(product_links, callback=self.parse_product)
 
         next_page_url = response.css("a.next-page ::attr(data-href)").get()
