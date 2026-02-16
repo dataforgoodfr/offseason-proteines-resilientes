@@ -136,11 +136,10 @@ class BiocoopProductsSpider(Spider, ProductSpider):
         yield item
 
     def is_relevant(self, response: Response) -> bool:
-        breadcrumbs = (
-            response.css("script::text")
-            .re_first(r"'product_category1': '(.+)'")
-            .split("/")
+        breadcrumbs = response.css("script::text").re_first(
+            r"'product_category1': '(.+)'"
         )
+        breadcrumbs = bytes(breadcrumbs, "utf-8").decode("unicode_escape").split("/")
 
         if len(breadcrumbs) == 0:
             self.log("No breadcrumbs detected")
