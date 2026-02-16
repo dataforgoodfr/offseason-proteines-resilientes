@@ -139,6 +139,16 @@ class IntermarcheProductsSpider(Spider, ProductSpider):
             callback=self.parse_product,
         )
 
+        if response.xpath("//body").re_first("hasNextPage.*: ?true}"):
+            self.logger.debug("Next page detected")
+
+            yield Request(
+                url=self.__get_next_page(),
+                cookies=COOKIES,
+                headers=HEADERS,
+                callback=self.parse,
+            )
+
     def parse_product(self, response: Response) -> Generator[ProductItem]:
         item = ProductItem()
 
