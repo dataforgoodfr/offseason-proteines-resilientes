@@ -108,7 +108,7 @@ class AuchanProductsSpider(Spider, ProductSpider):
         next_button = response.css("a.pagination-adjacent__link span.next").get()
 
         if next_button is not None:
-            self.log(f"Next button detected: {next_button}")
+            self.logger.debug(f"Next button detected: {next_button}")
 
             yield from response.follow_all(
                 css="a.pagination-adjacent__link::attr(href)", callback=self.parse
@@ -118,7 +118,7 @@ class AuchanProductsSpider(Spider, ProductSpider):
         item = ProductItem()
 
         if not self.is_relevant(response):
-            self.log("Product is irrelevant. Skipping...")
+            self.logger.info("Product is irrelevant. Skipping...")
             return
 
         item["name"] = self.get_name(response)
@@ -129,7 +129,7 @@ class AuchanProductsSpider(Spider, ProductSpider):
         eans = self.get_ean13s(response)
 
         if eans is None:
-            self.log("No EAN found. Skipping...")
+            self.logger.info("No EAN found. Skipping...")
             return
 
         item["eans"] = eans
@@ -148,7 +148,7 @@ class AuchanProductsSpider(Spider, ProductSpider):
         quantity, quantity_unit = self.get_quantity(response) or (None, None)
 
         if quantity is None:
-            self.log(f"Product {item['eans'][0]} has no quantity. Skipping...")
+            self.logger.info(f"Product {item['eans'][0]} has no quantity. Skipping...")
             return
 
         item["quantity"] = quantity
@@ -162,16 +162,16 @@ class AuchanProductsSpider(Spider, ProductSpider):
         ).getall()
 
         if len(breadcrumbs) == 0:
-            self.log("No breadcrumbs detected")
+            self.logger.info("No breadcrumbs detected")
             return False
 
-        self.log(f"Breadcrumbs on the page: {breadcrumbs}")
+        self.logger.info(f"Breadcrumbs on the page: {breadcrumbs}")
 
         try:
             main_department = breadcrumbs[1]
             main_department = Department(main_department)
         except ValueError:
-            self.log(
+            self.logger.info(
                 f"Main store department {main_department} is irrelevant. Skipping..."
             )
             return False
@@ -181,7 +181,9 @@ class AuchanProductsSpider(Spider, ProductSpider):
         ]
 
         if any_exclusion:
-            self.log(f"Hit excluded store departments: {any_exclusion}. Skipping...")
+            self.logger.info(
+                f"Hit excluded store departments: {any_exclusion}. Skipping..."
+            )
             return False
 
         return True

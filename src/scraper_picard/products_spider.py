@@ -88,7 +88,7 @@ class PicardProductsSpider(Spider, ProductSpider):
         next_page_url = response.css('[rel="next"] ::attr(href)').get()
 
         if next_page_url is not None:
-            self.log(f"Next page detected: {next_page_url}")
+            self.logger.debug(f"Next page detected: {next_page_url}")
             yield Request(
                 url=next_page_url,
                 meta={
@@ -102,7 +102,7 @@ class PicardProductsSpider(Spider, ProductSpider):
         item = ProductItem()
 
         if not self.is_relevant(response):
-            self.log("Product is irrelevant. Skipping...")
+            self.logger.info("Product is irrelevant. Skipping...")
             return
 
         item["name"] = self.get_name(response)
@@ -123,7 +123,7 @@ class PicardProductsSpider(Spider, ProductSpider):
         quantity, quantity_unit = self.get_quantity(response) or (None, None)
 
         if quantity is None:
-            self.log(f"Product {item['ean']} has no quantity. Skipping...")
+            self.logger.info(f"Product {item['ean']} has no quantity. Skipping...")
             return
 
         item["quantity"] = quantity
@@ -142,16 +142,16 @@ class PicardProductsSpider(Spider, ProductSpider):
         breadcrumbs = [item["name"] for item in itemlist["itemListElement"]]
 
         if len(breadcrumbs) == 0:
-            self.log("No breadcrumbs detected")
+            self.logger.info("No breadcrumbs detected")
             return False
 
-        self.log(f"Breadcrumbs on the page: {breadcrumbs}")
+        self.logger.info(f"Breadcrumbs on the page: {breadcrumbs}")
 
         try:
             main_department = breadcrumbs[2]
             main_department = Department(main_department)
         except ValueError:
-            self.log(
+            self.logger.info(
                 f"Main store department {main_department} is irrelevant. Skipping..."
             )
             return False
@@ -161,7 +161,9 @@ class PicardProductsSpider(Spider, ProductSpider):
         ]
 
         if any_exclusion:
-            self.log(f"Hit excluded store departments: {any_exclusion}. Skipping...")
+            self.logger.info(
+                f"Hit excluded store departments: {any_exclusion}. Skipping..."
+            )
             return False
 
         return True

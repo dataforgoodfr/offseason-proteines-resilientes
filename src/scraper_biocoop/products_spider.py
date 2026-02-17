@@ -93,7 +93,7 @@ class BiocoopProductsSpider(Spider, ProductSpider):
         next_page_url = response.css("a.next-page ::attr(data-href)").get()
 
         if next_page_url is not None:
-            self.log(f"Next button detected: {next_page_url}")
+            self.logger.debug(f"Next button detected: {next_page_url}")
 
             yield response.follow(next_page_url, callback=self.parse)
 
@@ -101,13 +101,13 @@ class BiocoopProductsSpider(Spider, ProductSpider):
         item = ProductItem()
 
         if not self.is_relevant(response):
-            self.log("Product is irrelevant. Skipping...")
+            self.logger.info("Product is irrelevant. Skipping...")
             return
 
         ean = self.get_ean13(response)
 
         if ean is None:
-            self.log("No EAN-13 found. Skipping...")
+            self.logger.info("No EAN-13 found. Skipping...")
             return
 
         item["ean"] = ean
@@ -127,7 +127,7 @@ class BiocoopProductsSpider(Spider, ProductSpider):
         quantity, quantity_unit = self.get_quantity(response) or (None, None)
 
         if quantity is None:
-            self.log(f"Product {ean} has no quantity. Skipping...")
+            self.logger.info(f"Product {ean} has no quantity. Skipping...")
             return
 
         item["quantity"] = quantity
@@ -142,16 +142,16 @@ class BiocoopProductsSpider(Spider, ProductSpider):
         breadcrumbs = bytes(breadcrumbs, "utf-8").decode("unicode_escape").split("/")
 
         if len(breadcrumbs) == 0:
-            self.log("No breadcrumbs detected")
+            self.logger.info("No breadcrumbs detected")
             return False
 
-        self.log(f"Breadcrumbs on the page: {breadcrumbs}")
+        self.logger.info(f"Breadcrumbs on the page: {breadcrumbs}")
 
         try:
             main_department = breadcrumbs[0]
             main_department = Department(main_department)
         except ValueError:
-            self.log(
+            self.logger.info(
                 f"Main store department {main_department} is irrelevant. Skipping..."
             )
             return False
@@ -161,7 +161,9 @@ class BiocoopProductsSpider(Spider, ProductSpider):
         ]
 
         if any_exclusion:
-            self.log(f"Hit excluded store departments: {any_exclusion}. Skipping...")
+            self.logger.info(
+                f"Hit excluded store departments: {any_exclusion}. Skipping..."
+            )
             return False
 
         return True

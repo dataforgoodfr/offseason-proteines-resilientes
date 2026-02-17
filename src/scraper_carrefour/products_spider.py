@@ -113,7 +113,7 @@ class CarrefourProductsSpider(Spider, ProductSpider):
         ).get()
 
         if next_button is not None:
-            self.log("Next button detected")
+            self.logger.debug("Next button detected")
 
             yield Request(
                 url=self.__get_next_page(),
@@ -128,7 +128,7 @@ class CarrefourProductsSpider(Spider, ProductSpider):
         item = ProductItem()
 
         if not self.is_relevant(response):
-            self.log("Product is irrelevant. Skipping...")
+            self.logger.info("Product is irrelevant. Skipping...")
             return
 
         item["name"] = self.get_name(response)
@@ -152,13 +152,13 @@ class CarrefourProductsSpider(Spider, ProductSpider):
         quantity, quantity_unit = self.get_quantity(response) or (None, None)
 
         if quantity is None:
-            self.log(f"Product {item['ean']} has no quantity. Skipping...")
+            self.logger.info(f"Product {item['ean']} has no quantity. Skipping...")
             return
 
         item["quantity"] = quantity
         item["quantity_unit"] = quantity_unit
 
-        self.log(f"Product cache info: {self.__get_product_info.cache_info()}")
+        self.logger.debug(f"Product cache info: {self.__get_product_info.cache_info()}")
 
         yield item
 
@@ -171,16 +171,16 @@ class CarrefourProductsSpider(Spider, ProductSpider):
         ]
 
         if len(breadcrumbs) == 0:
-            self.log("No breadcrumbs detected")
+            self.logger.info("No breadcrumbs detected")
             return False
 
-        self.log(f"Breadcrumbs on the page: {breadcrumbs}")
+        self.logger.info(f"Breadcrumbs on the page: {breadcrumbs}")
 
         try:
             main_department = breadcrumbs[1]
             main_department = Department(main_department)
         except ValueError:
-            self.log(
+            self.logger.info(
                 f"Main store department {main_department} is irrelevant. Skipping..."
             )
             return False
@@ -190,7 +190,9 @@ class CarrefourProductsSpider(Spider, ProductSpider):
         ]
 
         if any_exclusion:
-            self.log(f"Hit excluded store departments: {any_exclusion}. Skipping...")
+            self.logger.info(
+                f"Hit excluded store departments: {any_exclusion}. Skipping..."
+            )
             return False
 
         return True
