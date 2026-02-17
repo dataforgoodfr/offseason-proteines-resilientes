@@ -20,7 +20,7 @@ class ProductPipeline(RDBMSPipelineMixin):
     Scrapy pipeline used to store items into a RDBMS via SQLAlchemy.
     """
 
-    def process_item(self, item: Item, spider: Spider):
+    def process_item(self, item: Item, spider: Spider) -> Item:
         logger = getLogger(__name__)
 
         if isinstance(item, ProductItem):
