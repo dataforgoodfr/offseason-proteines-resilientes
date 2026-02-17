@@ -110,6 +110,8 @@ class IntermarcheProductsSpider(Spider, ProductSpider):
         self.current_page += 1
         self.url = f"https://www.intermarche.com/recherche/{self.query}?page={self.current_page}"
 
+        self.logger.debug(f"Next page set to {self.current_page}")
+
         return self.url
 
     async def start(self):

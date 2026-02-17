@@ -81,6 +81,8 @@ class SuperUProductsSpider(Spider, ProductSpider):
         self.current_page += 1
         self.url = f"https://www.coursesu.com/recherche?q={self.query}&page={self.current_page}"
 
+        self.logger.debug(f"Next page set to {self.current_page}")
+
         return self.url
 
     async def start(self):
