@@ -15,6 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
+pr-editor = "data_editor.cli:main"
 pr-offdc = "off_data_collector.cli:main"
 pr-scraper-auchan = "scraper_auchan.cli:main"
 pr-scraper-biocoop = "scraper_biocoop.cli:main"
