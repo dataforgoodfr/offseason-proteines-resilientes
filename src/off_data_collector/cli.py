@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from logging import DEBUG, INFO, Formatter, Logger, StreamHandler, getLogger
+from logging import DEBUG, INFO, getLogger
 from pathlib import Path
 
 from openfoodfacts import API as off_api
@@ -13,6 +13,7 @@ from models.nutrition_facts import NovaScore, NutriScore, NutritionFacts
 from models.product import Product
 from models.source import Origin, Source
 from utils.database import DEFAULT_DATABASE_URL
+from utils.logger import set_up_root_logger
 
 from .api import FIELDS
 
@@ -74,24 +75,6 @@ def __get_arg_parser() -> ArgumentParser:
     return arg_parser
 
 
-def __set_up_root_logger(level=INFO) -> Logger:
-    """
-    Sets up the root logger.
-    """
-
-    root_logger = getLogger("")
-    root_logger.setLevel(level)
-
-    console = StreamHandler()
-
-    console_formatter = Formatter("%(name)-12s: %(levelname)-8s %(message)s")
-    console.setFormatter(console_formatter)
-
-    root_logger.addHandler(console)
-
-    return root_logger
-
-
 def main() -> None:
     """
     Entry point of the OpenFoodFacts Data Collector command-line tool.
@@ -100,7 +83,7 @@ def main() -> None:
     args = __get_arg_parser().parse_args()
 
     log_level = DEBUG if args.debug else INFO
-    __set_up_root_logger(level=log_level)
+    set_up_root_logger(level=log_level)
 
     logger = getLogger(__name__)
     logger.info("Program started")
