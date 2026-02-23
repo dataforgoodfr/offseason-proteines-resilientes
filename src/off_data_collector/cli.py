@@ -4,6 +4,7 @@ from pathlib import Path
 
 from openfoodfacts import API as off_api
 from openfoodfacts.types import JSONType
+from requests.exceptions import HTTPError, ReadTimeout
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
@@ -161,7 +162,14 @@ def main() -> None:
                     logger.debug(f"Product with reference ID '{reference}' is disabled")
                     continue
 
-                data = __fetch_product_data(api_client, reference)
+                try:
+                    data = __fetch_product_data(api_client, reference)
+                except (HTTPError, ReadTimeout) as err:
+                    logger.error(
+                        f"Reference {reference} skipped due to an error: {err}"
+                    )
+                finally:
+                    continue
 
                 if data is None:
                     continue
