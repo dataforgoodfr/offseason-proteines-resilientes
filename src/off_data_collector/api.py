@@ -3,6 +3,8 @@ FIELDS = [
     # General
     "product_name",
     "brands",
+    "product_quantity",
+    "product_quantity_unit",
     # Nutrition Facts
     "nutrition_grade_fr",
     "nova_group",

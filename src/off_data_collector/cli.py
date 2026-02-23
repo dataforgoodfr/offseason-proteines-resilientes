@@ -10,12 +10,13 @@ from sqlalchemy.orm import Session
 from models.base import Base
 from models.environmental_facts import EnvironmentalFacts, GreenScore
 from models.nutrition_facts import NovaScore, NutriScore, NutritionFacts
-from models.product import Product
+from models.product import Product, QuantityUnit
 from models.source import Origin, Source
 from utils.database import DEFAULT_DATABASE_URL
 from utils.logger import set_up_root_logger
 
 from .api import FIELDS
+from .exceptions import InvalidUnitError
 
 # The country code used to restrict OpenFoodFacts results to that specific
 # country.
@@ -137,7 +138,11 @@ def main() -> None:
                 if data is None:
                     continue
 
-                new_product = __create_new_product(reference, data)
+                try:
+                    new_product = __create_new_product(reference, data)
+                except InvalidUnitError as err:
+                    logger.error(err)
+                    continue
 
                 session.add(new_product)
                 session.commit()
@@ -196,12 +201,35 @@ def __create_new_product(reference: str, data: JSONType) -> Product:
     Returns a new Product object based on the data fetched from OpenFoodFacts.
     """
 
+    quantity, quantity_unit = __normalise_quantity(
+        data["product_quantity"], data["product_quantity_unit"]
+    )
+
     return Product(
         ean_13=reference,
         name=data["product_name"],
         brand=data["brands"] if data.get("brands") else None,
+        quantity=quantity,
+        quantity_unit=quantity_unit,
         sources=[__create_new_source(reference, data)],
     )
+
+
+def __normalise_quantity(quantity: str, unit: str) -> tuple[float, QuantityUnit]:
+    """
+    Normalises the fields "quantity" and "product_quantity_unit" returned by the
+    Open Food Facts API.
+    """
+
+    match unit:
+        case "g":
+            return (float(quantity) / 1000, QuantityUnit.KILOGRAM)
+        case "ml":
+            return (float(quantity) / 1000, QuantityUnit.LITRE)
+        case _:
+            raise InvalidUnitError(
+                f"Open Food Facts API returned an unexpected quantity unit: {unit}"
+            )
 
 
 def __update_product(product: Product, reference: str, data: JSONType) -> None:
