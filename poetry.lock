@@ -1261,6 +1261,18 @@ files = [
 ]
 
 [[package]]
+name = "pyrate-limiter"
+version = "4.0.2"
+description = "Python Rate-Limiter using Leaky-Bucket Algorithm"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+files = [
+    {file = "pyrate_limiter-4.0.2-py3-none-any.whl", hash = "sha256:35ec42b9bb9cfabcafab14d0c5c6523f48378c3da2949e534ce3cbdfea71eadd"},
+    {file = "pyrate_limiter-4.0.2.tar.gz", hash = "sha256:b678841e2215f114ef6f98c7093755ca3b466de83cb5a881231fd6e321fa14b5"},
+]
+
+[[package]]
 name = "queuelib"
 version = "1.8.0"
 description = "Collection of persistent (disk-based) and non-persistent (memory-based) queues"
@@ -1731,4 +1743,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11, <4.0"
-content-hash = "349497379e1f8ffe7781d7050b34e2adc41324526202a9a95543b376ab49ac31"
+content-hash = "0e77df1ad3469558e008e2ff8f5a7120b9ed782bfc77fcbac65771aed951f15d"

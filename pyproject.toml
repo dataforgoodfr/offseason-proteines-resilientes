@@ -11,6 +11,7 @@ dependencies = [
   "scrapy (>=2.13.3,<3.0.0)",
   "scrapy-playwright (>=0.0.44,<0.0.45)",
   "scrapy-impersonate (>=1.6.1,<2.0.0)",
+  "pyrate-limiter (>=4.0.2,<5.0.0)",
 ]
 
 [project.scripts]

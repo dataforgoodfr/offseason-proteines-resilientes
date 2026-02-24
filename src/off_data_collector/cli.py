@@ -1,9 +1,11 @@
+import asyncio
 from argparse import ArgumentParser
 from logging import DEBUG, INFO, getLogger
 from pathlib import Path
 
 from openfoodfacts import API as off_api
 from openfoodfacts.types import JSONType
+from pyrate_limiter import Duration, limiter_factory
 from requests.exceptions import HTTPError, ReadTimeout
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
@@ -25,6 +27,11 @@ OPENFOODFACTS_COUNTRY = "fr"
 
 # The user agent used by the OpenFoodFacts REST API client.
 OPENFOODFACTS_USER_AGENT = "OFFPRDC/0.1"
+
+# Request rate limiter.
+LIMITER = limiter_factory.create_inmemory_limiter(
+    rate_per_duration=10, duration=Duration.MINUTE
+)
 
 
 def __get_arg_parser() -> ArgumentParser:
@@ -77,9 +84,9 @@ def __get_arg_parser() -> ArgumentParser:
     return arg_parser
 
 
-def main() -> None:
+async def __run() -> None:
     """
-    Entry point of the OpenFoodFacts Data Collector command-line tool.
+    Async entry point of the Open Food Facts Data Collector command-line tool.
     """
 
     args = __get_arg_parser().parse_args()
@@ -134,7 +141,7 @@ def main() -> None:
 
             # If the product does not already exist in the database.
             if products.count() == 0:
-                data = __fetch_product_data(api_client, reference)
+                data = await __fetch_product_data(api_client, reference)
 
                 if data is None:
                     continue
@@ -163,7 +170,7 @@ def main() -> None:
                     continue
 
                 try:
-                    data = __fetch_product_data(api_client, reference)
+                    data = await __fetch_product_data(api_client, reference)
                 except (HTTPError, ReadTimeout) as err:
                     logger.error(
                         f"Reference {reference} skipped due to an error: {err}"
@@ -181,7 +188,8 @@ def main() -> None:
     logger.info("Program ended")
 
 
-def __fetch_product_data(
+@LIMITER.as_decorator(name="fetch_product", weight=1)
+async def __fetch_product_data(
     api_client: off_api, reference: str, data_fields: list[str] = FIELDS
 ) -> JSONType | None:
     """
@@ -317,3 +325,11 @@ def __create_new_source(reference: str, data: JSONType) -> Source:
         ),
         environmental_facts=environmental_facts,
     )
+
+
+def main() -> None:
+    """
+    Entry point of the Open Food Facts Data Collector command-line tool.
+    """
+
+    asyncio.run(__run())
