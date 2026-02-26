@@ -102,6 +102,7 @@ async def __run() -> None:
     Base.metadata.create_all(engine)
 
     references = []
+    progress_counter = 0
 
     # Whether product references ("EAN") are passed by positional arguments or
     # via a text file.
@@ -121,7 +122,8 @@ async def __run() -> None:
         with Session(engine) as session:
             references += session.execute(select(Product.ean_13)).scalars().all()
 
-    logger.info(f"Processing {len(references)} references")
+    total_references = len(references)
+    logger.info(f"Processing {total_references} references")
 
     logger.debug("Setting up OpenFoodFacts REST API client")
     api_client = off_api(
@@ -134,7 +136,10 @@ async def __run() -> None:
         if reference == "" or reference.startswith("#"):
             continue
 
-        logger.debug(f"Processing reference ID '{reference}'")
+        progress_counter += 1
+        logger.debug(
+            f"Processing reference ID '{reference}' ({progress_counter}/{total_references})"
+        )
 
         with Session(engine) as session:
             products = session.query(Product).filter(Product.ean_13 == reference)
