@@ -28,6 +28,11 @@ class TestQuantityUnit(unittest.TestCase):
         self.assertIsInstance(quantity_unit, QuantityUnit)
         self.assertIs(quantity_unit, QuantityUnit.LITRE)
 
+        quantity_unit = QuantityUnit("p")
+
+        self.assertIsInstance(quantity_unit, QuantityUnit)
+        self.assertIs(quantity_unit, QuantityUnit.PIECE)
+
         with self.assertRaises(ValueError):
             quantity_unit = QuantityUnit("XYZ")
 

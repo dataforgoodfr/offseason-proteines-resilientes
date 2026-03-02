@@ -108,7 +108,10 @@ class IntermarcheProductsSpider(Spider, ProductSpider):
         """
 
         self.current_page += 1
-        self.url = f"https://www.intermarche.com/recherche/{self.query}?page={self.current_page}"
+        if self.get_category() == "Œufs":
+            self.url = f"https://www.intermarche.com/rayons/fromages-cremerie-et-oeufs/oeufs/16773?page={self.current_page}"
+        else:
+            self.url = f"https://www.intermarche.com/recherche/{self.query}?page={self.current_page}"
 
         self.logger.debug(f"Next page set to {self.current_page}")
 
@@ -328,7 +331,7 @@ class IntermarcheProductsSpider(Spider, ProductSpider):
         ).get()
 
         m = re.match(
-            "(.+) ([.0-9]+) ?(ml|cl|L|kg|g)",
+            "(.+) ([.0-9]+) ?(ml|cl|L|kg|g)?",
             packaging,
             re.IGNORECASE,
         )
@@ -344,20 +347,23 @@ class IntermarcheProductsSpider(Spider, ProductSpider):
 
         quantity = float(raw_quantity.replace(",", "."))
 
-        match raw_quantity_unit.lower():
-            case "kg":
-                quantity_unit = QuantityUnit.KILOGRAM
-            case "g":
-                quantity = quantity / 1000
-                quantity_unit = QuantityUnit.KILOGRAM
-            case "l":
-                quantity_unit = QuantityUnit.LITRE
-            case "cl":
-                quantity = quantity / 100
-                quantity_unit = QuantityUnit.LITRE
-            case "ml":
-                quantity = quantity / 1000
-                quantity_unit = QuantityUnit.LITRE
+        if raw_quantity_unit is None:
+            quantity_unit = QuantityUnit.PIECE
+        else:
+            match raw_quantity_unit.lower():
+                case "kg":
+                    quantity_unit = QuantityUnit.KILOGRAM
+                case "g":
+                    quantity = quantity / 1000
+                    quantity_unit = QuantityUnit.KILOGRAM
+                case "l":
+                    quantity_unit = QuantityUnit.LITRE
+                case "cl":
+                    quantity = quantity / 100
+                    quantity_unit = QuantityUnit.LITRE
+                case "ml":
+                    quantity = quantity / 1000
+                    quantity_unit = QuantityUnit.LITRE
 
         # check if packaging text contains total: Les 2 briques de 30cl - 60cl
         # sometimes not: les 6 briques de 1 l

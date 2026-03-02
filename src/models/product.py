@@ -17,11 +17,12 @@ class QuantityUnit(StrEnum):
     """
     Unit of the quantity of food product contained in a product packaging.
 
-    The unit represents eigher a weight or a volume.
+    The unit represents eigher a weight, a volume, or pieces (i.e. eggs).
     """
 
     KILOGRAM = "kg"
     LITRE = "L"
+    PIECE = "p"
 
     @classmethod
     def _missing_(cls, value):

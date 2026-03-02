@@ -70,7 +70,10 @@ class BiocoopProductsSpider(Spider, ProductSpider):
         if query is None:
             raise AttributeError("Missing 'query' argument")
 
-        url = f"https://www.biocoop.fr/magasin-biocoop_biocite/catalogsearch/result/?q={query}&p=1"
+        if self.get_category() == "Œufs":
+            url = "https://www.biocoop.fr/magasin-biocoop_biocite/cremerie/oeufs-beurres-cremes/oeufs.html"
+        else:
+            url = f"https://www.biocoop.fr/magasin-biocoop_biocite/catalogsearch/result/?q={query}&p=1"
 
         yield Request(
             url=url,
@@ -242,7 +245,7 @@ class BiocoopProductsSpider(Spider, ProductSpider):
 
             if quantity_attribute is not None:
                 m = re.match(
-                    "([.0-9]+) ?(cl|ml|L|kg|g)", quantity_attribute, re.IGNORECASE
+                    "([.0-9]+) ?(cl|ml|L|kg|g|u)", quantity_attribute, re.IGNORECASE
                 )
 
                 if m is not None:
@@ -263,6 +266,8 @@ class BiocoopProductsSpider(Spider, ProductSpider):
                         case "ml":
                             quantity = quantity / 1000
                             quantity_unit = QuantityUnit.LITRE
+                        case "u":
+                            quantity_unit = QuantityUnit.PIECE
                         case _:
                             return
 
