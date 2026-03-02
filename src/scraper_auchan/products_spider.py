@@ -176,6 +176,9 @@ class AuchanProductsSpider(Spider, ProductSpider):
             )
             return False
 
+        if (self.get_category() == "Œufs") and (breadcrumbs[3] == "Oeufs"):
+            return True
+
         any_exclusion = [
             s for excl in EXCLUSION_LIST for s in breadcrumbs if excl in s.lower()
         ]
