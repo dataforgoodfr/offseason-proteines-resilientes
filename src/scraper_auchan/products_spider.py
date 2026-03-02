@@ -85,17 +85,20 @@ class AuchanProductsSpider(Spider, ProductSpider):
         if journey_id is None:
             raise AttributeError("Missing 'journey_id' argument")
 
-        url = (
-            f"https://www.auchan.fr/recherche?text={query}&page=1"
-            "&categorylevel1=produits20laitiers2c20oeufs2c20fromages"
-            "&categorylevel1=boucherie2c20volaille2c20poissonnerie"
-            "&categorylevel1=fruits2c20le9gumes"
-            "&categorylevel1=fruits2c20le9gumes"
-            "&categorylevel1=surgele9s"
-            "&categorylevel1=epicerie20sucre9e"
-            "&categorylevel1=epicerie20sale9e"
-            "&categorylevel1=charcuterie2c20traiteur"
-        )
+        if self.get_category() == "Œufs":
+            url = "https://www.auchan.fr/oeufs-produits-laitiers/cremerie-oeufs-laits/oeufs/ca-n010103?page=1"
+        else:
+            url = (
+                f"https://www.auchan.fr/recherche?text={query}&page=1"
+                "&categorylevel1=produits20laitiers2c20oeufs2c20fromages"
+                "&categorylevel1=boucherie2c20volaille2c20poissonnerie"
+                "&categorylevel1=fruits2c20le9gumes"
+                "&categorylevel1=fruits2c20le9gumes"
+                "&categorylevel1=surgele9s"
+                "&categorylevel1=epicerie20sucre9e"
+                "&categorylevel1=epicerie20sale9e"
+                "&categorylevel1=charcuterie2c20traiteur"
+            )
 
         yield Request(
             url=url, cookies={JOURNEY_COOKIE_NAME: journey_id}, callback=self.parse
@@ -276,7 +279,7 @@ class AuchanProductsSpider(Spider, ProductSpider):
 
         for product_attribute in product_attributes:
             m = match(
-                "Contenance : (\\d+x)?([.,0-9]+) ?(ml|cl|L|kg|g)",
+                "Contenance : (\\d+x)?([.,0-9]+) ?(ml|cl|L|kg|g|pièces)",
                 product_attribute.attrib["aria-label"],
                 IGNORECASE,
             )
@@ -300,6 +303,8 @@ class AuchanProductsSpider(Spider, ProductSpider):
                     case "ml":
                         quantity = quantity / 1000
                         quantity_unit = QuantityUnit.LITRE
+                    case "pièces":
+                        quantity_unit = QuantityUnit.PIECE
                     case _:
                         return
 

@@ -77,7 +77,14 @@ class CarrefourProductsSpider(Spider, ProductSpider):
         """
 
         self.current_page += 1
-        self.url = f"https://www.carrefour.fr/s?q={self.query}&page={self.current_page}"
+        if self.get_category() == "Œufs":
+            self.url = (
+                f"https://www.carrefour.fr/r/cremerie/oeufs?page={self.current_page}"
+            )
+        else:
+            self.url = (
+                f"https://www.carrefour.fr/s?q={self.query}&page={self.current_page}"
+            )
 
         self.logger.debug(f"Next page set to {self.current_page}")
 
@@ -245,7 +252,7 @@ class CarrefourProductsSpider(Spider, ProductSpider):
         product_info = self.__get_product_info(response)
         raw_quantity = product_info["description"]
 
-        m = re.match("(.+) ([.0-9]+) ?(ml|cl|L|kg|g)", raw_quantity, re.IGNORECASE)
+        m = re.match("(.+) ([.0-9]+) ?(ml|cl|L|kg|g)?", raw_quantity, re.IGNORECASE)
 
         if m is None:
             return
@@ -256,20 +263,23 @@ class CarrefourProductsSpider(Spider, ProductSpider):
 
         quantity = float(raw_quantity.replace(",", "."))
 
-        match raw_quantity_unit.lower():
-            case "g":
-                quantity = quantity / 1000
-                quantity_unit = QuantityUnit.KILOGRAM
-            case "l":
-                quantity_unit = QuantityUnit.LITRE
-            case "cl":
-                quantity = quantity / 100
-                quantity_unit = QuantityUnit.LITRE
-            case "ml":
-                quantity = quantity / 1000
-                quantity_unit = QuantityUnit.LITRE
-            case _:
-                return
+        if raw_quantity_unit is None:
+            quantity_unit = QuantityUnit.PIECE
+        else:
+            match raw_quantity_unit.lower():
+                case "g":
+                    quantity = quantity / 1000
+                    quantity_unit = QuantityUnit.KILOGRAM
+                case "l":
+                    quantity_unit = QuantityUnit.LITRE
+                case "cl":
+                    quantity = quantity / 100
+                    quantity_unit = QuantityUnit.LITRE
+                case "ml":
+                    quantity = quantity / 1000
+                    quantity_unit = QuantityUnit.LITRE
+                case _:
+                    return
 
         is_coef = filter(str.isdigit, multiplier)
 
