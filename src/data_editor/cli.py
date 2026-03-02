@@ -6,6 +6,7 @@ from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session
 
 from models.base import Base
+from models.category import Category, CategoryValues
 from models.product import Product
 from utils.database import DEFAULT_DATABASE_URL
 from utils.logger import set_up_root_logger
@@ -82,6 +83,23 @@ def __get_arg_parser() -> ArgumentParser:
     )
     disable_subparser.set_defaults(func=__toggle_product_status)
 
+    # ------------------------------ #
+    # Command 'category'
+    # ------------------------------ #
+
+    category_subparser = subparsers.add_parser(
+        "category",
+        parents=[ref_options_parser],
+        help="Update product category",
+    )
+    category_subparser.add_argument(
+        "--category",
+        required=True,
+        type=CategoryValues,
+        help="The category the scraped product should be assigned to",
+    )
+    category_subparser.set_defaults(func=__update_product_category)
+
     return root_parser
 
 
@@ -132,7 +150,54 @@ def __toggle_product_status(
     logger.info(f"Updated: {updated} / Unchanged: {unchanged} / Not found: {not_found}")
 
 
-def __get_references(args: Namespace) -> tuple[str]:
+def __update_product_category(
+    args: Namespace, engine: Engine, references: tuple[str]
+) -> None:
+    """
+    Updates the category of the references given as parameter.
+    """
+
+    logger = getLogger(__name__)
+    logger.info(f"Processing {len(references)} references")
+
+    updated = 0
+    unchanged = 0
+    not_found = 0
+
+    for reference in references:
+        # To take into account potential newlines or comments when read from a
+        # text file.
+        if reference == "" or reference.startswith("#"):
+            continue
+
+        logger.debug(f"Processing reference ID '{reference}'")
+
+        with Session(engine) as session:
+            products = session.query(Product).filter(Product.ean_13 == reference)
+
+            category = (
+                session.query(Category).where(Category.name == args.category).one()
+            )
+
+            # If the product does not already exist in the database.
+            if products.count() == 0:
+                logger.debug(f"Product {reference} not found in database")
+                not_found += 1
+
+            else:
+                product = products.one()
+
+                if product.category == category:
+                    unchanged += 1
+                else:
+                    product.category = category
+                    updated += 1
+                    session.commit()
+
+    logger.info(f"Updated: {updated} / Unchanged: {unchanged} / Not found: {not_found}")
+
+
+def __get_references(args) -> tuple[str]:
     logger = getLogger(__name__)
 
     references = []
