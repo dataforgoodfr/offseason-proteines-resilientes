@@ -166,7 +166,7 @@ class CarrefourProductsSpider(Spider, ProductSpider):
         breadcrumbs = [
             s.strip()
             for s in response.xpath(
-                "//li[@class='c-breadcrumbs__breadcrumb']/a/text()"
+                "//li[contains(@class, 'c-breadcrumbs__breadcrumb')]/a/text()"
             ).getall()
         ]
 
@@ -184,6 +184,13 @@ class CarrefourProductsSpider(Spider, ProductSpider):
                 f"Main store department {main_department} is irrelevant. Skipping..."
             )
             return False
+
+        if (self.get_category() == "Lait entier") and (breadcrumbs[3] == "Lait entier"):
+            return True
+        elif (self.get_category() == "Lait demi écrémé") and (
+            breadcrumbs[3] == "Lait demi-écrémé"
+        ):
+            return True
 
         any_exclusion = [
             s for excl in EXCLUSION_LIST for s in breadcrumbs if excl in s.lower()
