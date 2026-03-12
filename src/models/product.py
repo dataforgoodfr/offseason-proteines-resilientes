@@ -17,7 +17,7 @@ class QuantityUnit(StrEnum):
     """
     Unit of the quantity of food product contained in a product packaging.
 
-    The unit represents eigher a weight, a volume, or pieces (i.e. eggs).
+    The unit represents either a weight, a volume, or pieces (i.e. eggs).
     """
 
     KILOGRAM = "kg"
