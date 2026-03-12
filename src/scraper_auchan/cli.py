@@ -10,10 +10,6 @@ from utils.spider import BOT_NAME
 
 from .products_spider import AuchanProductsSpider
 
-# The default journey ID sets the location to Auchan Drive Saint-Cyr-Sur-Loire
-# (Tours).
-DEFAULT_JOURNEY_ID = "9ca9e4a5-0d62-4a94-9f92-c7c88e374a7f"
-
 
 def __get_arg_parser() -> ArgumentParser:
     """
@@ -45,7 +41,7 @@ def __get_arg_parser() -> ArgumentParser:
 
     arg_parser.add_argument(
         "--journey-id",
-        default=DEFAULT_JOURNEY_ID,
+        required=True,
         help="The journey ID to send as cookie",
     )
 
