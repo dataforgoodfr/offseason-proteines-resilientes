@@ -180,8 +180,6 @@ async def __run() -> None:
                     logger.error(
                         f"Reference {reference} skipped due to an error: {err}"
                     )
-                finally:
-                    continue
 
                 if data is None:
                     continue
