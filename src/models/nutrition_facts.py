@@ -97,7 +97,7 @@ class NutritionFacts(Base):
     nutriscore: Mapped[Optional[NutriScore]]
     novascore: Mapped[Optional[NovaScore]]
 
-    calories_100g: Mapped[Optional[float]] = mapped_column(Numeric(5, 2))
+    calories_100g: Mapped[Optional[float]] = mapped_column(Numeric(6, 2))
 
     fat_100g: Mapped[Optional[float]] = mapped_column(Numeric(5, 2))
     saturated_fat_100g: Mapped[Optional[float]] = mapped_column(Numeric(5, 2))
