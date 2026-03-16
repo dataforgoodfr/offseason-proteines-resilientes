@@ -309,7 +309,7 @@ def __create_new_source(reference: str, data: JSONType) -> Source:
 
     return Source(
         origin=Origin.OPEN_FOOD_FACTS,
-        url=f"https://world.openfoodfacts.org/product/{reference}/",
+        url=f"https://fr.openfoodfacts.org/product/{reference}/",
         nutrition_facts=NutritionFacts(
             nutriscore=NutriScore(data["nutrition_grade_fr"])
             if data.get("nutrition_grade_fr")
