@@ -153,7 +153,7 @@ async def __run() -> None:
 
                 try:
                     new_product = __create_new_product(reference, data)
-                except InvalidUnitError as err:
+                except (Exception, InvalidUnitError) as err:
                     logger.error(err)
                     continue
 
@@ -180,6 +180,7 @@ async def __run() -> None:
                     logger.error(
                         f"Reference {reference} skipped due to an error: {err}"
                     )
+                    continue
 
                 if data is None:
                     continue
