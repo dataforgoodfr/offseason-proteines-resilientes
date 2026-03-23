@@ -13,7 +13,6 @@ from alembic import op
 
 from models.source import Source
 
-
 # revision identifiers, used by Alembic.
 revision: str = "24c1199c4b3a"
 down_revision: Union[str, Sequence[str], None] = "dffe227f920d"
