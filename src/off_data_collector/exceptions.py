@@ -11,5 +11,5 @@ class OFFDCError(Exception):
 
 class InvalidUnitError(OFFDCError):
     """
-    Thrown when the network interface does not exist.
+    Thrown when a quantity unit is invalid or unknown.
     """
