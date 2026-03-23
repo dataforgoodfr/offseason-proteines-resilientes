@@ -6,7 +6,6 @@ from pathlib import Path
 from openfoodfacts import API as off_api
 from openfoodfacts.types import JSONType
 from pyrate_limiter import Duration, limiter_factory
-from requests.exceptions import HTTPError, ReadTimeout
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
@@ -146,15 +145,23 @@ async def __run() -> None:
 
             # If the product does not already exist in the database.
             if products.count() == 0:
-                data = await __fetch_product_data(api_client, reference)
+                try:
+                    data = await __fetch_product_data(api_client, reference)
+                except Exception as err:
+                    logger.error(
+                        f"Reference {reference} skipped due to an error when fetching the data: {err}"
+                    )
+                    continue
 
                 if data is None:
                     continue
 
                 try:
                     new_product = __create_new_product(reference, data)
-                except (Exception, InvalidUnitError) as err:
-                    logger.error(err)
+                except Exception as err:
+                    logger.error(
+                        f"Reference {reference} skipped due to an error when processing the data: {err}"
+                    )
                     continue
 
                 session.add(new_product)
@@ -176,9 +183,9 @@ async def __run() -> None:
 
                 try:
                     data = await __fetch_product_data(api_client, reference)
-                except (HTTPError, ReadTimeout) as err:
+                except Exception as err:
                     logger.error(
-                        f"Reference {reference} skipped due to an error: {err}"
+                        f"Reference {reference} skipped due to an error when fetching the data: {err}"
                     )
                     continue
 
