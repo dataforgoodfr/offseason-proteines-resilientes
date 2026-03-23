@@ -1,0 +1,54 @@
+"""Update Open Food Facts URL to fr instance
+
+Revision ID: 24c1199c4b3a
+Revises: dffe227f920d
+Create Date: 2026-03-13 11:53:05.724626
+
+"""
+
+from typing import Sequence, Union
+
+import sqlalchemy as sa
+from alembic import op
+
+from models.source import Source
+
+# revision identifiers, used by Alembic.
+revision: str = "24c1199c4b3a"
+down_revision: Union[str, Sequence[str], None] = "dffe227f920d"
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Update existing data."""
+
+    bind = op.get_bind()
+
+    source_table = sa.inspect(Source).local_table
+    sources = bind.execute(sa.select(source_table.c.id, source_table.c.url)).fetchall()
+
+    for id, url in sources:
+        if url.startswith("https://world.openfoodfacts.org"):
+            new_url = url.replace("world", "fr")
+
+            bind.execute(
+                source_table.update().where(source_table.c.id == id).values(url=new_url)
+            )
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+
+    bind = op.get_bind()
+
+    source_table = sa.inspect(Source).local_table
+    sources = bind.execute(sa.select(source_table.c.id, source_table.c.url)).fetchall()
+
+    for id, url in sources:
+        if url.startswith("https://fr.openfoodfacts.org"):
+            new_url = url.replace("fr", "world")
+
+            bind.execute(
+                source_table.update().where(source_table.c.id == id).values(url=new_url)
+            )
