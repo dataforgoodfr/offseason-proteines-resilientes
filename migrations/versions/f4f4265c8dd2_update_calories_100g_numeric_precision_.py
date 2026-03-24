@@ -8,11 +8,10 @@ Create Date: 2026-03-16 12:09:53.643355
 
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 
 from models.nutrition_facts import NutritionFacts
-
 
 # revision identifiers, used by Alembic.
 revision: str = "f4f4265c8dd2"
@@ -29,26 +28,26 @@ def upgrade() -> None:
     # Create the new table with updated precision (NUMERIC(6, 2))
     op.execute("""
         CREATE TABLE nutrition_facts_new (
-            id INTEGER NOT NULL, 
-            nutriscore VARCHAR(1), 
-            novascore VARCHAR(6), 
-            calories_100g NUMERIC(6, 2), 
-            fat_100g NUMERIC(5, 2), 
-            saturated_fat_100g NUMERIC(5, 2), 
-            carbohydrates_100g NUMERIC(5, 2), 
-            sugars_100g NUMERIC(5, 2), 
-            fiber_100g NUMERIC(5, 2), 
-            protein_100g NUMERIC(5, 2), 
-            salt_100g NUMERIC(5, 2), 
-            source_id INTEGER NOT NULL, 
-            PRIMARY KEY(id), 
+            id INTEGER NOT NULL,
+            nutriscore VARCHAR(1),
+            novascore VARCHAR(6),
+            calories_100g NUMERIC(6, 2),
+            fat_100g NUMERIC(5, 2),
+            saturated_fat_100g NUMERIC(5, 2),
+            carbohydrates_100g NUMERIC(5, 2),
+            sugars_100g NUMERIC(5, 2),
+            fiber_100g NUMERIC(5, 2),
+            protein_100g NUMERIC(5, 2),
+            salt_100g NUMERIC(5, 2),
+            source_id INTEGER NOT NULL,
+            PRIMARY KEY(id),
             FOREIGN KEY(source_id) REFERENCES source(id)
         )
     """)
 
     # Copy data from old table to new table
     op.execute("""
-        INSERT INTO nutrition_facts_new 
+        INSERT INTO nutrition_facts_new
         SELECT * FROM nutrition_facts
     """)
 
@@ -77,26 +76,26 @@ def downgrade() -> None:
     # Create the old table structure
     op.execute("""
         CREATE TABLE nutrition_facts_old (
-            id INTEGER NOT NULL, 
-            nutriscore VARCHAR(1), 
-            novascore VARCHAR(6), 
-            calories_100g NUMERIC(5, 2), 
-            fat_100g NUMERIC(5, 2), 
-            saturated_fat_100g NUMERIC(5, 2), 
-            carbohydrates_100g NUMERIC(5, 2), 
-            sugars_100g NUMERIC(5, 2), 
-            fiber_100g NUMERIC(5, 2), 
-            protein_100g NUMERIC(5, 2), 
-            salt_100g NUMERIC(5, 2), 
-            source_id INTEGER NOT NULL, 
-            PRIMARY KEY(id), 
+            id INTEGER NOT NULL,
+            nutriscore VARCHAR(1),
+            novascore VARCHAR(6),
+            calories_100g NUMERIC(5, 2),
+            fat_100g NUMERIC(5, 2),
+            saturated_fat_100g NUMERIC(5, 2),
+            carbohydrates_100g NUMERIC(5, 2),
+            sugars_100g NUMERIC(5, 2),
+            fiber_100g NUMERIC(5, 2),
+            protein_100g NUMERIC(5, 2),
+            salt_100g NUMERIC(5, 2),
+            source_id INTEGER NOT NULL,
+            PRIMARY KEY(id),
             FOREIGN KEY(source_id) REFERENCES source(id)
         )
     """)
 
     # Copy data back
     op.execute("""
-        INSERT INTO nutrition_facts_old 
+        INSERT INTO nutrition_facts_old
         SELECT * FROM nutrition_facts
     """)
 
