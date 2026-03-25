@@ -4,9 +4,6 @@ Integration tests for Alembic migrations.
 These tests ensure that all migrations can be applied and reverted successfully.
 """
 
-import os
-import sys
-import tempfile
 import unittest
 from pathlib import Path
 
@@ -27,91 +24,89 @@ class TestMigrations(unittest.TestCase):
         Sets up a temporary database for testing.
         """
 
-        # Add src to path to import models
         self.project_root = Path(__file__).parent.parent.parent.parent
-        sys.path.insert(0, str(self.project_root / "src"))
 
-        # Create a temporary database file
-        self.temp_db = tempfile.NamedTemporaryFile(suffix=".sqlite", delete=False)
-        self.temp_db.close()
-        self.db_url = f"sqlite:///{self.temp_db.name}"
-
-        # Create engine for inspection
-        self.engine = create_engine(self.db_url)
-
-        # Create base tables manually (without migration-added columns)
-        # This represents the state of the database before any migrations
-        # These schemas reflect the original state before migrations were introduced
-        with self.engine.begin() as conn:
-            conn.execute(
-                sa.text("""
-                CREATE TABLE product (
-                    id INTEGER PRIMARY KEY,
-                    name TEXT,
-                    brand TEXT,
-                    url TEXT UNIQUE
-                )
-            """)
-            )
-            conn.execute(
-                sa.text("""
-                CREATE TABLE source (
-                    id INTEGER PRIMARY KEY,
-                    url TEXT NOT NULL,
-                    seen_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                    product_id INTEGER NOT NULL,
-                    FOREIGN KEY(product_id) REFERENCES product (id) ON DELETE CASCADE
-                )
-            """)
-            )
-            conn.execute(
-                sa.text("""
-                CREATE TABLE price (
-                    id INTEGER PRIMARY KEY,
-                    amount REAL NOT NULL,
-                    date_time TEXT NOT NULL,
-                    source_id INTEGER NOT NULL,
-                    FOREIGN KEY(source_id) REFERENCES source (id) ON DELETE CASCADE
-                )
-            """)
-            )
-            conn.execute(
-                sa.text("""
-                CREATE TABLE nutrition_facts (
-                    id INTEGER PRIMARY KEY,
-                    energy_kcal REAL,
-                    energy_kj REAL,
-                    fat REAL,
-                    saturated_fat REAL,
-                    carbohydrates REAL,
-                    sugars REAL,
-                    fiber REAL,
-                    proteins REAL,
-                    salt REAL,
-                    source_id INTEGER UNIQUE NOT NULL,
-                    FOREIGN KEY(source_id) REFERENCES source (id) ON DELETE CASCADE
-                )
-            """)
-            )
-            conn.execute(
-                sa.text("""
-                CREATE TABLE environmental_facts (
-                    id INTEGER PRIMARY KEY,
-                    co2_kg REAL,
-                    nutriscore TEXT,
-                    ecoscore TEXT,
-                    nova_group INTEGER,
-                    source_id INTEGER UNIQUE NOT NULL,
-                    FOREIGN KEY(source_id) REFERENCES source (id) ON DELETE CASCADE
-                )
-            """)
-            )
-
-        # Set up Alembic configuration
+        # Set up Alembic configuration.
         self.alembic_cfg = Config(str(self.project_root / "alembic.ini"))
-        self.alembic_cfg.set_main_option("sqlalchemy.url", self.db_url)
         self.alembic_cfg.set_main_option(
             "script_location", str(self.project_root / "migrations")
+        )
+
+        # Create an in-memory database.
+        self.engine = create_engine("sqlite:///:memory:")
+
+        # Initiate a connection to the database and share it via Alembic
+        # configuration object.
+        #
+        # See https://alembic.sqlalchemy.org/en/latest/cookbook.html#sharing-a-connection-across-one-or-more-programmatic-migration-commands.
+        self.conn = self.engine.connect()
+        self.alembic_cfg.attributes["connection"] = self.conn
+
+        # Create base tables manually (without migration-added columns).
+        #
+        # This represents the state of the database before any migrations.
+        self.conn.execute(
+            sa.text("""
+            CREATE TABLE product (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                brand TEXT,
+                url TEXT UNIQUE
+            )
+        """)
+        )
+        self.conn.execute(
+            sa.text("""
+            CREATE TABLE source (
+                id INTEGER PRIMARY KEY,
+                url TEXT NOT NULL,
+                seen_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                product_id INTEGER NOT NULL,
+                FOREIGN KEY(product_id) REFERENCES product (id) ON DELETE CASCADE
+            )
+        """)
+        )
+        self.conn.execute(
+            sa.text("""
+            CREATE TABLE price (
+                id INTEGER PRIMARY KEY,
+                amount REAL NOT NULL,
+                date_time TEXT NOT NULL,
+                source_id INTEGER NOT NULL,
+                FOREIGN KEY(source_id) REFERENCES source (id) ON DELETE CASCADE
+            )
+        """)
+        )
+        self.conn.execute(
+            sa.text("""
+            CREATE TABLE nutrition_facts (
+                id INTEGER PRIMARY KEY,
+                energy_kcal REAL,
+                energy_kj REAL,
+                fat REAL,
+                saturated_fat REAL,
+                carbohydrates REAL,
+                sugars REAL,
+                fiber REAL,
+                proteins REAL,
+                salt REAL,
+                source_id INTEGER UNIQUE NOT NULL,
+                FOREIGN KEY(source_id) REFERENCES source (id) ON DELETE CASCADE
+            )
+        """)
+        )
+        self.conn.execute(
+            sa.text("""
+            CREATE TABLE environmental_facts (
+                id INTEGER PRIMARY KEY,
+                co2_kg REAL,
+                nutriscore TEXT,
+                ecoscore TEXT,
+                nova_group INTEGER,
+                source_id INTEGER UNIQUE NOT NULL,
+                FOREIGN KEY(source_id) REFERENCES source (id) ON DELETE CASCADE
+            )
+        """)
         )
 
         # Stamp the database with base to track migrations
@@ -123,22 +118,21 @@ class TestMigrations(unittest.TestCase):
         """
 
         self.engine.dispose()
-        if os.path.exists(self.temp_db.name):
-            os.unlink(self.temp_db.name)
 
     def test_migrations_upgrade_to_head(self):
         """
         Tests that all migrations can be applied successfully.
         """
 
-        # Run all migrations
+        # Run all migrations.
         command.upgrade(self.alembic_cfg, "head")
+        self.conn.commit()
 
-        # Verify that the database has tables
+        # Verify that the database has tables.
         inspector = inspect(self.engine)
         tables = inspector.get_table_names()
 
-        # Check that expected tables exist
+        # Check that expected tables exist.
         expected_tables = [
             "product",
             "source",
@@ -159,17 +153,19 @@ class TestMigrations(unittest.TestCase):
         Tests that all migrations can be reverted successfully.
         """
 
-        # First upgrade to head
+        # First upgrade to head.
         command.upgrade(self.alembic_cfg, "head")
 
-        # Then downgrade to base
+        # Then downgrade to base.
         command.downgrade(self.alembic_cfg, "base")
 
-        # Verify that base tables still exist (migrations don't delete them)
+        self.conn.commit()
+
+        # Verify that base tables still exist (migrations don't delete them).
         inspector = inspect(self.engine)
         tables = inspector.get_table_names()
 
-        # Base tables should still exist after downgrade
+        # Base tables should still exist after downgrade.
         base_tables = [
             "product",
             "source",
@@ -184,7 +180,7 @@ class TestMigrations(unittest.TestCase):
                 f"Base table '{table}' should still exist after downgrade",
             )
 
-        # Verify that migration-added columns are removed
+        # Verify that migration-added columns are removed.
         product_columns = {col["name"] for col in inspector.get_columns("product")}
         self.assertNotIn(
             "disabled", product_columns, "disabled column should be removed"
@@ -193,7 +189,9 @@ class TestMigrations(unittest.TestCase):
             "quantity", product_columns, "quantity column should be removed"
         )
         self.assertNotIn(
-            "quantity_unit", product_columns, "quantity_unit column should be removed"
+            "quantity_unit",
+            product_columns,
+            "quantity_unit column should be removed",
         )
         self.assertNotIn(
             "category_id", product_columns, "category_id column should be removed"
@@ -212,7 +210,7 @@ class TestMigrations(unittest.TestCase):
             "discounted_amount column should be removed",
         )
 
-        # Category table should be removed (it was created by a migration)
+        # Category table should be removed (it was created by a migration).
         self.assertNotIn("category", tables, "category table should be removed")
 
     def test_migrations_upgrade_downgrade_each_revision(self):
@@ -220,18 +218,19 @@ class TestMigrations(unittest.TestCase):
         Tests that each migration can be applied and reverted individually.
         """
 
-        # Get all revisions
+        # Get all revisions.
         script = ScriptDirectory.from_config(self.alembic_cfg)
         revisions = [rev.revision for rev in script.walk_revisions()]
         revisions.reverse()  # Start from oldest
 
-        # Test each revision
+        # Test each revision.
         for i, revision in enumerate(revisions):
             with self.subTest(revision=revision, step=i + 1):
-                # Upgrade to this revision
+                # Upgrade to this revision.
                 command.upgrade(self.alembic_cfg, revision)
+                self.conn.commit()
 
-                # Verify database is in a consistent state
+                # Verify database is in a consistent state.
                 inspector = inspect(self.engine)
                 tables = inspector.get_table_names()
                 self.assertGreaterEqual(
@@ -240,7 +239,7 @@ class TestMigrations(unittest.TestCase):
                     f"At least alembic_version table should exist at revision {revision}",
                 )
 
-                # Downgrade one step
+                # Downgrade one step.
                 if i > 0:
                     command.downgrade(self.alembic_cfg, revisions[i - 1])
                 else:
@@ -251,21 +250,22 @@ class TestMigrations(unittest.TestCase):
         Tests that the category migration creates the category table.
         """
 
-        # Upgrade to the category migration
+        # Upgrade to the category migration.
         command.upgrade(self.alembic_cfg, "0ea78d81a3aa")
+        self.conn.commit()
 
         inspector = inspect(self.engine)
         tables = inspector.get_table_names()
 
         self.assertIn("category", tables)
 
-        # Check category table columns
+        # Check category table columns.
         columns = {col["name"] for col in inspector.get_columns("category")}
         self.assertIn("id", columns)
         self.assertIn("name", columns)
         self.assertIn("parent_id", columns)
 
-        # Check product table has category_id
+        # Check product table has 'category_id'.
         product_columns = {col["name"] for col in inspector.get_columns("product")}
         self.assertIn("category_id", product_columns)
 
@@ -274,7 +274,7 @@ class TestMigrations(unittest.TestCase):
         Tests that the disabled field migration works.
         """
 
-        # Upgrade to the disabled field migration
+        # Upgrade to the disabled field migration.
         command.upgrade(self.alembic_cfg, "74f8c9658d25")
 
         inspector = inspect(self.engine)
@@ -287,7 +287,7 @@ class TestMigrations(unittest.TestCase):
         Tests that the quantity fields migration works.
         """
 
-        # Upgrade to the quantity fields migration
+        # Upgrade to the quantity fields migration.
         command.upgrade(self.alembic_cfg, "b13c7ee298c7")
 
         inspector = inspect(self.engine)
@@ -301,7 +301,7 @@ class TestMigrations(unittest.TestCase):
         Tests that the origin field migration works.
         """
 
-        # Upgrade to the origin field migration
+        # Upgrade to the origin field migration.
         command.upgrade(self.alembic_cfg, "d483c555d6d1")
 
         inspector = inspect(self.engine)
@@ -314,16 +314,18 @@ class TestMigrations(unittest.TestCase):
         Tests that the price discount fields migrations work.
         """
 
-        # Upgrade to the discounted field migration
+        # Upgrade to the discounted field migration.
         command.upgrade(self.alembic_cfg, "dd08dfad6653")
+        self.conn.commit()
 
         inspector = inspect(self.engine)
         price_columns = {col["name"] for col in inspector.get_columns("price")}
 
         self.assertIn("discounted", price_columns)
 
-        # Continue to discounted_amount field migration
+        # Continue to discounted_amount field migration.
         command.upgrade(self.alembic_cfg, "aaa4b447e0c5")
+        self.conn.commit()
 
         inspector = inspect(self.engine)
         price_columns = {col["name"] for col in inspector.get_columns("price")}
