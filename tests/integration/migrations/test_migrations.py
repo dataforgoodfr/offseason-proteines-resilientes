@@ -23,7 +23,10 @@ class TestMigrations(unittest.TestCase):
     """
 
     def setUp(self):
-        """Set up a temporary database for testing."""
+        """
+        Sets up a temporary database for testing.
+        """
+
         # Add src to path to import models
         self.project_root = Path(__file__).parent.parent.parent.parent
         sys.path.insert(0, str(self.project_root / "src"))
@@ -115,13 +118,19 @@ class TestMigrations(unittest.TestCase):
         command.stamp(self.alembic_cfg, "base")
 
     def tearDown(self):
-        """Clean up the temporary database."""
+        """
+        Cleans up the temporary database.
+        """
+
         self.engine.dispose()
         if os.path.exists(self.temp_db.name):
             os.unlink(self.temp_db.name)
 
     def test_migrations_upgrade_to_head(self):
-        """Test that all migrations can be applied successfully."""
+        """
+        Tests that all migrations can be applied successfully.
+        """
+
         # Run all migrations
         command.upgrade(self.alembic_cfg, "head")
 
@@ -146,7 +155,10 @@ class TestMigrations(unittest.TestCase):
             )
 
     def test_migrations_downgrade_to_base(self):
-        """Test that all migrations can be reverted successfully."""
+        """
+        Tests that all migrations can be reverted successfully.
+        """
+
         # First upgrade to head
         command.upgrade(self.alembic_cfg, "head")
 
@@ -204,7 +216,10 @@ class TestMigrations(unittest.TestCase):
         self.assertNotIn("category", tables, "category table should be removed")
 
     def test_migrations_upgrade_downgrade_each_revision(self):
-        """Test that each migration can be applied and reverted individually."""
+        """
+        Tests that each migration can be applied and reverted individually.
+        """
+
         # Get all revisions
         script = ScriptDirectory.from_config(self.alembic_cfg)
         revisions = [rev.revision for rev in script.walk_revisions()]
@@ -232,7 +247,10 @@ class TestMigrations(unittest.TestCase):
                     command.downgrade(self.alembic_cfg, "base")
 
     def test_migration_adds_category_table(self):
-        """Test that the category migration creates the category table."""
+        """
+        Tests that the category migration creates the category table.
+        """
+
         # Upgrade to the category migration
         command.upgrade(self.alembic_cfg, "0ea78d81a3aa")
 
@@ -252,7 +270,10 @@ class TestMigrations(unittest.TestCase):
         self.assertIn("category_id", product_columns)
 
     def test_migration_adds_disabled_field(self):
-        """Test that the disabled field migration works."""
+        """
+        Tests that the disabled field migration works.
+        """
+
         # Upgrade to the disabled field migration
         command.upgrade(self.alembic_cfg, "74f8c9658d25")
 
@@ -262,7 +283,10 @@ class TestMigrations(unittest.TestCase):
         self.assertIn("disabled", product_columns)
 
     def test_migration_adds_quantity_fields(self):
-        """Test that the quantity fields migration works."""
+        """
+        Tests that the quantity fields migration works.
+        """
+
         # Upgrade to the quantity fields migration
         command.upgrade(self.alembic_cfg, "b13c7ee298c7")
 
@@ -273,7 +297,10 @@ class TestMigrations(unittest.TestCase):
         self.assertIn("quantity_unit", product_columns)
 
     def test_migration_adds_origin_field(self):
-        """Test that the origin field migration works."""
+        """
+        Tests that the origin field migration works.
+        """
+
         # Upgrade to the origin field migration
         command.upgrade(self.alembic_cfg, "d483c555d6d1")
 
@@ -283,7 +310,10 @@ class TestMigrations(unittest.TestCase):
         self.assertIn("origin", source_columns)
 
     def test_migration_adds_price_discount_fields(self):
-        """Test that the price discount fields migrations work."""
+        """
+        Tests that the price discount fields migrations work.
+        """
+
         # Upgrade to the discounted field migration
         command.upgrade(self.alembic_cfg, "dd08dfad6653")
 
@@ -301,7 +331,10 @@ class TestMigrations(unittest.TestCase):
         self.assertIn("discounted_amount", price_columns)
 
     def test_no_missing_downgrade_functions(self):
-        """Test that all migrations have downgrade functions."""
+        """
+        Tests that all migrations have downgrade functions.
+        """
+
         script = ScriptDirectory.from_config(self.alembic_cfg)
 
         for revision in script.walk_revisions():
