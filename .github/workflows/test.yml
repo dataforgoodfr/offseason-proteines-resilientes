@@ -84,7 +84,7 @@ jobs:
 
       - name: Run migration tests
         run: |
-          poetry run python -m unittest -v discover tests.integration.migrations
+          poetry run python -m unittest discover tests.integration.migrations -v
 
   lint-format-code:
     name: Lint and format code
