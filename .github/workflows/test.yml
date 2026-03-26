@@ -12,9 +12,9 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python-version:
-        - '3.11'
-        - '3.12'
-        - '3.13'
+          - "3.11"
+          - "3.12"
+          - "3.13"
 
     steps:
       - name: Check out code
@@ -49,6 +49,43 @@ jobs:
         run: |
           poetry run python -m unittest discover
 
+  test-migrations:
+    name: Test migrations
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Upgrade pip
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Set up Poetry
+        run: |
+          python -m pip install poetry
+          python -m poetry config --local -- virtualenvs.create true
+          python -m poetry config --local -- virtualenvs.in-project true
+
+      - name: Cache Python virtual environment
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-migrations-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        run: |
+          python -m poetry install
+
+      - name: Run migration tests
+        run: |
+          poetry run python -m unittest discover tests.integration.migrations -v
+
   lint-format-code:
     name: Lint and format code
     runs-on: ubuntu-latest
@@ -60,7 +97,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.13'
+          python-version: "3.13"
 
       - name: Install dependencies
         run: |
