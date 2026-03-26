@@ -48,51 +48,56 @@ class TestMigrations(unittest.TestCase):
         self.conn.execute(
             sa.text("""
             CREATE TABLE product (
-                id INTEGER PRIMARY KEY,
-                name TEXT,
-                brand TEXT,
-                url TEXT UNIQUE
-            )
+                id INTEGER NOT NULL,
+                ean_13 VARCHAR(13) NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                brand VARCHAR(255),
+                PRIMARY KEY (id)
+            );
         """)
         )
         self.conn.execute(
             sa.text("""
             CREATE TABLE source (
-                id INTEGER PRIMARY KEY,
-                url TEXT NOT NULL,
-                seen_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                id INTEGER NOT NULL,
+                url VARCHAR(8000) NOT NULL,
+                seen_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
                 product_id INTEGER NOT NULL,
-                FOREIGN KEY(product_id) REFERENCES product (id) ON DELETE CASCADE
-            )
+                PRIMARY KEY (id),
+                FOREIGN KEY(product_id) REFERENCES product (id)
+            );
         """)
         )
         self.conn.execute(
             sa.text("""
             CREATE TABLE price (
-                id INTEGER PRIMARY KEY,
-                amount REAL NOT NULL,
-                date_time TEXT NOT NULL,
+                id INTEGER NOT NULL,
+                amount NUMERIC(4, 2) NOT NULL,
+                currency VARCHAR(3) NOT NULL,
                 source_id INTEGER NOT NULL,
-                FOREIGN KEY(source_id) REFERENCES source (id) ON DELETE CASCADE
-            )
+                PRIMARY KEY (id),
+                FOREIGN KEY(source_id) REFERENCES source (id)
+            );
         """)
         )
         self.conn.execute(
             sa.text("""
             CREATE TABLE nutrition_facts (
-                id INTEGER PRIMARY KEY,
-                energy_kcal REAL,
-                energy_kj REAL,
-                fat REAL,
-                saturated_fat REAL,
-                carbohydrates REAL,
-                sugars REAL,
-                fiber REAL,
-                proteins REAL,
-                salt REAL,
-                source_id INTEGER UNIQUE NOT NULL,
-                FOREIGN KEY(source_id) REFERENCES source (id) ON DELETE CASCADE
-            )
+                id INTEGER NOT NULL,
+                nutriscore VARCHAR(1),
+                novascore VARCHAR(6),
+                calories_100g NUMERIC(5, 2),
+                fat_100g NUMERIC(5, 2),
+                saturated_fat_100g NUMERIC(5, 2),
+                carbohydrates_100g NUMERIC(5, 2),
+                sugars_100g NUMERIC(5, 2),
+                fiber_100g NUMERIC(5, 2),
+                protein_100g NUMERIC(5, 2),
+                salt_100g NUMERIC(5, 2),
+                source_id INTEGER NOT NULL,
+                PRIMARY KEY (id),
+                FOREIGN KEY(source_id) REFERENCES source (id)
+            );
         """)
         )
         self.conn.execute(
