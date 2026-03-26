@@ -12,9 +12,9 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python-version:
-        - '3.11'
-        - '3.12'
-        - '3.13'
+          - "3.11"
+          - "3.12"
+          - "3.13"
 
     steps:
       - name: Check out code
@@ -60,7 +60,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.13'
+          python-version: "3.13"
 
       - name: Upgrade pip
         run: |
@@ -84,7 +84,7 @@ jobs:
 
       - name: Run migration tests
         run: |
-          poetry run python -m unittest tests.integration.migrations.test_migrations -v
+          poetry run python -m unittest -v discover tests.integration.migrations
 
   lint-format-code:
     name: Lint and format code
@@ -97,7 +97,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.13'
+          python-version: "3.13"
 
       - name: Install dependencies
         run: |
