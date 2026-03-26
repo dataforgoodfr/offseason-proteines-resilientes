@@ -1,7 +1,8 @@
 """
-Integration tests for Alembic migrations.
+Integration tests for Alembic migrations on SQLite.
 
-These tests ensure that all migrations can be applied and reverted successfully.
+These tests ensure that all migrations can be applied and reverted successfully
+on SQLite.
 """
 
 import unittest
@@ -114,7 +115,7 @@ class TestMigrations(unittest.TestCase):
         """)
         )
 
-        # Stamp the database with base to track migrations
+        # Stamp the database with 'base' to track migrations.
         command.stamp(self.alembic_cfg, "base")
 
     def tearDown(self):
@@ -158,10 +159,10 @@ class TestMigrations(unittest.TestCase):
         Tests that all migrations can be reverted successfully.
         """
 
-        # First upgrade to head.
+        # First upgrade to 'head'.
         command.upgrade(self.alembic_cfg, "head")
 
-        # Then downgrade to base.
+        # Then downgrade to 'base'.
         command.downgrade(self.alembic_cfg, "base")
 
         self.conn.commit()
@@ -226,7 +227,7 @@ class TestMigrations(unittest.TestCase):
         # Get all revisions.
         script = ScriptDirectory.from_config(self.alembic_cfg)
         revisions = [rev.revision for rev in script.walk_revisions()]
-        revisions.reverse()  # Start from oldest
+        revisions.reverse()  # Start from oldest.
 
         # Test each revision.
         for i, revision in enumerate(revisions):
@@ -255,7 +256,6 @@ class TestMigrations(unittest.TestCase):
         Tests that the category migration creates the category table.
         """
 
-        # Upgrade to the category migration.
         command.upgrade(self.alembic_cfg, "0ea78d81a3aa")
         self.conn.commit()
 
@@ -264,13 +264,11 @@ class TestMigrations(unittest.TestCase):
 
         self.assertIn("category", tables)
 
-        # Check category table columns.
         columns = {col["name"] for col in inspector.get_columns("category")}
         self.assertIn("id", columns)
         self.assertIn("name", columns)
         self.assertIn("parent_id", columns)
 
-        # Check product table has 'category_id'.
         product_columns = {col["name"] for col in inspector.get_columns("product")}
         self.assertIn("category_id", product_columns)
 
@@ -279,7 +277,6 @@ class TestMigrations(unittest.TestCase):
         Tests that the disabled field migration works.
         """
 
-        # Upgrade to the disabled field migration.
         command.upgrade(self.alembic_cfg, "74f8c9658d25")
 
         inspector = inspect(self.engine)
@@ -292,7 +289,6 @@ class TestMigrations(unittest.TestCase):
         Tests that the quantity fields migration works.
         """
 
-        # Upgrade to the quantity fields migration.
         command.upgrade(self.alembic_cfg, "b13c7ee298c7")
 
         inspector = inspect(self.engine)
@@ -306,7 +302,6 @@ class TestMigrations(unittest.TestCase):
         Tests that the origin field migration works.
         """
 
-        # Upgrade to the origin field migration.
         command.upgrade(self.alembic_cfg, "d483c555d6d1")
 
         inspector = inspect(self.engine)
@@ -319,7 +314,7 @@ class TestMigrations(unittest.TestCase):
         Tests that the price discount fields migrations work.
         """
 
-        # Upgrade to the discounted field migration.
+        # Upgrade to the 'discounted' field migration.
         command.upgrade(self.alembic_cfg, "dd08dfad6653")
         self.conn.commit()
 
@@ -328,7 +323,7 @@ class TestMigrations(unittest.TestCase):
 
         self.assertIn("discounted", price_columns)
 
-        # Continue to discounted_amount field migration.
+        # Continue to 'discounted_amount' field migration.
         command.upgrade(self.alembic_cfg, "aaa4b447e0c5")
         self.conn.commit()
 
@@ -339,14 +334,14 @@ class TestMigrations(unittest.TestCase):
 
     def test_no_missing_downgrade_functions(self):
         """
-        Tests that all migrations have downgrade functions.
+        Tests that all migrations have a downgrade function.
         """
 
         script = ScriptDirectory.from_config(self.alembic_cfg)
 
         for revision in script.walk_revisions():
             with self.subTest(revision=revision.revision):
-                # Check that the module has a downgrade function
+                # Check that the module has a downgrade function.
                 module = revision.module
                 self.assertTrue(
                     hasattr(module, "downgrade"),
