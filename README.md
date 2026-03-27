@@ -1,5 +1,22 @@
 # Proteines Resilientes
 
+<!--toc:start-->
+
+- [Proteines Resilientes](#proteines-resilientes)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Data Editor](#data-editor)
+    - [Open Food Facts Data Collector](#open-food-facts-data-collector)
+    - [Scraper for Auchan](#scraper-for-auchan)
+  - [Development](#development)
+    - [Testing](#testing)
+    - [Linting & Formatting](#linting-formatting)
+    - [Database Migrations](#database-migrations)
+  - [Documentation](#documentation)
+    - [Generating the Mermaid Diagrams](#generating-the-mermaid-diagrams)
+
+<!--toc:end-->
+
 Proteines Resilientes is a data study designed to gather information from
 various online sources about food products sold in France, particularly their
 nutritional facts. The project's primary objective is to compare plant-based and
@@ -35,6 +52,33 @@ the `project.scripts` section of the [`pyproject.toml`](./pyproject.toml) file.
 All the CLI tools can be invoked with `-h` or `--help` to get the list of all
 their positional parameters and options.
 
+### Data Editor
+
+The Proteines Resilientes Data Editor is a small CLI tool allowing
+post-collection data editing. The tool consists of multiple subcommands, such as
+`disable` to disable irrelevant products, or `category` to recategorise
+products.
+
+The full list can be obtain by invoking the Data Editor with `-h` or `--help`:
+
+```
+❯ pr-editor -h
+usage: pr-editor [-h] [--database DATABASE] [--debug] {enable,disable,category} ...
+
+Proteines Resilientes Data Editor
+
+options:
+  -h, --help            show this help message and exit
+  --database DATABASE   Database URL to use (defaults to sqlite+pysqlite:///data.sqlite)
+  --debug, -d           Enable the debug mode
+
+Commands:
+  {enable,disable,category}
+    enable              Enable a product
+    disable             Disable a product
+    category            Update product category
+```
+
 ### Open Food Facts Data Collector
 
 The Open Food Facts Data Collector (OFFDC) takes a list of [EAN-13][ean-13]
@@ -62,7 +106,7 @@ $ cat <<EOF > references.txt
 3564700726044
 EOF
 $ pr-offdc -f references.txt
-````
+```
 
 By default, the products already present in the database are skipped. To force
 the creation of a new `Source` entry with the most recent data from Open Food
@@ -79,14 +123,14 @@ order to select products to scrap.
 
 For instance, to scrap the results of a query for `lentilles vertes`:
 
-    $ pr-scraper-auchan 'lentilles vertes'
+    $ pr-scraper-auchan --journey-id '9ca9e4a5-0d62-4a94-9f92-c7c88e374a7f' 'lentilles vertes'
 
-However, by default, when opening a product page, the price is absent from it.
-This is because a specific physical store needs to be selected first as prices
-differ across locations.
+If the web scraper were not to require the `--journey-id` option, the price
+would be absent from the product pages. This is because a specific physical
+store needs to be selected first as prices differ across locations.
 
-To do so, Auchan uses a notion of "journey ID". When opening the website
-for the first time, the web application makes an HTTP GET request to
+To do so, Auchan uses a notion of "journey ID". When opening the website for the
+first time, the web application makes an HTTP GET request to
 `https://www.auchan.fr/journey` which returns a JSON payload similar to this
 one:
 
@@ -130,17 +174,12 @@ this location information. From now on, all future requests to product pages
 comprising the cookie `lark-journey` with the journey ID as value will return
 location-specific information, including the price.
 
-The `--journey-id` CLI option is meant to set an arbitrary value of journey ID
-when scraping the product pages:
-
-    $ pr-scraper-auchan --journey-id '9ca9e4a5-0d62-4a94-9f92-c7c88e374a7f' 'lentilles vertes'
-
 ## Development
 
 ### Testing
 
-The project includes both unit and integration tests. They are
-located respectively in the [`./tests/unit`](./tests/unit) and
+The project includes both unit and integration tests. They are located
+respectively in the [`./tests/unit`](./tests/unit) and
 [`./tests/integration`](./tests/integration) folders.
 
 To run all the tests:
@@ -191,7 +230,7 @@ To apply the migration scripts to the latest available revision:
 
 ## Documentation
 
-### Generating the Mermaid diagrams
+### Generating the Mermaid Diagrams
 
 To generate the diagrams made with [mermaid][mermaid]:
 
@@ -201,12 +240,12 @@ For instance, to generate an SVG image of the relational database diagram:
 
     $ npx -p @mermaid-js/mermaid-cli mmdc -i docs/rdb_diagram.mermaid -o docs/rdb_diagram.svg
 
- [alembic]: https://alembic.sqlalchemy.org "Alembic documentation website"
- [alembic-autogenerate]: https://alembic.sqlalchemy.org/en/latest/autogenerate.html "Auto Generating Migrations - Alembic documentation"
- [auchan]: https://www.auchan.fr/ "Auchan"
- [ean-13]: https://en.wikipedia.org/wiki/International_Article_Number "International Article Number - Wikipedia"
- [mermaid]: http://mermaid.js.org/ "Mermaid website"
- [off]: https://world.openfoodfacts.org/ "Open Food Facts"
- [poetry]: https://python-poetry.org "Poetry website"
- [pre-commit]: https://pre-commit.com/ "pre-commit website"
- [ruff]: https://docs.astral.sh/ruff/ "Ruff website"
+[alembic]: https://alembic.sqlalchemy.org "Alembic documentation website"
+[alembic-autogenerate]: https://alembic.sqlalchemy.org/en/latest/autogenerate.html "Auto Generating Migrations - Alembic documentation"
+[auchan]: https://www.auchan.fr/ "Auchan"
+[ean-13]: https://en.wikipedia.org/wiki/International_Article_Number "International Article Number - Wikipedia"
+[mermaid]: http://mermaid.js.org/ "Mermaid website"
+[off]: https://world.openfoodfacts.org/ "Open Food Facts"
+[poetry]: https://python-poetry.org "Poetry website"
+[pre-commit]: https://pre-commit.com/ "pre-commit website"
+[ruff]: https://docs.astral.sh/ruff/ "Ruff website"
