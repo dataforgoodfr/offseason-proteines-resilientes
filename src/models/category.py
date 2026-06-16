@@ -68,7 +68,6 @@ class CategoryValues(StrEnum):
     SAUCISSON_SEC = "Saucisson sec"
     SAUTE_DE_VEAU = "Sauté de veau"
     STEAK_HACHE_BOEUF = "Steak haché bœuf"
-    TOURNEDOS_BOEUF = "Tournedos bœuf"
 
     # ----------------------------------------------------------------------
     # Poissons et fruits de mer
@@ -101,7 +100,6 @@ class CategoryValues(StrEnum):
     EMMENTAL = "Emmental"
     FETA = "Feta"
     FROMAGE_BLANC = "Fromage blanc nature"
-    FROMAGE_FRAIS = "Fromage frais"
     FROMAGE_RACLETTE = "Fromage à raclette"
     LAIT_DEMI_ECREME = "Lait demi écrémé"
     LAIT_ENTIER = "Lait entier"
@@ -111,7 +109,6 @@ class CategoryValues(StrEnum):
     PETITS_SUISSES = "Petits‑suisses"
     ROQUEFORT = "Roquefort"
     SKYR = "Skyr"
-    YAOURT_AROMATISE_FRUITS = "Yaourt aromatisé aux fruits"
     YAOURT_NATURE_0 = "Yaourt nature 0%"
 
     # ----------------------------------------------------------------------
@@ -158,12 +155,10 @@ class CategoryValues(StrEnum):
     AMARANTE = "Amarante"
     BLE_COMPLET = "Blé complet"
     FLOCON_DAVOINE = "Avoine (flocons)"
-    GERME_DE_BLE = "Germe de blé"
     QUINOA = "Quinoa"
     SARRASIN = "Sarrasin"
     SEIGLE = "Seigle"
     SEITAN = "Seitan"
-    SON_DAVOINE = "Son d'avoine"
 
     # ----------------------------------------------------------------------
     # Noix et graines
@@ -268,7 +263,6 @@ CATEGORY_SUBCATEGORY_MAP: Dict[CategoryValues, CategoryValues] = {
     CategoryValues.SAUCISSON_SEC: CategoryValues.VIANDES,
     CategoryValues.SAUTE_DE_VEAU: CategoryValues.VIANDES,
     CategoryValues.STEAK_HACHE_BOEUF: CategoryValues.VIANDES,
-    CategoryValues.TOURNEDOS_BOEUF: CategoryValues.VIANDES,
     # ----------------------------------------------------------------------
     # Poissons et fruits de mer
     # ----------------------------------------------------------------------
@@ -299,7 +293,6 @@ CATEGORY_SUBCATEGORY_MAP: Dict[CategoryValues, CategoryValues] = {
     CategoryValues.EMMENTAL: CategoryValues.OEUFS_PRODUITS_LAITIERS,
     CategoryValues.FETA: CategoryValues.OEUFS_PRODUITS_LAITIERS,
     CategoryValues.FROMAGE_BLANC: CategoryValues.OEUFS_PRODUITS_LAITIERS,
-    CategoryValues.FROMAGE_FRAIS: CategoryValues.OEUFS_PRODUITS_LAITIERS,
     CategoryValues.FROMAGE_RACLETTE: CategoryValues.OEUFS_PRODUITS_LAITIERS,
     CategoryValues.LAIT_DEMI_ECREME: CategoryValues.OEUFS_PRODUITS_LAITIERS,
     CategoryValues.LAIT_ENTIER: CategoryValues.OEUFS_PRODUITS_LAITIERS,
@@ -309,7 +302,6 @@ CATEGORY_SUBCATEGORY_MAP: Dict[CategoryValues, CategoryValues] = {
     CategoryValues.PETITS_SUISSES: CategoryValues.OEUFS_PRODUITS_LAITIERS,
     CategoryValues.ROQUEFORT: CategoryValues.OEUFS_PRODUITS_LAITIERS,
     CategoryValues.SKYR: CategoryValues.OEUFS_PRODUITS_LAITIERS,
-    CategoryValues.YAOURT_AROMATISE_FRUITS: CategoryValues.OEUFS_PRODUITS_LAITIERS,
     CategoryValues.YAOURT_NATURE_0: CategoryValues.OEUFS_PRODUITS_LAITIERS,
     # ----------------------------------------------------------------------
     # Légumineuses
@@ -352,12 +344,10 @@ CATEGORY_SUBCATEGORY_MAP: Dict[CategoryValues, CategoryValues] = {
     CategoryValues.AMARANTE: CategoryValues.CEREALES,
     CategoryValues.BLE_COMPLET: CategoryValues.CEREALES,
     CategoryValues.FLOCON_DAVOINE: CategoryValues.CEREALES,
-    CategoryValues.GERME_DE_BLE: CategoryValues.CEREALES,
     CategoryValues.QUINOA: CategoryValues.CEREALES,
     CategoryValues.SARRASIN: CategoryValues.CEREALES,
     CategoryValues.SEIGLE: CategoryValues.CEREALES,
     CategoryValues.SEITAN: CategoryValues.CEREALES,
-    CategoryValues.SON_DAVOINE: CategoryValues.CEREALES,
     # ----------------------------------------------------------------------
     # Noix et graines
     # ----------------------------------------------------------------------
