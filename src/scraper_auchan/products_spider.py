@@ -20,41 +20,8 @@ from .items import ProductItem
 # for more information.
 JOURNEY_COOKIE_NAME = "lark-journey"
 
-
-@unique
-class Department(StrEnum):
-    """
-    The main store departments.
-    """
-
-    CHARCUTERIE = "Charcuterie, traiteur"  # cn12
-    EPICERIE = "Epicerie salée"  # cn06
-    FRAIS = "Marché frais"  # cb19
-    FRUITS_LEGUMES = "Fruits, légumes"  # cn03
-    OEUFS_PRODUITS_LAITIERS = "Produits laitiers, oeufs, fromages"  # cn01
-    SUCRE = "Epicerie sucrée"  # cn05
-    SURGELES = "Surgelés"  # cn04
-    VIANDES = "Boucherie, volaille, poissonnerie"  # cn02
-
-    @classmethod
-    def _missing_(cls, value: str) -> str | None:
-        """
-        Invoked when the value is not found in the enum. It is used here to
-        accept values in a case-insensitive way.
-
-        See https://docs.python.org/3/library/enum.html#enum.Enum._missing_.
-        """
-
-        value = value.upper()
-
-        for member in cls:
-            if member.value.upper() == value:
-                return member
-
-        return None
-
-
-dept_for_category = {
+# Mapping between categories and departments.
+CAT_DEPT_MAPPING = {
     CategoryValues.AIGUILLETTES_VEGETALES: ["Simili-carnés, tofu"],
     CategoryValues.BASTONETS_POISSON_VEGETAUX: ["Simili-carnés, tofu"],
     CategoryValues.BASTONETS_POISSON_VEGETAUX_CONSERVE: ["Simili-carnés, tofu"],
@@ -210,6 +177,39 @@ dept_for_category = {
 }
 
 
+@unique
+class Department(StrEnum):
+    """
+    The main store departments.
+    """
+
+    CHARCUTERIE = "Charcuterie, traiteur"  # cn12
+    EPICERIE = "Epicerie salée"  # cn06
+    FRAIS = "Marché frais"  # cb19
+    FRUITS_LEGUMES = "Fruits, légumes"  # cn03
+    OEUFS_PRODUITS_LAITIERS = "Produits laitiers, oeufs, fromages"  # cn01
+    SUCRE = "Epicerie sucrée"  # cn05
+    SURGELES = "Surgelés"  # cn04
+    VIANDES = "Boucherie, volaille, poissonnerie"  # cn02
+
+    @classmethod
+    def _missing_(cls, value: str) -> str | None:
+        """
+        Invoked when the value is not found in the enum. It is used here to
+        accept values in a case-insensitive way.
+
+        See https://docs.python.org/3/library/enum.html#enum.Enum._missing_.
+        """
+
+        value = value.upper()
+
+        for member in cls:
+            if member.value.upper() == value:
+                return member
+
+        return None
+
+
 class AuchanProductsSpider(Spider, ProductSpider):
     """
     Scrapy Spider for the products of the Auchan retail website.
@@ -314,7 +314,7 @@ class AuchanProductsSpider(Spider, ProductSpider):
 
         self.logger.info(f"Breadcrumbs on the page: {breadcrumbs}")
 
-        expected_departments = dept_for_category[self.get_category()]
+        expected_departments = CAT_DEPT_MAPPING[self.get_category()]
         if any(x in breadcrumbs for x in expected_departments):
             return True
         else:
