@@ -20,19 +20,6 @@ from .items import ProductItem
 # for more information.
 JOURNEY_COOKIE_NAME = "lark-journey"
 
-# List of store department that are not relevant.
-EXCLUSION_LIST = (
-    "aides culinaires",
-    "alcools",
-    "boissons végétales",
-    "bébé",
-    "bouillon",
-    "cuisinés",
-    "glaces",
-    "pizza",
-    "préparés",
-)
-
 
 @unique
 class Department(StrEnum):
