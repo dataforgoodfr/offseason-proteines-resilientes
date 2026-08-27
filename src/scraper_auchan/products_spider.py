@@ -441,6 +441,15 @@ class AuchanProductsSpider(Spider, ProductSpider):
                         quantity_unit = QuantityUnit.LITRE
                     case "pièces" | "œufs":
                         quantity_unit = QuantityUnit.PIECE
+                        if self.get_category() == CategoryValues.OEUFS:
+                            item_name = self.get_name(response)
+                            eggs_num = quantity
+                            quantity, quantity_unit = self.compute_eggs_weight(
+                                eggs_num, item_name
+                            )
+                            self.logger.info(
+                                f"Converted eggs quantity {int(eggs_num)} to weight {quantity} kg..."
+                            )
                     case _:
                         return
 
