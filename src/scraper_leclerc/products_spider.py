@@ -6,6 +6,7 @@ from functools import lru_cache
 from scrapy import Request, Spider
 from scrapy.http import Response
 
+from models.category import CategoryValues
 from models.product import QuantityUnit
 from utils.spider import ProductItem, ProductSpider
 
@@ -253,5 +254,17 @@ class LeclercProductsSpider(Spider, ProductSpider):
             r'"sUniteMesureTotale":"([^"]+)"', product_info
         ).group(1)
         quantity_unit = QuantityUnit(quantity_unit)
+
+        if (
+            quantity_unit == QuantityUnit.PIECE
+            and self.get_category() == CategoryValues.OEUFS
+        ):
+            item_name = self.get_name(response)
+            eggs_num = quantity
+            quantity, quantity_unit = self.compute_eggs_weight(eggs_num, item_name)
+
+            self.logger.info(
+                f"Converted eggs quantity {int(eggs_num)} to weight {quantity} kg..."
+            )
 
         return (quantity, quantity_unit)
