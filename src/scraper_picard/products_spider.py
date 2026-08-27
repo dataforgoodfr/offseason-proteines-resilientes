@@ -5,21 +5,48 @@ from enum import StrEnum, unique
 from scrapy import Request, Spider
 from scrapy.http import Response
 
+from models.category import CategoryValues
 from models.product import QuantityUnit
 from utils.spider import ProductItem, ProductSpider
 
-# List of store department that are not relevant.
-EXCLUSION_LIST = (
-    "aides culinaires",
-    "alcools",
-    "boissons végétales",
-    "bébé",
-    "bouillon",
-    "cuisinés",
-    "glaces",
-    "pizza",
-    "préparés",
-)
+# Mapping between categories and departments.
+CAT_DEPT_MAPPING = {
+    CategoryValues.GALETTE_VEGETALE_CEREALES_SURGELE: ["Accompagnements"],
+    CategoryValues.NUGGETS_VEGETAUX_SURGELE: ["Plats cuisinés végétariens"],
+    CategoryValues.FEVES: ["Légumineuses"],
+    CategoryValues.FLAGEOLETS_CONSERVE: ["Haricots"],
+    CategoryValues.HARICOTS_BLANCS_CONSERVE: ["Haricots"],
+    CategoryValues.LENTILLES_VERTES_CONSERVE: ["Légumineuses"],
+    CategoryValues.POIS_CHICHES_CONSERVE: ["Légumineuses"],
+    CategoryValues.CABILLAUD: ["Cabillaud"],
+    CategoryValues.COLIN_PANE: ["Poissons panés, meunières"],
+    CategoryValues.CREVETTES: ["Crevettes, langoustes, autres crustacés"],
+    CategoryValues.LIMANDE: ["Poissons panés, meunières"],
+    CategoryValues.MAQUEREAU_FRAIS: ["Thon et maquereau"],
+    CategoryValues.NOIX_DE_SAINT_JACQUES: ["Saint-Jacques"],
+    CategoryValues.SARDINES_FRAICHES: ["Thon et maquereau"],
+    CategoryValues.SAUMON: ["Saumon et truite"],
+    CategoryValues.SAUMON_FUME: ["Saumon et truite"],
+    CategoryValues.THON_FRAIS: ["Thon et maquereau"],
+    CategoryValues.TRUITE_FUMEE: ["Poissons marinés, fumés, cuisinés"],
+    CategoryValues.CHIPOLATAS: ["Barbecue"],
+    CategoryValues.CONFIT_DE_CANARD: ["Canard"],
+    CategoryValues.CORDON_BLEU: ["Volailles panées"],
+    CategoryValues.COTES_AGNEAU: ["Agneau"],
+    CategoryValues.COTES_DE_PORC: ["Porc"],
+    CategoryValues.CUISSE_POULET: ["Poulet et dinde"],
+    CategoryValues.ENTRECOTE_BOEUF: ["Boeuf", "Viandes BIO et labellisées"],
+    CategoryValues.ESCALOPES_DE_DINDE: ["Poulet et dinde"],
+    CategoryValues.ESCALOPE_DE_VEAU: ["Veau"],
+    CategoryValues.GIGOT_AGNEAU: ["Agneau"],
+    CategoryValues.LAPIN: ["Viandes"],
+    CategoryValues.MAGRET_DE_CANARD: ["Canard"],
+    CategoryValues.MERGUEZ: ["Barbecue"],
+    CategoryValues.NUGGETS: ["Volailles panées"],
+    CategoryValues.POULET_FILET: ["Poulet et dinde"],
+    CategoryValues.SAUTE_DE_VEAU: ["Veau"],
+    CategoryValues.STEAK_HACHE_BOEUF: ["Boeuf"],
+}
 
 
 @unique
@@ -147,26 +174,14 @@ class PicardProductsSpider(Spider, ProductSpider):
 
         self.logger.info(f"Breadcrumbs on the page: {breadcrumbs}")
 
-        try:
-            main_department = breadcrumbs[2]
-            main_department = Department(main_department)
-        except ValueError:
+        expected_departments = CAT_DEPT_MAPPING[self.get_category()]
+        if any(x in breadcrumbs for x in expected_departments):
+            return True
+        else:
             self.logger.info(
-                f"Main store department {main_department} is irrelevant. Skipping..."
+                f"Store department '{breadcrumbs.pop()}' is irrelevant for category '{self.get_category()}'. Skipping..."
             )
             return False
-
-        any_exclusion = [
-            s for excl in EXCLUSION_LIST for s in breadcrumbs if excl in s.lower()
-        ]
-
-        if any_exclusion:
-            self.logger.info(
-                f"Hit excluded store departments: {any_exclusion}. Skipping..."
-            )
-            return False
-
-        return True
 
     def get_name(self, response: Response) -> str:
         name = response.xpath("//h1[@itemprop='name']/text()").get()
