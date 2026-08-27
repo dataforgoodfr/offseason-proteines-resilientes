@@ -5,6 +5,7 @@ from re import IGNORECASE, match
 from scrapy import Request, Spider
 from scrapy.http import Response
 
+from models.category import CategoryValues
 from models.product import QuantityUnit
 from utils.spider import ProductSpider
 
@@ -64,6 +65,162 @@ class Department(StrEnum):
                 return member
 
         return None
+
+
+dept_for_category = {
+    CategoryValues.AIGUILLETTES_VEGETALES: ["Simili-carnés, tofu"],
+    CategoryValues.BASTONETS_POISSON_VEGETAUX: ["Simili-carnés, tofu"],
+    CategoryValues.BASTONETS_POISSON_VEGETAUX_CONSERVE: ["Simili-carnés, tofu"],
+    CategoryValues.BOULETTES_VEGETALES: ["Simili-carnés, tofu"],
+    CategoryValues.BOULETTES_VEGETALES_SURGELE: ["Surgelés"],
+    CategoryValues.ESCALOPES_VEGETALES_PANEES: ["Simili-carnés, tofu"],
+    CategoryValues.GALETTE_VEGETALE_CEREALES: ["Simili-carnés, tofu"],
+    CategoryValues.GALETTE_VEGETALE_CEREALES_SURGELE: ["Surgelés"],
+    CategoryValues.JAMBON_VEGETAL: ["Simili-carnés, tofu"],
+    CategoryValues.KNAX_VEGETALES: ["Simili-carnés, tofu"],
+    CategoryValues.LARDONS_VEGETAUX: ["Simili-carnés, tofu"],
+    CategoryValues.NUGGETS_VEGETAUX: ["Simili-carnés, tofu"],
+    CategoryValues.NUGGETS_VEGETAUX_SURGELE: ["Surgelés"],
+    CategoryValues.SAUCISSES_VEGETALES: ["Simili-carnés, tofu"],
+    CategoryValues.SIMILI_THON: ["Traiteur végétal"],
+    CategoryValues.STEAK_VEGETAL: ["Simili-carnés, tofu"],
+    CategoryValues.STEAK_VEGETAL_SURGELE: ["Surgelés"],
+    CategoryValues.SUPREME_FAUX_POULET: ["Simili-carnés, tofu"],
+    CategoryValues.FLOCON_DAVOINE: ["Céréales adultes"],
+    CategoryValues.QUINOA: ["Céréales, galettes, quinoa"],
+    CategoryValues.SARRASIN: ["Lentilles, légumes secs"],
+    CategoryValues.FALAFELS: ["Traiteur végétal"],
+    CategoryValues.FALAFELS_POUDRE: ["Chapelure, fécule"],
+    CategoryValues.FEVES: ["Autres légumes", "Mono légumes surgelés"],
+    CategoryValues.FLAGEOLETS: ["Légumes secs, graines", "Lentilles, légumes secs"],
+    CategoryValues.FLAGEOLETS_CONSERVE: ["Flageolets", "Mono légumes surgelés"],
+    CategoryValues.GALETTES_DE_LEGUMINEUSES: ["Céréales, légumineuses"],
+    CategoryValues.HARICOTS_BLANCS: [
+        "Légumes secs, graines",
+        "Lentilles, légumes secs",
+    ],
+    CategoryValues.HARICOTS_BLANCS_CONSERVE: [
+        "Haricots blancs",
+        "Mono légumes surgelés",
+    ],
+    CategoryValues.HARICOTS_NOIRS: ["Légumes secs, graines", "Lentilles, légumes secs"],
+    CategoryValues.HARICOTS_NOIRS_CONSERVE: ["Haricots rouge", "Mono légumes surgelés"],
+    CategoryValues.HARICOTS_ROUGES: [
+        "Légumes secs, graines",
+        "Lentilles, légumes secs",
+    ],
+    CategoryValues.HARICOTS_ROUGES_CONSERVE: [
+        "Haricots rouge",
+        "Mono légumes surgelés",
+    ],
+    CategoryValues.LENTILLES_BLONDES: [
+        "Légumes secs, graines",
+        "Lentilles, légumes secs",
+    ],
+    CategoryValues.LENTILLES_BLONDES_CONSERVE: ["Lentilles"],
+    CategoryValues.LENTILLES_CORAIL: [
+        "Légumes secs, graines",
+        "Lentilles, légumes secs",
+    ],
+    CategoryValues.LENTILLES_VERTES: [
+        "Lentilles, légumes secs",
+        "Légumes secs, graines",
+    ],
+    CategoryValues.LENTILLES_VERTES_CONSERVE: ["Lentilles", "Mono légumes surgelés"],
+    CategoryValues.LUPIN: ["Autres légumes"],
+    CategoryValues.POIS_CASSES: ["Légumes secs, graines", "Lentilles, légumes secs"],
+    CategoryValues.POIS_CHICHES: ["Légumes secs, graines", "Lentilles, légumes secs"],
+    CategoryValues.POIS_CHICHES_CONSERVE: ["Pois chiches"],
+    CategoryValues.AMANDES: ["Amandes"],
+    CategoryValues.BEURRE_DE_CACAHUETE: ["Pâtes à tartiner"],
+    CategoryValues.CACAHUETES: ["Cacahuètes"],
+    CategoryValues.GRANES_CHIA: ["Mélanges, graines, fruits exotiques"],
+    CategoryValues.GRANES_COURGE: ["Mélanges, graines, fruits exotiques"],
+    CategoryValues.GRANES_LIN: ["Mélanges, graines, fruits exotiques"],
+    CategoryValues.GRANES_TOURNESOL: ["Mélanges, graines, fruits exotiques"],
+    CategoryValues.NOISETTES: ["Noix, noisettes"],
+    CategoryValues.NOIX_CAJOUS: ["Noix de cajou"],
+    CategoryValues.PIGNONS_PIN: [
+        "Légumes secs, graines",
+        "Mélanges, graines, fruits exotiques",
+    ],
+    CategoryValues.PISTACHES: ["Pistaches"],
+    CategoryValues.BRIE: ["Brie", "Brie, bleu, fromage crémeux"],
+    CategoryValues.BUCHE_DE_CHEVRE: ["Fromages de chèvre"],
+    CategoryValues.CAMEMBERT: ["Camembert"],
+    CategoryValues.COMTE: [
+        "Emmental, Gruyère, Comté",
+        "Emmental, Comté, Parmesan, Mimolette",
+    ],
+    CategoryValues.COULOMMIERS: ["Coulommiers"],
+    CategoryValues.EMMENTAL: ["Emmental, Gruyère, Comté"],
+    CategoryValues.FETA: ["Fêta, fromages de brebis"],
+    CategoryValues.FROMAGE_BLANC: ["Fromages blancs"],
+    CategoryValues.FROMAGE_RACLETTE: ["Raclette"],
+    CategoryValues.LAIT_DEMI_ECREME: ["Lait demi-écrémé"],
+    CategoryValues.LAIT_ENTIER: ["Lait entier"],
+    CategoryValues.MOZZARELLA: ["Mozzarella"],
+    CategoryValues.OEUFS: ["Oeufs de plein air", "Oeufs standards"],
+    CategoryValues.PARMESAN_RAPE: ["Parmesan, grana padano râpés"],
+    CategoryValues.PETITS_SUISSES: ["Petits suisses"],
+    CategoryValues.ROQUEFORT: ["Roquefort", "Brie, bleu, fromage crémeux"],
+    CategoryValues.SKYR: ["Skyr"],
+    CategoryValues.YAOURT_NATURE_0: ["Yaourts nature", "Yaourts au bifidus, bien-être"],
+    CategoryValues.ANCHOIS: ["Anchois, harengs, apéritifs de la mer"],
+    CategoryValues.CABILLAUD: ["Cabillaud, merlan", "Surgelés"],
+    CategoryValues.COLIN_PANE: ["Poissons panés, plats préparés", "Surgelés"],
+    CategoryValues.CREVETTES: ["Crevettes, crustacés", "Surgelés"],
+    CategoryValues.LIMANDE: ["Autres poissons", "Surgelés"],
+    CategoryValues.MAQUEREAU_CONSERVE: ["Maquereaux"],
+    CategoryValues.MAQUEREAU_FRAIS: ["Marée du jour", "Autres poissons"],
+    CategoryValues.NOIX_DE_SAINT_JACQUES: ["Marée du jour", "Surgelés"],
+    CategoryValues.SARDINES: ["Sardines"],
+    CategoryValues.SARDINES_FRAICHES: ["Marée du jour", "Surgelés"],
+    CategoryValues.SAUMON: ["Marée du jour", "Saumon, truite", "Surgelés"],
+    CategoryValues.SAUMON_FUME: ["Saumon fumé"],
+    CategoryValues.SURIMI: ["Surimi, bâtonnets"],
+    CategoryValues.THON: ["Thon"],
+    CategoryValues.THON_FRAIS: ["Marée du jour"],
+    CategoryValues.TRUITE_FUMEE: ["Truite fumée"],
+    CategoryValues.BARRES_PROTEINEES: ["Barres de céréales"],
+    CategoryValues.ISOLAT_WHEY: ["Nutrition sportive"],
+    CategoryValues.PROTEINES_VEGETALES_POUDRE: ["Nutrition sportive"],
+    CategoryValues.TOFU_FUME: ["Simili-carnés, tofu"],
+    CategoryValues.TOFU_NATURE: ["Simili-carnés, tofu"],
+    CategoryValues.AIGUILLETTES_DINDE: ["Dinde"],
+    CategoryValues.BLANC_DE_DINDE_TRANCHES: ["Blanc de dinde"],
+    CategoryValues.CHIPOLATAS: ["Chipolatas, saucisses barbecue"],
+    CategoryValues.CONFIT_DE_CANARD: ["Canard", "Confits, gésiers"],
+    CategoryValues.CORDON_BLEU: ["Cordons bleus, panés", "Surgelés"],
+    CategoryValues.COTES_AGNEAU: ["Agneau"],
+    CategoryValues.COTES_DE_PORC: ["Porc", "Surgelés"],
+    CategoryValues.CUISSE_POULET: ["Cuisses, pilons, ailes", "Surgelés"],
+    CategoryValues.ENTRECOTE_BOEUF: ["Boeuf"],
+    CategoryValues.ESCALOPES_DE_DINDE: ["Dinde"],
+    CategoryValues.ESCALOPE_DE_VEAU: ["Veau"],
+    CategoryValues.FILET_MIGNON_DE_PORC: ["Porc"],
+    CategoryValues.GIGOT_AGNEAU: ["Agneau"],
+    CategoryValues.JAMBON_BLANC: ["Jambon blanc", "Jambon, rôti"],
+    CategoryValues.JAMBON_CRU: [
+        "Jambon cru, charcuterie en tranche",
+        "Jambon cru, sec, fumé",
+    ],
+    CategoryValues.LAPIN: ["Lapins"],
+    CategoryValues.LARDONS: ["Lardons"],
+    CategoryValues.MAGRET_DE_CANARD: ["Canard"],
+    CategoryValues.MERGUEZ: ["Merguez", "Barbecue, saucisses, brochettes"],
+    CategoryValues.NUGGETS: ["Nuggets", "Surgelés"],
+    CategoryValues.POITRINE_FUMEE_BACON: ["Bacon, poitrine"],
+    CategoryValues.POULET_FERMIER: ["Poulets entiers"],
+    CategoryValues.POULET_FILET: ["Escalopes, filets, aiguilettes", "Surgelés"],
+    CategoryValues.RILLETTES: ["Rillettes"],
+    CategoryValues.ROTI_DE_BOEUF: ["Boeuf"],
+    CategoryValues.ROTI_DE_PORC: ["Porc", "Rôti"],
+    CategoryValues.SAUCISSE_DE_STRASBOURG_KNACKI: ["Knacks, saucisses"],
+    CategoryValues.SAUCISSON_SEC: ["Saucisson sec entier"],
+    CategoryValues.SAUTE_DE_VEAU: ["Veau"],
+    CategoryValues.STEAK_HACHE_BOEUF: ["Steaks hachés", "Surgelés"],
+}
 
 
 class AuchanProductsSpider(Spider, ProductSpider):
@@ -170,37 +327,14 @@ class AuchanProductsSpider(Spider, ProductSpider):
 
         self.logger.info(f"Breadcrumbs on the page: {breadcrumbs}")
 
-        try:
-            main_department = breadcrumbs[1]
-            main_department = Department(main_department)
-        except ValueError:
+        expected_departments = dept_for_category[self.get_category()]
+        if any(x in breadcrumbs for x in expected_departments):
+            return True
+        else:
             self.logger.info(
-                f"Main store department {main_department} is irrelevant. Skipping..."
+                f"Store department '{breadcrumbs.pop()}' is irrelevant for category '{self.get_category()}'. Skipping..."
             )
             return False
-
-        if (self.get_category() == "Œufs") and (breadcrumbs[3] == "Oeufs"):
-            return True
-        elif (self.get_category() == "Lait entier") and (
-            breadcrumbs[3] == "Lait entier"
-        ):
-            return True
-        elif (self.get_category() == "Lait demi écrémé") and (
-            breadcrumbs[3] == "Lait demi-écrémé"
-        ):
-            return True
-
-        any_exclusion = [
-            s for excl in EXCLUSION_LIST for s in breadcrumbs if excl in s.lower()
-        ]
-
-        if any_exclusion:
-            self.logger.info(
-                f"Hit excluded store departments: {any_exclusion}. Skipping..."
-            )
-            return False
-
-        return True
 
     def get_name(self, response: Response) -> str:
         name = response.xpath(
@@ -279,7 +413,7 @@ class AuchanProductsSpider(Spider, ProductSpider):
 
         for product_attribute in product_attributes:
             m = match(
-                "Contenance : (\\d+x)?([.,0-9]+) ?(ml|cl|L|kg|g|pièces)",
+                "Contenance : (\\d+x)?([.,0-9]+) ?(ml|cl|L|kg|g|œufs|pièces)",
                 product_attribute.attrib["aria-label"],
                 IGNORECASE,
             )
@@ -292,6 +426,8 @@ class AuchanProductsSpider(Spider, ProductSpider):
                 quantity = float(raw_quantity.replace(",", "."))
 
                 match raw_quantity_unit.lower():
+                    case "kg":
+                        quantity_unit = QuantityUnit.KILOGRAM
                     case "g":
                         quantity = quantity / 1000
                         quantity_unit = QuantityUnit.KILOGRAM
@@ -303,8 +439,17 @@ class AuchanProductsSpider(Spider, ProductSpider):
                     case "ml":
                         quantity = quantity / 1000
                         quantity_unit = QuantityUnit.LITRE
-                    case "pièces":
+                    case "pièces" | "œufs":
                         quantity_unit = QuantityUnit.PIECE
+                        if self.get_category() == CategoryValues.OEUFS:
+                            item_name = self.get_name(response)
+                            eggs_num = quantity
+                            quantity, quantity_unit = self.compute_eggs_weight(
+                                eggs_num, item_name
+                            )
+                            self.logger.info(
+                                f"Converted eggs quantity {int(eggs_num)} to weight {quantity} kg..."
+                            )
                     case _:
                         return
 
