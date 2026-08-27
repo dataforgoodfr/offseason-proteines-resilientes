@@ -255,6 +255,8 @@ class BiocoopProductsSpider(Spider, ProductSpider):
                     quantity = float(raw_quantity.replace(",", "."))
 
                     match raw_quantity_unit.lower():
+                        case "kg":
+                            quantity_unit = QuantityUnit.KILOGRAM
                         case "g":
                             quantity = quantity / 1000
                             quantity_unit = QuantityUnit.KILOGRAM
@@ -268,6 +270,15 @@ class BiocoopProductsSpider(Spider, ProductSpider):
                             quantity_unit = QuantityUnit.LITRE
                         case "u":
                             quantity_unit = QuantityUnit.PIECE
+                            if self.get_category() == CategoryValues.OEUFS:
+                                item_name = self.get_name(response)
+                                eggs_num = quantity
+                                quantity, quantity_unit = self.compute_eggs_weight(
+                                    eggs_num, item_name
+                                )
+                                self.logger.info(
+                                    f"Converted eggs quantity {int(eggs_num)} to weight {quantity} kg..."
+                                )
                         case _:
                             return
 
