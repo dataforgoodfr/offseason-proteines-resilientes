@@ -1,7 +1,16 @@
-Cuisse de poulet,Cuisse de poulet 280
+Filet de poulet,Filet de poulet
+Cuisse de poulet,Cuisse de poulet
+Poulet fermier,Poulet jaune
+Aiguillettes de dinde,Émincé de dinde
 Nuggets,Nuggets de volaille
 Cordon bleu,Cordon bleu de volaille
+Escalopes de dinde,Filet de dinde
+Steak haché boeuf,Steak haché boeuf
+Escalope de veau,Escalope de veau
+Sauté de veau,sauté de veau
 Rôti de porc,Rôti porc nature
+Filet mignon de porc,Filet mignon de porc
+Côtes de porc,côtes de porc
 Jambon blanc,Jambon blanc basilic
 Jambon blanc,jambon supérieur ss sel
 Jambon cru,Jambon de Parme DOP
@@ -10,13 +19,15 @@ Lardons,Lardons nature s/sel
 Poitrine fumée / bacon,Bacon
 Rillettes,rillettes porc
 Chipolatas,Chipolatas
-Merguez,Merguez 4
+Merguez,Merguez
 Saucisson sec,saucisson 160g
 Saucisson sec,saucisson 200g
 Thon (conserve),thon égoutté
+Pavé de saumon,Pavé de saumon
 Saumon fumé,Saumon fumé 80g
 Saumon fumé,Saumon fumé 4 tranches
 Truité fumée,Truite fumée
+Dos de cabillaud,Dos de cabillaud
 Maquereau (conserve),Maquereaux égoutté
 Maquereau (conserve),Maquereaux 151g
 Maquereau frais,Maquereaux filets thym citron
@@ -52,13 +63,11 @@ Flageolets,Flageolets verts 500g
 Flageolets (conserve),Flageolets verts égoutté
 Haricots blancs,Haricots blancs lingots 500g
 Haricots blancs (conserve),Haricots blancs 280g net égoutté
-Lupin (conserve),Lupins nature 200g net égoutté
 Pois cassés,Pois cassés France 500g
 Pois cassés,Pois cassés France cuisson rapide 250g
 Falafels,Falafel (15) 250g
 Falafels,Falafel finger piment Espelette (12)200g
 Falafels,Falafel burger patate douce curcuma 2x100g
-Falafels (poudre),préparation falafel
 Tofu (ferme) nature,Tofu lactofermenté nature 200g
 Tofu (ferme) nature,Tofu nature 500g
 Tofu (ferme) fumé,Tofou fumé 2x100g
@@ -67,7 +76,6 @@ Tempeh,Tempeh d'okara 125g
 Tempeh,Tempeh à cuisiner (2) 200g
 Protéines de soja texturées,Protéines de soja gros
 Protéines de soja texturées,Protéines de soja petit 300g
-Fruit du jacquier,Fruit du jacquier à cuisiner 220g net égoutté
 Quinoa,Quinoa France 500g
 Quinoa,Trio quinoa 500g
 Seitan,Seitan
@@ -99,8 +107,6 @@ Protéines végétales poudre,Mix Protéines végétales + collagène 200g
 Barres protéinées,barres protéinées biofair
 Steak végétal,Végé'hachés (2) 200g
 Steak végétal,Falafel burger patate douce curcuma 2x100g
-Steak végétal surgelé,Végé'hachés (2) 200g
-Steak végétal surgelé,Falafel burger patate douce curcuma 2x100g
 Nuggets végétaux,Savoureux petits panés vegan (6) 170g
 Escalopes végétales panées,Délicieuse panée tomate basilic vegan 2x90g
 Saucisses végétales,Soyciss'fumées (4) 160g
