@@ -254,4 +254,15 @@ class LeclercProductsSpider(Spider, ProductSpider):
         ).group(1)
         quantity_unit = QuantityUnit(quantity_unit)
 
+        if (
+            quantity_unit == QuantityUnit.PIECE
+            and self.get_category() == CategoryValues.OEUFS
+        ):
+            item_name = self.get_name(response)
+            eggs_num = quantity
+            quantity, quantity_unit = self.compute_eggs_weight(eggs_num, item_name)
+            self.logger.info(
+                f"Converted eggs quantity {int(eggs_num)} to weight {quantity} kg..."
+            )
+
         return (quantity, quantity_unit)

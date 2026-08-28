@@ -82,3 +82,4 @@ venv.bak/
 *.sublime-project
 *.sublime-workspace
 *.code-workspace
+/logs
