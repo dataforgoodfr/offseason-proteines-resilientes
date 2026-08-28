@@ -25,7 +25,6 @@ class CategoryValues(StrEnum):
     # ----------------------------------------------------------------------
     ALTERNATIVES = "Alternatives végétales"
     CEREALES = "Céréales et pseudo-céréales"
-    LEGUMES = "Légumes et assimilés"
     LEGUMINEUSES = "Légumineuses"
     NOIX = "Noix et graines"
     OEUFS_PRODUITS_LAITIERS = "Œufs et produits laitiers"
@@ -114,12 +113,9 @@ class CategoryValues(StrEnum):
     # ----------------------------------------------------------------------
     # Légumineuses
     # ----------------------------------------------------------------------
-    FALAFELS = "Falafels"
-    FALAFELS_POUDRE = "Falafels (poudre)"
     FEVES = "Fèves"
     FLAGEOLETS = "Flageolets"
     FLAGEOLETS_CONSERVE = "Flageolets (conserve)"
-    GALETTES_DE_LEGUMINEUSES = "Galettes de légumineuses"
     HARICOTS_BLANCS = "Haricots blancs"
     HARICOTS_BLANCS_CONSERVE = "Haricots blancs (conserve)"
     HARICOTS_NOIRS = "Haricots noirs"
@@ -131,7 +127,6 @@ class CategoryValues(StrEnum):
     LENTILLES_CORAIL = "Lentilles corail"
     LENTILLES_VERTES = "Lentilles vertes"
     LENTILLES_VERTES_CONSERVE = "Lentilles vertes (conserve)"
-    LUPIN = "Lupin (conserve)"
     POIS_CASSES = "Pois cassés"
     POIS_CHICHES = "Pois chiches"
     POIS_CHICHES_CONSERVE = "Pois chiches (conserve)"
@@ -145,14 +140,8 @@ class CategoryValues(StrEnum):
     TOFU_NATURE = "Tofu (ferme) nature"
 
     # ----------------------------------------------------------------------
-    # Légumes et assimilés
-    # ----------------------------------------------------------------------
-    FRUIT_DU_JACQUER = "Fruit du jacquier"
-
-    # ----------------------------------------------------------------------
     # Céréales et pseudo‑céréales
     # ----------------------------------------------------------------------
-    AMARANTE = "Amarante"
     BLE_COMPLET = "Blé complet"
     FLOCON_DAVOINE = "Avoine (flocons)"
     QUINOA = "Quinoa"
@@ -188,23 +177,17 @@ class CategoryValues(StrEnum):
     # ----------------------------------------------------------------------
     AIGUILLETTES_VEGETALES = "Aiguillettes végétales"
     BASTONETS_POISSON_VEGETAUX = 'Bâtonnets "poisson" panés végétaux'
-    BASTONETS_POISSON_VEGETAUX_CONSERVE = (
-        'Bâtonnets "poisson" panés végétaux (conserve)'
-    )
     BOULETTES_VEGETALES = "Boulettes végétales"
-    BOULETTES_VEGETALES_SURGELE = "Boulettes végétales (surgelé)"
     ESCALOPES_VEGETALES_PANEES = "Escalopes végétales panées"
+    FALAFELS = "Falafels"
+    GALETTES_DE_LEGUMINEUSES = "Galettes de légumineuses"
     GALETTE_VEGETALE_CEREALES = "Galette végétale (céréales)"
-    GALETTE_VEGETALE_CEREALES_SURGELE = "Galette végétale (céréales) (surgelé)"
     JAMBON_VEGETAL = "Jambon végétal"
     KNAX_VEGETALES = "Knax végétales"
     LARDONS_VEGETAUX = "Lardons végétaux"
     NUGGETS_VEGETAUX = "Nuggets végétaux"
-    NUGGETS_VEGETAUX_SURGELE = "Nuggets végétaux (surgelé)"
     SAUCISSES_VEGETALES = "Saucisses végétales"
-    SIMILI_THON = "Simili thon"
     STEAK_VEGETAL = "Steak végétal"
-    STEAK_VEGETAL_SURGELE = "Steak végétal surgelé"
     SUPREME_FAUX_POULET = "Suprème de faux poulet"
 
     @classmethod
@@ -306,12 +289,9 @@ CATEGORY_SUBCATEGORY_MAP: Dict[CategoryValues, CategoryValues] = {
     # ----------------------------------------------------------------------
     # Légumineuses
     # ----------------------------------------------------------------------
-    CategoryValues.FALAFELS: CategoryValues.LEGUMINEUSES,
-    CategoryValues.FALAFELS_POUDRE: CategoryValues.LEGUMINEUSES,
     CategoryValues.FEVES: CategoryValues.LEGUMINEUSES,
     CategoryValues.FLAGEOLETS: CategoryValues.LEGUMINEUSES,
     CategoryValues.FLAGEOLETS_CONSERVE: CategoryValues.LEGUMINEUSES,
-    CategoryValues.GALETTES_DE_LEGUMINEUSES: CategoryValues.LEGUMINEUSES,
     CategoryValues.HARICOTS_BLANCS: CategoryValues.LEGUMINEUSES,
     CategoryValues.HARICOTS_BLANCS_CONSERVE: CategoryValues.LEGUMINEUSES,
     CategoryValues.HARICOTS_NOIRS: CategoryValues.LEGUMINEUSES,
@@ -323,7 +303,6 @@ CATEGORY_SUBCATEGORY_MAP: Dict[CategoryValues, CategoryValues] = {
     CategoryValues.LENTILLES_CORAIL: CategoryValues.LEGUMINEUSES,
     CategoryValues.LENTILLES_VERTES: CategoryValues.LEGUMINEUSES,
     CategoryValues.LENTILLES_VERTES_CONSERVE: CategoryValues.LEGUMINEUSES,
-    CategoryValues.LUPIN: CategoryValues.LEGUMINEUSES,
     CategoryValues.POIS_CASSES: CategoryValues.LEGUMINEUSES,
     CategoryValues.POIS_CHICHES: CategoryValues.LEGUMINEUSES,
     CategoryValues.POIS_CHICHES_CONSERVE: CategoryValues.LEGUMINEUSES,
@@ -335,13 +314,8 @@ CATEGORY_SUBCATEGORY_MAP: Dict[CategoryValues, CategoryValues] = {
     CategoryValues.TOFU_FUME: CategoryValues.SOJA,
     CategoryValues.TOFU_NATURE: CategoryValues.SOJA,
     # ----------------------------------------------------------------------
-    # Légumes et assimilés
-    # ----------------------------------------------------------------------
-    CategoryValues.FRUIT_DU_JACQUER: CategoryValues.LEGUMES,
-    # ----------------------------------------------------------------------
     # Céréales et pseudo‑céréales
     # ----------------------------------------------------------------------
-    CategoryValues.AMARANTE: CategoryValues.CEREALES,
     CategoryValues.BLE_COMPLET: CategoryValues.CEREALES,
     CategoryValues.FLOCON_DAVOINE: CategoryValues.CEREALES,
     CategoryValues.QUINOA: CategoryValues.CEREALES,
@@ -374,21 +348,17 @@ CATEGORY_SUBCATEGORY_MAP: Dict[CategoryValues, CategoryValues] = {
     # ----------------------------------------------------------------------
     CategoryValues.AIGUILLETTES_VEGETALES: CategoryValues.ALTERNATIVES,
     CategoryValues.BASTONETS_POISSON_VEGETAUX: CategoryValues.ALTERNATIVES,
-    CategoryValues.BASTONETS_POISSON_VEGETAUX_CONSERVE: CategoryValues.ALTERNATIVES,
     CategoryValues.BOULETTES_VEGETALES: CategoryValues.ALTERNATIVES,
-    CategoryValues.BOULETTES_VEGETALES_SURGELE: CategoryValues.ALTERNATIVES,
     CategoryValues.ESCALOPES_VEGETALES_PANEES: CategoryValues.ALTERNATIVES,
+    CategoryValues.FALAFELS: CategoryValues.ALTERNATIVES,
+    CategoryValues.GALETTES_DE_LEGUMINEUSES: CategoryValues.ALTERNATIVES,
     CategoryValues.GALETTE_VEGETALE_CEREALES: CategoryValues.ALTERNATIVES,
-    CategoryValues.GALETTE_VEGETALE_CEREALES_SURGELE: CategoryValues.ALTERNATIVES,
     CategoryValues.JAMBON_VEGETAL: CategoryValues.ALTERNATIVES,
     CategoryValues.KNAX_VEGETALES: CategoryValues.ALTERNATIVES,
     CategoryValues.LARDONS_VEGETAUX: CategoryValues.ALTERNATIVES,
     CategoryValues.NUGGETS_VEGETAUX: CategoryValues.ALTERNATIVES,
-    CategoryValues.NUGGETS_VEGETAUX_SURGELE: CategoryValues.ALTERNATIVES,
     CategoryValues.SAUCISSES_VEGETALES: CategoryValues.ALTERNATIVES,
-    CategoryValues.SIMILI_THON: CategoryValues.ALTERNATIVES,
     CategoryValues.STEAK_VEGETAL: CategoryValues.ALTERNATIVES,
-    CategoryValues.STEAK_VEGETAL_SURGELE: CategoryValues.ALTERNATIVES,
     CategoryValues.SUPREME_FAUX_POULET: CategoryValues.ALTERNATIVES,
 }
 
