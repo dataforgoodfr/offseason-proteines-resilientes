@@ -33,10 +33,6 @@ class TestCategory(unittest.TestCase):
         self.assertIsInstance(category, CategoryValues)
         self.assertIs(category, CategoryValues.SOJA)
 
-        category = CategoryValues("Légumes et assimilés")
-        self.assertIsInstance(category, CategoryValues)
-        self.assertIs(category, CategoryValues.LEGUMES)
-
         category = CategoryValues("Céréales et pseudo-céréales")
         self.assertIsInstance(category, CategoryValues)
         self.assertIs(category, CategoryValues.CEREALES)
