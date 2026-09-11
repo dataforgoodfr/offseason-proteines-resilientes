@@ -105,3 +105,22 @@ class ProductSpider(ABC):
         """
 
         pass
+
+    @staticmethod
+    def compute_eggs_weight(
+        nb: int, item_name: str
+    ) -> tuple[float, QuantityUnit] | None:
+        """
+        Compute eggs weight in kg based on egg category average value.
+        """
+
+        if "très gros" in item_name.lower():
+            weight = nb * 73 / 1000
+        elif "gros" in item_name.lower():
+            weight = nb * 68 / 1000
+        elif "petit" in item_name.lower():
+            weight = nb * 53 / 1000
+        else:
+            weight = nb * 58 / 1000
+
+        return (float(weight), QuantityUnit.KILOGRAM)
