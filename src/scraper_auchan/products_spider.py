@@ -297,7 +297,7 @@ class AuchanProductsSpider(Spider, ProductSpider):
 
     def is_relevant(self, response: Response) -> bool:
         breadcrumbs = response.xpath(
-            "//span[@class='site-breadcrumb__item']/a/text()"
+            "//span[@class='site-breadcrumb__item breadcrumbItem']/a/text()"
         ).getall()
 
         if len(breadcrumbs) == 0:
