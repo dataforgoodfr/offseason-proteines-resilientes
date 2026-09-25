@@ -9,18 +9,94 @@ from models.category import CategoryValues
 from models.product import QuantityUnit
 from utils.spider import ProductItem, ProductSpider
 
-# List of store department that are not relevant.
-EXCLUSION_LIST = (
-    "aides culinaires",
-    "alcools",
-    "boissons végétales",
-    "bébé",
-    "bouillon",
-    "cuisinés",
-    "glaces",
-    "pizza",
-    "préparés",
-)
+# Mapping between categories and departments.
+CAT_DEPT_MAPPING = {
+    CategoryValues.ESCALOPES_VEGETALES_PANEES: ["Spécialités végétales"],
+    CategoryValues.FALAFELS: ["Traiteur végétal"],
+    CategoryValues.GALETTE_VEGETALE_CEREALES: ["Traiteur végétal"],
+    CategoryValues.JAMBON_VEGETAL: ["Spécialités végétales"],
+    CategoryValues.KNAX_VEGETALES: ["Spécialités végétales"],
+    CategoryValues.NUGGETS_VEGETAUX: ["Spécialités végétales"],
+    CategoryValues.SAUCISSES_VEGETALES: ["Spécialités végétales"],
+    CategoryValues.STEAK_VEGETAL: ["Spécialités végétales"],
+    CategoryValues.BLE_COMPLET: ["Quinoa, boulghour, céréales"],
+    CategoryValues.FLOCON_DAVOINE: ["Mueslis, flocons"],
+    CategoryValues.QUINOA: ["Quinoa, boulghour, céréales"],
+    CategoryValues.SARRASIN: ["Graines", "Quinoa, Semoule, Céréales"],
+    CategoryValues.SEIGLE: ["Mueslis, flocons"],
+    CategoryValues.SEITAN: ["Spécialités végétales"],
+    CategoryValues.FLAGEOLETS: ["Légumineuses"],
+    CategoryValues.FLAGEOLETS_CONSERVE: ["Conserves de légumes"],
+    CategoryValues.HARICOTS_BLANCS: ["Légumineuses"],
+    CategoryValues.HARICOTS_BLANCS_CONSERVE: ["Conserves de légumes"],
+    CategoryValues.HARICOTS_ROUGES: ["Légumineuses"],
+    CategoryValues.HARICOTS_ROUGES_CONSERVE: ["Conserves de légumes"],
+    CategoryValues.LENTILLES_BLONDES: ["Légumineuses"],
+    CategoryValues.LENTILLES_CORAIL: ["Légumineuses"],
+    CategoryValues.LENTILLES_VERTES: ["Légumineuses"],
+    CategoryValues.LENTILLES_VERTES_CONSERVE: ["Conserves de légumes"],
+    CategoryValues.POIS_CASSES: ["Légumineuses"],
+    CategoryValues.POIS_CHICHES: ["Légumineuses"],
+    CategoryValues.POIS_CHICHES_CONSERVE: ["Conserves de légumes"],
+    CategoryValues.AMANDES: ["Oléagineux"],
+    CategoryValues.BEURRE_DE_CACAHUETE: ["Pâtes à tartiner"],
+    CategoryValues.GRAINES_CHIA: ["Graines"],
+    CategoryValues.GRAINES_COURGE: ["Graines"],
+    CategoryValues.GRAINES_LIN: ["Légumineuses, graines"],
+    CategoryValues.GRAINES_TOURNESOL: ["Légumineuses, graines"],
+    CategoryValues.NOISETTES: ["Oléagineux"],
+    CategoryValues.NOIX_CAJOUS: ["Oléagineux"],
+    CategoryValues.PIGNONS_PIN: ["Oléagineux"],
+    CategoryValues.PISTACHES: ["Fruits secs", "Oléagineux"],
+    CategoryValues.BRIE: ["Camembert, Brie, pâtes molles"],
+    CategoryValues.BUCHE_DE_CHEVRE: ["Chèvres et brebis"],
+    CategoryValues.CAMEMBERT: ["Camembert, Brie, pâtes molles"],
+    CategoryValues.COMTE: ["Emmental, Comté, pâtes cuites"],
+    CategoryValues.COULOMMIERS: ["Camembert, Brie, pâtes molles"],
+    CategoryValues.EMMENTAL: ["Râpé"],
+    CategoryValues.FETA: ["Mozzarella, buratta, mascarpone"],
+    CategoryValues.FROMAGE_BLANC: ["Lait de vache"],
+    CategoryValues.LAIT_DEMI_ECREME: ["Laits de vache"],
+    CategoryValues.LAIT_ENTIER: ["Laits de vache"],
+    CategoryValues.MOZZARELLA: ["Mozzarella, buratta, mascarpone", "Râpé"],
+    CategoryValues.OEUFS: ["Œufs"],
+    CategoryValues.PARMESAN_RAPE: ["Râpé"],
+    CategoryValues.ROQUEFORT: ["Roquefort et bleus"],
+    CategoryValues.SKYR: ["Lait de vache"],
+    CategoryValues.YAOURT_NATURE_0: ["Lait de brebis, chèvre"],
+    CategoryValues.ANCHOIS: ["Poissons, crustacés"],
+    CategoryValues.COLIN_PANE: ["Poissons"],
+    CategoryValues.CREVETTES: ["Poissons, crustacés"],
+    CategoryValues.MAQUEREAU_CONSERVE: ["Conserves de poissons"],
+    CategoryValues.MAQUEREAU_FRAIS: ["Poissons, crustacés"],
+    CategoryValues.SARDINES: ["Conserves de poissons"],
+    CategoryValues.SAUMON_FUME: ["Poissons, crustacés"],
+    CategoryValues.THON: ["Conserves de poissons"],
+    CategoryValues.BARRES_PROTEINEES: ["Sport"],
+    CategoryValues.ISOLAT_WHEY: ["Sport"],
+    CategoryValues.PROTEINES_VEGETALES_POUDRE: ["Sport"],
+    CategoryValues.PROTEINES_SOJA_TEXTUREES: ["Légumineuses"],
+    CategoryValues.TEMPEH: ["Tofus, seitans"],
+    CategoryValues.TOFU_FUME: ["Tofus, seitans"],
+    CategoryValues.TOFU_NATURE: ["Tofus, seitans"],
+    CategoryValues.CHIPOLATAS: ["Saucisserie"],
+    CategoryValues.CORDON_BLEU: ["Volaille"],
+    CategoryValues.COTES_DE_PORC: ["Porc"],
+    CategoryValues.CUISSE_POULET: ["Volaille"],
+    CategoryValues.FILET_MIGNON_DE_PORC: ["Porc"],
+    CategoryValues.JAMBON_BLANC: ["Jambons"],
+    CategoryValues.JAMBON_CRU: ["Jambons"],
+    CategoryValues.LARDONS: ["Lardons"],
+    CategoryValues.MERGUEZ: ["Saucisserie"],
+    CategoryValues.NUGGETS: ["Volaille"],
+    CategoryValues.POITRINE_FUMEE_BACON: ["Porc"],
+    CategoryValues.POULET_FERMIER: ["Volaille"],
+    CategoryValues.POULET_FILET: ["Volaille"],
+    CategoryValues.RILLETTES: ["Pâtés"],
+    CategoryValues.ROTI_DE_PORC: ["Porc"],
+    CategoryValues.SAUCISSON_SEC: ["Pâtés, saucissons"],
+    CategoryValues.STEAK_HACHE_BOEUF: ["Boeuf"],
+}
 
 
 @unique
@@ -151,26 +227,14 @@ class BiocoopProductsSpider(Spider, ProductSpider):
 
         self.logger.info(f"Breadcrumbs on the page: {breadcrumbs}")
 
-        try:
-            main_department = breadcrumbs[0]
-            main_department = Department(main_department)
-        except ValueError:
+        expected_departments = CAT_DEPT_MAPPING[self.get_category()]
+        if any(x in breadcrumbs for x in expected_departments):
+            return True
+        else:
             self.logger.info(
-                f"Main store department {main_department} is irrelevant. Skipping..."
+                f"Store department '{breadcrumbs.pop()}' is irrelevant for category '{self.get_category()}'. Skipping..."
             )
             return False
-
-        any_exclusion = [
-            s for excl in EXCLUSION_LIST for s in breadcrumbs if excl in s.lower()
-        ]
-
-        if any_exclusion:
-            self.logger.info(
-                f"Hit excluded store departments: {any_exclusion}. Skipping..."
-            )
-            return False
-
-        return True
 
     def get_name(self, response: Response) -> str:
         name = response.xpath("//span[@itemprop='name']/text()").get()
