@@ -11,18 +11,179 @@ from models.category import CategoryValues
 from models.product import QuantityUnit
 from utils.spider import ProductItem, ProductSpider
 
-# List of store department that are not relevant.
-EXCLUSION_LIST = (
-    "aides culinaires",
-    "alcools",
-    "boissons végétales",
-    "bébé",
-    "bouillon",
-    "cuisinés",
-    "glaces",
-    "pizza",
-    "préparés",
-)
+# Mapping between categories and departments.
+CAT_DEPT_MAPPING = {
+    CategoryValues.AIGUILLETTES_VEGETALES: ["Steaks, Panés et Galettes végétales"],
+    CategoryValues.BASTONETS_POISSON_VEGETAUX: ["Steaks, Panés et Galettes végétales"],
+    CategoryValues.BOULETTES_VEGETALES: ["Steaks, Panés et Galettes végétales"],
+    CategoryValues.ESCALOPES_VEGETALES_PANEES: ["Steaks, Panés et Galettes végétales"],
+    CategoryValues.GALETTE_VEGETALE_CEREALES: ["Steaks, Panés et Galettes végétales"],
+    CategoryValues.JAMBON_VEGETAL: ["Charcuterie végétale"],
+    CategoryValues.KNAX_VEGETALES: ["Charcuterie végétale"],
+    CategoryValues.LARDONS_VEGETAUX: ["Charcuterie végétale"],
+    CategoryValues.NUGGETS_VEGETAUX: ["Steaks, Panés et Galettes végétales"],
+    CategoryValues.SAUCISSES_VEGETALES: ["Charcuterie végétale"],
+    CategoryValues.STEAK_VEGETAL: ["Steaks, Panés et Galettes végétales"],
+    CategoryValues.SUPREME_FAUX_POULET: ["Steaks, Panés et Galettes végétales"],
+    CategoryValues.FLOCON_DAVOINE: ["Mueslis et Avoines", "Céréales adultes"],
+    CategoryValues.QUINOA: ["Quinoa, Boulgour et Céréales"],
+    CategoryValues.SARRASIN: ["Quinoa, Boulgour et Céréales"],
+    CategoryValues.SEITAN: ["Steaks, Panés et Galettes végétales"],
+    CategoryValues.FALAFELS: ["Steaks, Panés et Galettes végétales"],
+    CategoryValues.FEVES: ["Lentilles et Légumes secs", "Légumes natures"],
+    CategoryValues.FLAGEOLETS: ["Flageolets"],
+    CategoryValues.FLAGEOLETS_CONSERVE: ["Flageolets"],
+    CategoryValues.GALETTES_DE_LEGUMINEUSES: ["Traiteur"],
+    CategoryValues.HARICOTS_BLANCS: ["Lentilles et Légumes secs"],
+    CategoryValues.HARICOTS_BLANCS_CONSERVE: ["Haricots blancs"],
+    CategoryValues.HARICOTS_NOIRS: ["Lentilles et Légumes secs"],
+    CategoryValues.HARICOTS_NOIRS_CONSERVE: ["Haricots rouges"],
+    CategoryValues.HARICOTS_ROUGES: ["Haricots rouges"],
+    CategoryValues.HARICOTS_ROUGES_CONSERVE: ["Haricots rouges"],
+    CategoryValues.LENTILLES_BLONDES: ["Lentilles et Légumes secs"],
+    CategoryValues.LENTILLES_CORAIL: ["Lentilles et Légumes secs"],
+    CategoryValues.LENTILLES_VERTES: ["Lentilles et Légumes secs"],
+    CategoryValues.LENTILLES_VERTES_CONSERVE: [
+        "Lentilles",
+        "Lentilles et Légumes secs",
+    ],
+    CategoryValues.POIS_CASSES: ["Lentilles et Légumes secs"],
+    CategoryValues.POIS_CHICHES: ["Lentilles et Légumes secs"],
+    CategoryValues.POIS_CHICHES_CONSERVE: ["Pois chiche"],
+    CategoryValues.AMANDES: ["Légumes et Fruits secs"],
+    CategoryValues.BEURRE_DE_CACAHUETE: [
+        "Pâtes à tartiner et Crèmes",
+        "Pâtes à tartiner, Confitures et Miels",
+    ],
+    CategoryValues.CACAHUETES: ["Cacahuètes"],
+    CategoryValues.GRANES_CHIA: ["Graines"],
+    CategoryValues.GRANES_COURGE: ["Graines"],
+    CategoryValues.GRANES_LIN: ["Graines"],
+    CategoryValues.GRANES_TOURNESOL: ["Graines"],
+    CategoryValues.NOISETTES: [
+        "Pistaches, Noix de cajou et Amandes",
+        "Fruits secs et mélanges",
+        "Fruits secs et Fruits confits",
+    ],
+    CategoryValues.NOIX_CAJOUS: [
+        "Pistaches, Noix de cajou et Amandes",
+        "Graines",
+        "Fruits secs et mélanges",
+    ],
+    CategoryValues.PIGNONS_PIN: [
+        "Fruits secs et Fruits confits",
+        "Légumes et Fruits secs",
+        "Fruits secs et mélanges",
+    ],
+    CategoryValues.PISTACHES: [
+        "Pistaches, Noix de cajou et Amandes",
+        "Fruits secs et mélanges",
+    ],
+    CategoryValues.BRIE: ["Brie"],
+    CategoryValues.BUCHE_DE_CHEVRE: [
+        "Bûches et Fromage de chèvre",
+    ],
+    CategoryValues.CAMEMBERT: ["Camembert"],
+    CategoryValues.COMTE: ["Comté"],
+    CategoryValues.COULOMMIERS: ["Coulommiers"],
+    CategoryValues.EMMENTAL: ["Emmental"],
+    CategoryValues.FETA: ["Feta"],
+    CategoryValues.FROMAGE_BLANC: [
+        "Fromages blancs allégés et 0%",
+        "Fromages blancs natures",
+    ],
+    CategoryValues.FROMAGE_RACLETTE: ["Raclette"],
+    CategoryValues.LAIT_DEMI_ECREME: ["Lait demi-écrémé", "Lait et Oeufs"],
+    CategoryValues.LAIT_ENTIER: ["Lait entier", "Lait et Oeufs"],
+    CategoryValues.MOZZARELLA: ["Mozzarella"],
+    CategoryValues.OEUFS: ["Œufs"],
+    CategoryValues.PARMESAN_RAPE: [
+        "Fromages râpés et parmesans",
+        "Parmesan et Gorgonzola",
+    ],
+    CategoryValues.PETITS_SUISSES: ["Petits suisses et Yaourts enfants"],
+    CategoryValues.ROQUEFORT: ["Roquefort"],
+    CategoryValues.SKYR: ["Yaourts allégés, 0% et Skyrs"],
+    CategoryValues.YAOURT_NATURE_0: ["Yaourts allégés, 0% et Skyrs", "Yaourts natures"],
+    CategoryValues.ANCHOIS: ["Poissons fumés"],
+    CategoryValues.CABILLAUD: ["Cabillaud et Poissons blancs", "Poissons natures"],
+    CategoryValues.COLIN_PANE: [
+        "Poissons panés",
+        "Poissons panés et cuisinés",
+    ],
+    CategoryValues.CREVETTES: ["Crevettes et Crustacés", "Fruits de mer et Crustacés"],
+    CategoryValues.LIMANDE: ["Poissons panés et cuisinés", "Poissons panés"],
+    CategoryValues.MAQUEREAU_CONSERVE: ["Maquereaux"],
+    CategoryValues.MAQUEREAU_FRAIS: ["Poissons entiers"],
+    CategoryValues.NOIX_DE_SAINT_JACQUES: [
+        "Coquillages et crustacés",
+        "Moules et Coquillages",
+        "Fruits de mer et Crustacés",
+    ],
+    CategoryValues.SARDINES: ["Sardines"],
+    CategoryValues.SARDINES_FRAICHES: [
+        "Brochettes et Grillades poisson",
+        "Poissons entiers",
+        "Filets et pavés",
+    ],
+    CategoryValues.SAUMON: ["Saumons et Truites", "Poissons natures"],
+    CategoryValues.SAUMON_FUME: ["Saumons fumés"],
+    CategoryValues.SURIMI: ["Surimis"],
+    CategoryValues.THON: ["Thon"],
+    CategoryValues.THON_FRAIS: [
+        "Brochettes et Grillades poisson",
+        "Cabillaud et Poissons blancs",
+    ],
+    CategoryValues.TRUITE_FUMEE: ["Truites fumées"],
+    CategoryValues.BARRES_PROTEINEES: ["Nutrition et Protéine"],
+    CategoryValues.CASEINE: ["Hydratation et Poudres"],
+    CategoryValues.ISOLAT_WHEY: ["Hydratation et Poudres"],
+    CategoryValues.PROTEINES_VEGETALES_POUDRE: ["Hydratation et Poudres"],
+    CategoryValues.PROTEINES_SOJA_TEXTUREES: [
+        "Lentilles et Légumes secs",
+        "Quinoa, Boulgour et Céréales",
+    ],
+    CategoryValues.TEMPEH: ["Tofu"],
+    CategoryValues.TOFU_FUME: ["Tofu", "Steaks, Panés et Galettes végétales"],
+    CategoryValues.TOFU_NATURE: ["Tofu"],
+    CategoryValues.AIGUILLETTES_DINDE: ["Dindes"],
+    CategoryValues.BLANC_DE_DINDE_TRANCHES: ["Blanc de dinde"],
+    CategoryValues.CHIPOLATAS: ["Chipolatas et Saucisses"],
+    CategoryValues.CONFIT_DE_CANARD: ["Cassoulets et Confits", "Canard"],
+    CategoryValues.CORDON_BLEU: ["Cordons bleus", "Volailles panées et volailles"],
+    CategoryValues.COTES_AGNEAU: ["Agneau"],
+    CategoryValues.COTES_DE_PORC: ["Porc", "Grillades et Brochettes", "Grands formats"],
+    CategoryValues.CUISSE_POULET: ["Cuisses et Ailes"],
+    CategoryValues.ENTRECOTE_BOEUF: ["Boeuf", "Boucherie et Poissonnerie"],
+    CategoryValues.ESCALOPES_DE_DINDE: ["Dindes"],
+    CategoryValues.ESCALOPE_DE_VEAU: ["Veau"],
+    CategoryValues.FILET_MIGNON_DE_PORC: ["Porc"],
+    CategoryValues.GIGOT_AGNEAU: ["Agneau"],
+    CategoryValues.JAMBON_BLANC: ["Jambons blancs"],
+    CategoryValues.JAMBON_CRU: ["Jambons crus et secs"],
+    CategoryValues.LAPIN: ["Lapin"],
+    CategoryValues.LARDONS: ["Lardons"],
+    CategoryValues.MAGRET_DE_CANARD: ["Canard"],
+    CategoryValues.MERGUEZ: ["Merguez"],
+    CategoryValues.NUGGETS: ["Nuggets et Tenders", "Volailles panées et volailles"],
+    CategoryValues.POITRINE_FUMEE_BACON: [
+        "Jambons crus et Charcuteries tranchées",
+        "Bacon et Poitrines",
+        "Bacon, Rosette et Salami",
+    ],
+    CategoryValues.POULET_FERMIER: ["Poulets entiers"],
+    CategoryValues.POULET_FILET: ["Filets et Aiguillettes"],
+    CategoryValues.RILLETTES: ["Rillettes"],
+    CategoryValues.ROTI_DE_BOEUF: ["Boeuf"],
+    CategoryValues.ROTI_DE_PORC: ["Porc", "Rôtis"],
+    CategoryValues.SAUCISSE_DE_STRASBOURG_KNACKI: ["Knacks"],
+    CategoryValues.SAUCISSON_SEC: [
+        "Charcuterie apéritive",
+        "Saucissons et Fuets",
+    ],
+    CategoryValues.SAUTE_DE_VEAU: ["Veau"],
+    CategoryValues.STEAK_HACHE_BOEUF: ["Steaks hachés"],
+}
 
 
 @unique
@@ -78,14 +239,7 @@ class CarrefourProductsSpider(Spider, ProductSpider):
         """
 
         self.current_page += 1
-        if self.get_category() == "Œufs":
-            self.url = (
-                f"https://www.carrefour.fr/r/cremerie/oeufs?page={self.current_page}"
-            )
-        else:
-            self.url = (
-                f"https://www.carrefour.fr/s?q={self.query}&page={self.current_page}"
-            )
+        self.url = f"https://www.carrefour.fr/s?filters[facet_enseignes][0]=Drive ou livraison à domicile&q={self.query}&page={self.current_page}"
 
         self.logger.debug(f"Next page set to {self.current_page}")
 
@@ -184,33 +338,14 @@ class CarrefourProductsSpider(Spider, ProductSpider):
 
         self.logger.info(f"Breadcrumbs on the page: {breadcrumbs}")
 
-        try:
-            main_department = breadcrumbs[1]
-            main_department = Department(main_department)
-        except ValueError:
+        expected_departments = CAT_DEPT_MAPPING[self.get_category()]
+        if any(x in breadcrumbs for x in expected_departments):
+            return True
+        else:
             self.logger.info(
-                f"Main store department {main_department} is irrelevant. Skipping..."
+                f"Store department '{breadcrumbs.pop()}' is irrelevant for category '{self.get_category()}'. Skipping..."
             )
             return False
-
-        if (self.get_category() == "Lait entier") and (breadcrumbs[3] == "Lait entier"):
-            return True
-        elif (self.get_category() == "Lait demi écrémé") and (
-            breadcrumbs[3] == "Lait demi-écrémé"
-        ):
-            return True
-
-        any_exclusion = [
-            s for excl in EXCLUSION_LIST for s in breadcrumbs if excl in s.lower()
-        ]
-
-        if any_exclusion:
-            self.logger.info(
-                f"Hit excluded store departments: {any_exclusion}. Skipping..."
-            )
-            return False
-
-        return True
 
     @lru_cache(maxsize=8, typed=True)
     def __get_product_info(self, response: Response):
@@ -248,34 +383,41 @@ class CarrefourProductsSpider(Spider, ProductSpider):
         """
         Extracts the product quantity and its unit from the response, and
         normalises it into either kg or L.
+
+        Examples:
+        la barquette de 2x90 g (par pièce)
+        la barquette de 2 cuisses - 450g (total)
+        les 20 saucisses 700 g (total)
+        les 2 galettes de 100g (par pièce)
+        le paquet de 320g de 12 (total)
+        la barquette de 200g - 18 pièces
         """
 
         product_info = self.__get_product_info(response)
-        raw_quantity = product_info["description"]
+        quantity_text = product_info["description"]
 
-        m = re.match("(.+) ([.0-9]+) ?(ml|cl|L|kg|g)?", raw_quantity, re.IGNORECASE)
+        m = re.match("(.+) ([,.0-9]+) ?(ml|cl|L|kg|g)?", quantity_text, re.IGNORECASE)
 
         if m is None:
             return
 
-        multiplier = m.group(1)  # les 2 plaquettes, la bouteille
-        raw_quantity = m.group(2)  # 200, 1,5
+        raw_multiplier = m.group(1)  # les 2 plaquettes, la bouteille
+        raw_quantity = m.group(
+            2
+        )  # 200, 1,5 = usually the total quantity, but sometimes not!
         raw_quantity_unit = m.group(3)  # g, kg, L, l, cl
 
         quantity = float(raw_quantity.replace(",", "."))
 
         if raw_quantity_unit is None:
             quantity_unit = QuantityUnit.PIECE
-
             if self.get_category() == CategoryValues.OEUFS:
                 item_name = self.get_name(response)
                 eggs_num = quantity
                 quantity, quantity_unit = self.compute_eggs_weight(eggs_num, item_name)
-
                 self.logger.info(
                     f"Converted eggs quantity {int(eggs_num)} to weight {quantity} kg..."
                 )
-
         else:
             match raw_quantity_unit.lower():
                 case "kg":
@@ -294,10 +436,17 @@ class CarrefourProductsSpider(Spider, ProductSpider):
                 case _:
                     return
 
-        is_coef = filter(str.isdigit, multiplier)
-
-        if list(is_coef):
-            nb = int("".join(filter(str.isdigit, multiplier)))
-            return (quantity * nb, quantity_unit)
-        else:
+        # check if packaging text contains total: Les 2 briques de 30cl - 60cl
+        # sometimes not: les 6 briques de 1 l
+        is_separator = quantity_text.find("-")
+        if is_separator > 0:
+            self.logger.info(
+                f"Quantity found: {quantity_text} / extracted: {quantity}{quantity_unit}"
+            )
             return (quantity, quantity_unit)
+        else:
+            nb = int("".join(filter(str.isdigit, raw_multiplier)) or 1)
+            self.logger.info(
+                f"Quantity found: {quantity_text} / extracted: {quantity * nb}{quantity_unit}"
+            )
+            return (quantity * nb, quantity_unit)
