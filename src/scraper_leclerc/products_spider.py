@@ -10,18 +10,95 @@ from models.category import CategoryValues
 from models.product import QuantityUnit
 from utils.spider import ProductItem, ProductSpider
 
-# List of store department that are not relevant.
-EXCLUSION_LIST = (
-    "aides culinaires",
-    "alcools",
-    "boissons végétales",
-    "bébé",
-    "bouillon",
-    "cuisinés",
-    "glaces",
-    "pizza",
-    "préparés",
-)
+# Mapping between categories and departments.
+CAT_DEPT_MAPPING = {
+    CategoryValues.AIGUILLETTES_VEGETALES: ["Tofus, émincés, galettes"],
+    CategoryValues.BOULETTES_VEGETALES: ["Alternatives à la viande"],
+    CategoryValues.ESCALOPES_VEGETALES_PANEES: ["Panés et nuggets"],
+    CategoryValues.FALAFELS: ["Tofus, émincés, galettes"],
+    CategoryValues.JAMBON_VEGETAL: ["Charcuteries végétales"],
+    CategoryValues.KNAX_VEGETALES: ["Alternatives à la viande"],
+    CategoryValues.LARDONS_VEGETAUX: ["Charcuteries végétales"],
+    CategoryValues.NUGGETS_VEGETAUX: ["Panés et nuggets"],
+    CategoryValues.SAUCISSES_VEGETALES: ["Alternatives à la viande"],
+    CategoryValues.STEAK_VEGETAL: ["Alternatives à la viande"],
+    CategoryValues.FLOCON_DAVOINE: ["Céréales adultes"],
+    CategoryValues.QUINOA: ["Couscous, Blés et Céréales"],
+    CategoryValues.FLAGEOLETS_CONSERVE: ["Haricots et flageolets"],
+    CategoryValues.HARICOTS_BLANCS_CONSERVE: ["Haricots et flageolets"],
+    CategoryValues.HARICOTS_NOIRS_CONSERVE: ["Haricots et flageolets"],
+    CategoryValues.HARICOTS_ROUGES_CONSERVE: ["Haricots et flageolets"],
+    CategoryValues.LENTILLES_BLONDES: ["Légumes secs"],
+    CategoryValues.LENTILLES_CORAIL: ["Légumes secs"],
+    CategoryValues.LENTILLES_VERTES: ["Légumes secs"],
+    CategoryValues.LENTILLES_VERTES_CONSERVE: ["Lentilles et pois chiches"],
+    CategoryValues.POIS_CASSES: ["Légumes secs"],
+    CategoryValues.POIS_CHICHES_CONSERVE: ["Lentilles et pois chiches"],
+    CategoryValues.AMANDES: ["Fruits à coques"],
+    CategoryValues.BEURRE_DE_CACAHUETE: ["Pâtes à tartiner"],
+    CategoryValues.CACAHUETES: ["Cacahuètes, pistaches…"],
+    CategoryValues.GRANES_CHIA: ["Légumes secs"],
+    CategoryValues.GRANES_COURGE: ["Fruits secs"],
+    CategoryValues.GRANES_TOURNESOL: ["Graines, fruits séchés"],
+    CategoryValues.NOISETTES: ["Fruits à coques"],
+    CategoryValues.NOIX_CAJOUS: ["Cacahuètes, pistaches…"],
+    CategoryValues.PIGNONS_PIN: ["Fruits à coques"],
+    CategoryValues.PISTACHES: ["Cacahuètes, pistaches…"],
+    CategoryValues.BRIE: ["Camemberts Coulommiers Bries"],
+    CategoryValues.BUCHE_DE_CHEVRE: ["Chèvres et Brebis"],
+    CategoryValues.CAMEMBERT: ["Camemberts Coulommiers Bries"],
+    CategoryValues.COMTE: ["Bloc emmental Comté Gouda", "Sélection du fromager"],
+    CategoryValues.COULOMMIERS: ["Camemberts Coulommiers Bries"],
+    CategoryValues.EMMENTAL: ["Bloc emmental Comté Gouda"],
+    CategoryValues.FETA: ["Mozzarellas Burratas Fetas"],
+    CategoryValues.FROMAGE_BLANC: ["Skyrs, fromages blancs,allégés"],
+    CategoryValues.FROMAGE_RACLETTE: ["Raclettes Tartiflettes Panés"],
+    CategoryValues.LAIT_DEMI_ECREME: ["Laits demi-écrémés"],
+    CategoryValues.LAIT_ENTIER: ["Laits entiers"],
+    CategoryValues.MOZZARELLA: ["Mozzarellas Burratas Fetas"],
+    CategoryValues.ROQUEFORT: ["Roqueforts et bleus"],
+    CategoryValues.SKYR: ["Skyrs, fromages blancs,allégés"],
+    CategoryValues.YAOURT_NATURE_0: ["Natures et arômatisés"],
+    CategoryValues.ANCHOIS: ["Anchois et Harengs, Rollmops"],
+    CategoryValues.CABILLAUD: ["Filets, Pavés, Dos et Lamelles", "Poissons"],
+    CategoryValues.COLIN_PANE: ["Panés et Steaks de poissons"],
+    CategoryValues.CREVETTES: ["Coquillages et Crustacés"],
+    CategoryValues.LIMANDE: ["Panés et Steaks de poissons", "Poissons panés"],
+    CategoryValues.MAQUEREAU_CONSERVE: ["Maquereaux"],
+    CategoryValues.NOIX_DE_SAINT_JACQUES: ["Fruits de mer et coquilles"],
+    CategoryValues.SARDINES: ["Sardines"],
+    CategoryValues.SAUMON: ["Filets, Pavés, Dos et Lamelles"],
+    CategoryValues.SAUMON_FUME: ["Saumons et Poissons fumés"],
+    CategoryValues.SURIMI: ["Surimis"],
+    CategoryValues.THON: ["Thons"],
+    CategoryValues.TRUITE_FUMEE: ["Saumons et Poissons fumés"],
+    CategoryValues.BARRES_PROTEINEES: ["Minceur & Sport"],
+    CategoryValues.BLANC_DE_DINDE_TRANCHES: ["Charcuteries de volaille"],
+    CategoryValues.CHIPOLATAS: ["Saucisses et Grillades"],
+    CategoryValues.CONFIT_DE_CANARD: ["Canards et Cailles", "Cassoulets et Sud ouest"],
+    CategoryValues.CORDON_BLEU: ["Cordons Bleus et Croqs"],
+    CategoryValues.COTES_DE_PORC: ["Porc"],
+    CategoryValues.CUISSE_POULET: ["Poulets"],
+    CategoryValues.ENTRECOTE_BOEUF: ["Viande bovine"],
+    CategoryValues.ESCALOPES_DE_DINDE: ["Dindes"],
+    CategoryValues.ESCALOPE_DE_VEAU: ["Veau"],
+    CategoryValues.JAMBON_BLANC: ["Jambons blancs et rôtis"],
+    CategoryValues.JAMBON_CRU: ["Charcuteries sèches tranchées"],
+    CategoryValues.LAPIN: ["Lapins et autres gibiers"],
+    CategoryValues.LARDONS: ["Lardons, Dés, Émincés, Bacons"],
+    CategoryValues.MAGRET_DE_CANARD: ["Canards et Cailles"],
+    CategoryValues.MERGUEZ: ["Saucisses et Grillades"],
+    CategoryValues.NUGGETS: ["Nuggets et Tenders", "Volailles et panés"],
+    CategoryValues.POITRINE_FUMEE_BACON: ["Lardons, Dés, Émincés, Bacons"],
+    CategoryValues.POULET_FERMIER: ["Poulets"],
+    CategoryValues.POULET_FILET: ["Poulets"],
+    CategoryValues.RILLETTES: ["Pâtés, rillettes et foies gras"],
+    CategoryValues.ROTI_DE_PORC: ["Jambons blancs et rôtis"],
+    CategoryValues.SAUCISSE_DE_STRASBOURG_KNACKI: ["Knacks, Saucisses, Boudins"],
+    CategoryValues.SAUCISSON_SEC: ["Saucissons entiers et Chorizos"],
+    CategoryValues.SAUTE_DE_VEAU: ["Veau"],
+    CategoryValues.STEAK_HACHE_BOEUF: ["Steaks hachés"],
+}
 
 
 @unique
@@ -155,26 +232,14 @@ class LeclercProductsSpider(Spider, ProductSpider):
 
         self.logger.info(f"Breadcrumbs on the page: {breadcrumbs}")
 
-        try:
-            main_department = breadcrumbs[2].strip()
-            main_department = Department(main_department)
-        except ValueError:
+        expected_departments = CAT_DEPT_MAPPING[self.get_category()]
+        if any(x in breadcrumbs for x in expected_departments):
+            return True
+        else:
             self.logger.info(
-                f"Main store department {main_department} is irrelevant. Skipping..."
+                f"Store department '{breadcrumbs.pop()}' is irrelevant for category '{self.get_category()}'. Skipping..."
             )
             return False
-
-        any_exclusion = [
-            s for excl in EXCLUSION_LIST for s in breadcrumbs if excl in s.lower()
-        ]
-
-        if any_exclusion:
-            self.logger.info(
-                f"Hit excluded store departments: {any_exclusion}. Skipping..."
-            )
-            return False
-
-        return True
 
     @lru_cache(maxsize=8, typed=True)
     def __get_product_info(self, response: Response):
