@@ -298,15 +298,32 @@ class BiocoopProductsSpider(Spider, ProductSpider):
             response.xpath("//div[@class='vrac-options-wrapper']").get() is not None
         )
 
+        # vrac price is given for vrac minimum, may start at 20g, 50g or 100g
         if is_vrac:
-            quantity = 100 / 1000
+            min_max = (
+                response.xpath("//div[@class='vrac-options-wrapper']").xpath(
+                    "//div[@class='min-max-notice']/text()"
+                )
+            ).re_first(r"Minimum (.+)g et maximum")
+
+            quantity = float(min_max) if min_max else 100
+            quantity /= 1000
             quantity_unit = QuantityUnit.KILOGRAM
 
             return (quantity, quantity_unit)
+
+        # information for "poids net égoutté" only in product name
+        elif found := re.search(" ([0-9]+)g net égoutté", item_name):
+            quantity = float(found.group(1))
+            quantity /= 1000
+            quantity_unit = QuantityUnit.KILOGRAM
+
+            return (quantity, quantity_unit)
+
         else:
             quantity_attribute = response.xpath(
                 "//div[@class='part-product']/span/text()"
-            ).get()
+            ).getall()[1]
 
             if quantity_attribute is not None:
                 m = re.match(
@@ -337,7 +354,6 @@ class BiocoopProductsSpider(Spider, ProductSpider):
                             quantity_unit = QuantityUnit.PIECE
 
                             if self.get_category() == CategoryValues.OEUFS:
-                                item_name = self.get_name(response)
                                 eggs_num = quantity
                                 quantity, quantity_unit = self.compute_eggs_weight(
                                     eggs_num, item_name
