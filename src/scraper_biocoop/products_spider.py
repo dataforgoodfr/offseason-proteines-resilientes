@@ -294,6 +294,8 @@ class BiocoopProductsSpider(Spider, ProductSpider):
             return (is_discounted, current_price, None)
 
     def get_quantity(self, response: Response) -> tuple[float, QuantityUnit] | None:
+        item_name = self.get_name(response)
+
         is_vrac = (
             response.xpath("//div[@class='vrac-options-wrapper']").get() is not None
         )
