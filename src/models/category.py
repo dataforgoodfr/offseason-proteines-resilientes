@@ -155,10 +155,10 @@ class CategoryValues(StrEnum):
     AMANDES = "Amandes"
     BEURRE_DE_CACAHUETE = "Beurre de cacahuète"
     CACAHUETES = "Cacahuètes"
-    GRANES_CHIA = "Graines de chia"
-    GRANES_COURGE = "Graines de courge"
-    GRANES_LIN = "Graines de lin"
-    GRANES_TOURNESOL = "Graines de tournesol"
+    GRAINES_CHIA = "Graines de chia"
+    GRAINES_COURGE = "Graines de courge"
+    GRAINES_LIN = "Graines de lin"
+    GRAINES_TOURNESOL = "Graines de tournesol"
     NOISETTES = "Noisettes"
     NOIX_CAJOUS = "Noix de cajou"
     PIGNONS_PIN = "Pignons de pin"
@@ -328,10 +328,10 @@ CATEGORY_SUBCATEGORY_MAP: Dict[CategoryValues, CategoryValues] = {
     CategoryValues.AMANDES: CategoryValues.NOIX,
     CategoryValues.BEURRE_DE_CACAHUETE: CategoryValues.NOIX,
     CategoryValues.CACAHUETES: CategoryValues.NOIX,
-    CategoryValues.GRANES_CHIA: CategoryValues.NOIX,
-    CategoryValues.GRANES_COURGE: CategoryValues.NOIX,
-    CategoryValues.GRANES_LIN: CategoryValues.NOIX,
-    CategoryValues.GRANES_TOURNESOL: CategoryValues.NOIX,
+    CategoryValues.GRAINES_CHIA: CategoryValues.NOIX,
+    CategoryValues.GRAINES_COURGE: CategoryValues.NOIX,
+    CategoryValues.GRAINES_LIN: CategoryValues.NOIX,
+    CategoryValues.GRAINES_TOURNESOL: CategoryValues.NOIX,
     CategoryValues.NOISETTES: CategoryValues.NOIX,
     CategoryValues.NOIX_CAJOUS: CategoryValues.NOIX,
     CategoryValues.PIGNONS_PIN: CategoryValues.NOIX,
