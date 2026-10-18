@@ -5,8 +5,9 @@ Nuggets,Nuggets poulet
 Cordon bleu,Cordon bleu
 Escalopes de dinde,escalope de dinde
 Blanc de dinde (tranches),blanc de dinde doré
-Steak haché boeuf,steak haché pur boeuf
-Entrecôte boeuf,Entrecôte de boeuf
+Steak haché bœuf,steak haché pur boeuf
+Entrecôte bœuf,Entrecôte de boeuf
+Rôti de bœuf,Rôti de boeuf
 Escalope de veau,Escalope veau
 Magret de canard,Magret de canard gras
 Confit de canard,Canard confit cuisse
@@ -21,7 +22,6 @@ Poitrine fumée / bacon,Poitrine fumée
 Rillettes,Rillettes porc
 Saucisse de Strasbourg / Knacki,Saucisses de Strasbourg
 Chipolatas,Chipolatas
-Merguez,Petit prix Merguez
 Merguez,Merguez Jean Rozé
 Merguez,Merguez boucher
 Saucisson sec,Le saucisson sec
@@ -47,7 +47,7 @@ Fromage blanc nature,Fromage blanc nature
 Petits-suisses,Petits suisses nature
 Yaourt nature 0%,Yaourt nature 0%
 Skyr,Skyr
-Lait demi ecrémé,lait demi écrémé UHT
+Lait demi écrémé,lait demi écrémé UHT
 Lait entier,Lait entier UHT
 Parmesan rapé,Parmigiano reggiano
 Emmental,Emmental français
@@ -64,8 +64,8 @@ Lentilles vertes,Lentilles vertes sec paquet
 Lentilles vertes (conserve),Lentilles conserve
 Lentilles blondes,Lentilles blondes
 Lentilles corail,lentilles corail BIO paquet
-Pois chiches,Pois chiches
 Pois chiches (conserve),Pois chiches conserve
+Pois chiches,Pois chiches
 Haricots rouges (conserve),Haricots rouges conserve
 Flageolets,Flageolets verts
 Flageolets (conserve),Flageolets conserve
@@ -96,6 +96,7 @@ Nuggets végétaux,Nuggets végétal
 Nuggets végétaux,Nuggets végétaux
 Escalopes végétales panées,Escalopes végétales panées
 Saucisses végétales,Saucisses végétales
+Saucisses végétales,Chipos végétales aux herbes
 Boulettes végétales,Boulettes végétales
 Galette végétale (céréales),Galettes boulgour
 Galette végétale (céréales),Galettes quinoa
