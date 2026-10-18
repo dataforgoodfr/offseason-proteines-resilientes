@@ -174,7 +174,7 @@ HEADERS = {
 
 # Web cookies to send with each request.
 COOKIES = {
-    "datadome": "DxCK0EoVDu6k8an5n18mcaCYWEkKaE53YE6tQfLT2B4v4Fq2DfQhEEEoaGbfqGNhbfs0Gw3jroKXt_VS3T~6MijaLysGLnrJ40rGb418ZM2r2UCaQcpxRSIGLbzxBkJM",
+    "datadome": "7_uMda9h4vr1oYSSL4AB3GyEfOXpaJlEnljGYsGgj1JkRPvPqRbf_H0xvxSAVuGUtiuWDq_E7yo3ol4DNZpJCnvTmEHfPxfuVPrcXVMcPZWkrYgLEU1xoDvNwgaWr5Wu",
     "itm_pdv": "{%22ref%22:%2209117%22%2C%22isEcommerce%22:true%2C%22name%22:%22Super%2520Notre%2520Dame%2520D'oe%22%2C%22city%22:%22Notre%2520Dame%2520D'oe%22}",
     "novaParams": "{%22pdvRef%22:%2209117%22}",
 }
