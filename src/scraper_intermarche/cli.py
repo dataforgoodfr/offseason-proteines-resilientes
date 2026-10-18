@@ -63,6 +63,8 @@ def main() -> None:
     crawler = CrawlerProcess(
         settings={
             "AUTOTHROTTLE_ENABLED": True,
+            "AUTOTHROTTLE_DEBUG": True,
+            "DOWNLOAD_DELAY": 10,
             "BOT_NAME": BOT_NAME,
             "DATABASE_URL": args.database,
             "FEED_EXPORT_ENCODING": "utf-8",
