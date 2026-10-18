@@ -226,7 +226,7 @@ class IntermarcheProductsSpider(Spider, ProductSpider):
 
     def parse(self, response: Response):
         product_links = response.xpath(
-            "//a[@class='link text-c-primary productCard__link']/@href"
+            "//a[@class='link transition-colors font-normal font-body text-body-lg text-c-primary flex h-full flex-col no-underline']/@href"
         ).getall()
 
         yield from response.follow_all(
@@ -407,7 +407,7 @@ class IntermarcheProductsSpider(Spider, ProductSpider):
         """
 
         packaging = response.xpath(
-            '//p[@class="m-0 p-0 text-[0.75rem] leading-[1rem] font-normal font-open-sans text-grey-700"]/text()'
+            '//p[@class="transition-colors font-normal font-body text-body-sm text-grey-700"]/text()'
         ).get()
 
         m = re.match(
