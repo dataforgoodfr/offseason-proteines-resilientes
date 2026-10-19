@@ -164,6 +164,10 @@ class LeclercProductsSpider(Spider, ProductSpider):
 
         yield Request(
             url=url,
+            meta={
+                "playwright": True,
+                "playwright_include_page": True,
+            },
             cookies=COOKIES,
             callback=self.parse,
         )
