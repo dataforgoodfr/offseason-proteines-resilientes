@@ -6,24 +6,179 @@ from functools import lru_cache
 from scrapy import Request, Spider
 from scrapy.http import Response
 
+from models.category import CategoryValues
 from models.product import QuantityUnit
 from utils.spider import ProductItem, ProductSpider
 
 # Name of the cookie used to specify the store ID.
 STORE_COOKIE_NAME = "storeId"
 
-# List of store department that are not relevant.
-EXCLUSION_LIST = (
-    "aides culinaires",
-    "alcools",
-    "boissons végétales",
-    "bébé",
-    "bouillon",
-    "cuisinés",
-    "glaces",
-    "pizza",
-    "préparés",
-)
+# Mapping between categories and departments.
+CAT_DEPT_MAPPING = {
+    CategoryValues.AIGUILLETTES_VEGETALES: ["Végétal"],
+    CategoryValues.BOULETTES_VEGETALES: ["Végétal", "Plats cuisinés bio"],
+    CategoryValues.ESCALOPES_VEGETALES_PANEES: ["Végétal"],
+    CategoryValues.FALAFELS: ["Végétal"],
+    CategoryValues.GALETTES_DE_LEGUMINEUSES: ["Plats cuisinés bio", "Végétal"],
+    CategoryValues.GALETTE_VEGETALE_CEREALES: ["Végétal"],
+    CategoryValues.JAMBON_VEGETAL: ["Végétal"],
+    CategoryValues.KNAX_VEGETALES: ["Végétal"],
+    CategoryValues.LARDONS_VEGETAUX: ["Lardon, dés, poitrine", "Végétal"],
+    CategoryValues.NUGGETS_VEGETAUX: ["Végétal"],
+    CategoryValues.SAUCISSES_VEGETALES: ["Végétal"],
+    CategoryValues.STEAK_VEGETAL: ["Végétal"],
+    CategoryValues.FLOCON_DAVOINE: ["Céréales adulte"],
+    CategoryValues.QUINOA: ["Semoule, céréales, blé", "Légumes secs"],
+    CategoryValues.SARRASIN: ["Légumes secs, sous-vide"],
+    CategoryValues.SEITAN: ["Plats cuisinés bio"],
+    CategoryValues.FEVES: [
+        "Légumes verts",
+        "Légumes natures",
+    ],
+    CategoryValues.FLAGEOLETS: ["Légumes secs, sous-vide"],
+    CategoryValues.FLAGEOLETS_CONSERVE: ["Lentilles et légumes secs"],
+    CategoryValues.HARICOTS_BLANCS: ["Légumes secs"],
+    CategoryValues.HARICOTS_BLANCS_CONSERVE: ["Lentilles et légumes secs"],
+    CategoryValues.HARICOTS_NOIRS_CONSERVE: [
+        "Epicerie espagnole et portugaise",
+        "Lentilles et légumes secs",
+    ],
+    CategoryValues.HARICOTS_ROUGES_CONSERVE: ["Lentilles et légumes secs"],
+    CategoryValues.LENTILLES_BLONDES: ["Légumes secs"],
+    CategoryValues.LENTILLES_CORAIL: ["Légumes secs"],
+    CategoryValues.LENTILLES_VERTES: ["Légumes secs, sous-vide", "Légumes secs"],
+    CategoryValues.LENTILLES_VERTES_CONSERVE: ["Lentilles et légumes secs"],
+    CategoryValues.POIS_CASSES: ["Légumes secs"],
+    CategoryValues.POIS_CHICHES: ["Légumes secs"],
+    CategoryValues.POIS_CHICHES_CONSERVE: ["Lentilles et légumes secs"],
+    CategoryValues.AMANDES: [
+        "Fruits séchés et Fruits secs",
+        "Fruits secs, aide à la pâtisserie",
+    ],
+    CategoryValues.BEURRE_DE_CACAHUETE: ["Pâte à tartiner, crème de marrons"],
+    CategoryValues.CACAHUETES: ["Cacahuètes, pistaches et noix de cajou"],
+    CategoryValues.GRAINES_CHIA: [
+        "Fruits séchés et Fruits secs",
+        "Sucre, farine, pâtisserie bio",
+    ],
+    CategoryValues.GRAINES_COURGE: [
+        "Amandes, noisettes et mélanges",
+        "Sucre, farine, pâtisserie bio",
+    ],
+    CategoryValues.GRAINES_TOURNESOL: [
+        "Fruits et légumes bio",
+        "Epicerie espagnole et portugaise",
+        "Fruits séchés et Fruits secs",
+    ],
+    CategoryValues.NOISETTES: [
+        "Fruits séchés et Fruits secs",
+        "Fruits secs, aide à la pâtisserie",
+    ],
+    CategoryValues.NOIX_CAJOUS: [
+        "Fruits séchés et Fruits secs",
+        "Cacahuètes, pistaches et noix de cajou",
+    ],
+    CategoryValues.PIGNONS_PIN: ["Fruits séchés et Fruits secs"],
+    CategoryValues.PISTACHES: ["Cacahuètes, pistaches et noix de cajou"],
+    CategoryValues.BRIE: ["Camemberts, coulommiers et bries", "Fromages à la coupe"],
+    CategoryValues.BUCHE_DE_CHEVRE: ["Chèvres et brebis"],
+    CategoryValues.CAMEMBERT: ["Camemberts, coulommiers et bries"],
+    CategoryValues.COMTE: ["Comté, emmental, gouda et autres", "Fromages à la coupe"],
+    CategoryValues.COULOMMIERS: ["Camemberts, coulommiers et bries"],
+    CategoryValues.EMMENTAL: [
+        "Comté, emmental, gouda et autres",
+        "Fromages à la coupe",
+    ],
+    CategoryValues.FETA: ["Mozzarella et burrata, feta, mascarpone"],
+    CategoryValues.FROMAGE_BLANC: ["Yaourts et fromages blancs natures"],
+    CategoryValues.FROMAGE_RACLETTE: [
+        "Raclette, tartiflette et fondue",
+        "Fromages à la coupe",
+    ],
+    CategoryValues.LAIT_DEMI_ECREME: [
+        "Laits demi-écrémés",
+        "Laits bio",
+        "Laits sans lactose",
+    ],
+    CategoryValues.LAIT_ENTIER: ["Laits entiers", "Laits bio"],
+    CategoryValues.MOZZARELLA: ["Mozzarella et burrata, feta, mascarpone"],
+    CategoryValues.OEUFS: ["Oeufs"],
+    CategoryValues.PARMESAN_RAPE: ["Fromages râpés et parmesan"],
+    CategoryValues.PETITS_SUISSES: ["Yaourts et fromages blancs natures"],
+    CategoryValues.ROQUEFORT: ["Roquefort et bleu"],
+    CategoryValues.SKYR: ["Skyr, bien-être et 0%"],
+    CategoryValues.YAOURT_NATURE_0: ["Skyr, bien-être et 0%"],
+    CategoryValues.ANCHOIS: ["Anchois, harengs et rollmops"],
+    CategoryValues.CABILLAUD: ["Filets, pavés et poissons entiers", "Poissons natures"],
+    CategoryValues.COLIN_PANE: ["Panés", "Poissons panés"],
+    CategoryValues.CREVETTES: ["Fruits de mer, crustacés"],
+    CategoryValues.LIMANDE: ["Panés", "Poissons natures"],
+    CategoryValues.MAQUEREAU_CONSERVE: ["Maquereaux"],
+    CategoryValues.MAQUEREAU_FRAIS: ["Saumons et poissons fumés"],
+    CategoryValues.NOIX_DE_SAINT_JACQUES: [
+        "Crevettes, coquillages et crustacés",
+        "Fruits de mer, crustacés",
+    ],
+    CategoryValues.SARDINES: ["Sardines"],
+    CategoryValues.SAUMON: [
+        "Filets et pavés",
+        "Filets, pavés et poissons entiers",
+        "Poissons natures",
+    ],
+    CategoryValues.SAUMON_FUME: ["Saumons et poissons fumés"],
+    CategoryValues.SURIMI: ["Surimis"],
+    CategoryValues.THON: ["Thon"],
+    CategoryValues.TRUITE_FUMEE: ["Saumons et poissons fumés"],
+    CategoryValues.BARRES_PROTEINEES: ["Minceur et sport"],
+    CategoryValues.ISOLAT_WHEY: ["Minceur et sport"],
+    CategoryValues.PROTEINES_VEGETALES_POUDRE: ["Minceur et sport"],
+    CategoryValues.PROTEINES_SOJA_TEXTUREES: ["Légumes secs, sous-vide"],
+    CategoryValues.TOFU_FUME: ["Plats cuisinés bio", "Végétal"],
+    CategoryValues.TOFU_NATURE: ["Végétal", "Plats cuisinés bio"],
+    CategoryValues.BLANC_DE_DINDE_TRANCHES: ["Jambon et roti de volaille"],
+    CategoryValues.CHIPOLATAS: ["Saucisse, paupiette et farce"],
+    CategoryValues.CONFIT_DE_CANARD: [
+        "Canard et Lapin",
+        "Cassoulets, confits, choucroutes",
+    ],
+    CategoryValues.CORDON_BLEU: [
+        "Panés, nuggets, grignottes",
+        "Volailles, panés de volailles, autres",
+    ],
+    CategoryValues.COTES_AGNEAU: ["Veau, agneau et abat"],
+    CategoryValues.COTES_DE_PORC: ["Porc"],
+    CategoryValues.CUISSE_POULET: ["Poulet"],
+    CategoryValues.ENTRECOTE_BOEUF: ["Boeuf"],
+    CategoryValues.ESCALOPES_DE_DINDE: ["Dinde"],
+    CategoryValues.ESCALOPE_DE_VEAU: ["Veau, agneau et abat"],
+    CategoryValues.FILET_MIGNON_DE_PORC: ["Porc"],
+    CategoryValues.GIGOT_AGNEAU: [
+        "Veau, agneau et abat",
+        "Volailles, panés de volailles, autres",
+    ],
+    CategoryValues.JAMBON_BLANC: ["Jambon blanc et rôti"],
+    CategoryValues.JAMBON_CRU: ["Jambon cru et sec"],
+    CategoryValues.LAPIN: ["Canard et Lapin"],
+    CategoryValues.LARDONS: ["Lardon, dés, poitrine"],
+    CategoryValues.MAGRET_DE_CANARD: ["Canard et Lapin"],
+    CategoryValues.MERGUEZ: ["Saucisse, paupiette et farce"],
+    CategoryValues.NUGGETS: [
+        "Panés, nuggets, grignottes",
+        "Volailles, panés de volailles, autres",
+    ],
+    CategoryValues.POITRINE_FUMEE_BACON: ["Lardon, dés, poitrine"],
+    CategoryValues.POULET_FERMIER: ["Poulet"],
+    CategoryValues.POULET_FILET: ["Poulet"],
+    CategoryValues.RILLETTES: ["Pâté, rillette, foie gras", "Pâtés, foie gras"],
+    CategoryValues.ROTI_DE_BOEUF: ["Boeuf"],
+    CategoryValues.ROTI_DE_PORC: ["Jambon blanc, viande cuite"],
+    CategoryValues.SAUCISSE_DE_STRASBOURG_KNACKI: [
+        "Knack, saucisse, boudin, saucisson cuit"
+    ],
+    CategoryValues.SAUCISSON_SEC: ["Saucisson sec, chorizo"],
+    CategoryValues.SAUTE_DE_VEAU: ["Veau, agneau et abat"],
+    CategoryValues.STEAK_HACHE_BOEUF: ["Viande hachée", "Steaks, viandes hachées"],
+}
 
 
 @unique
@@ -157,26 +312,14 @@ class SuperUProductsSpider(Spider, ProductSpider):
 
         self.logger.info(f"Breadcrumbs on the page: {breadcrumbs}")
 
-        try:
-            main_department = breadcrumbs[0]
-            main_department = Department(main_department)
-        except ValueError:
+        expected_departments = CAT_DEPT_MAPPING[self.get_category()]
+        if any(x in breadcrumbs for x in expected_departments):
+            return True
+        else:
             self.logger.info(
-                f"Main store department {main_department} is irrelevant. Skipping..."
+                f"Store department '{breadcrumbs.pop()}' is irrelevant for category '{self.get_category()}'. Skipping..."
             )
             return False
-
-        any_exclusion = [
-            s for excl in EXCLUSION_LIST for s in breadcrumbs if excl in s.lower()
-        ]
-
-        if any_exclusion:
-            self.logger.info(
-                f"Hit excluded store departments: {any_exclusion}. Skipping..."
-            )
-            return False
-
-        return True
 
     @lru_cache(maxsize=8, typed=True)
     def __get_product_info(self, response: Response):
