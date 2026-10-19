@@ -73,6 +73,7 @@ def main() -> None:
                 "scraper_leclerc.pipeline_rdbms.ProductPipeline": 300,
             },
             "LOG_LEVEL": log_level,
+            "PLAYWRIGHT_BROWSER_PROVIDER": "utils.browser.InvisibleBrowserProvider",
             "PLAYWRIGHT_BROWSER_TYPE": "chromium",
             "PLAYWRIGHT_LAUNCH_OPTIONS": {
                 "headless": False,
