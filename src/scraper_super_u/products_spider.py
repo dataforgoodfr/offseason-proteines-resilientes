@@ -394,12 +394,19 @@ class SuperUProductsSpider(Spider, ProductSpider):
         )
 
     def get_quantity(self, response: Response) -> tuple[float, QuantityUnit] | None:
-        poids_net = response.xpath(
+        poids_net_egoutte = response.xpath(
             '//p[@class="pdp-description-text"]/text()'
-        ).re_first(r"Poids net: (.+)")
+        ).re_first(r"Poids net égoutté: (.+)")
 
-        if poids_net is None:
-            return
+        if poids_net_egoutte is None:
+            poids_net = response.xpath(
+                '//p[@class="pdp-description-text"]/text()'
+            ).re_first(r"Poids net: (.+)")
+
+            if poids_net is None:
+                return
+        else:
+            poids_net = poids_net_egoutte
 
         raw_quantity = poids_net.split()[0]
         quantity = float(raw_quantity.replace(",", "."))
