@@ -16,14 +16,18 @@ CAT_DEPT_MAPPING = {
     CategoryValues.BOULETTES_VEGETALES: ["Alternatives à la viande"],
     CategoryValues.ESCALOPES_VEGETALES_PANEES: ["Panés et nuggets"],
     CategoryValues.FALAFELS: ["Tofus, émincés, galettes"],
+    CategoryValues.GALETTE_VEGETALE_CEREALES: ["Tofus, émincés, galettes"],
     CategoryValues.JAMBON_VEGETAL: ["Charcuteries végétales"],
     CategoryValues.KNAX_VEGETALES: ["Alternatives à la viande"],
     CategoryValues.LARDONS_VEGETAUX: ["Charcuteries végétales"],
     CategoryValues.NUGGETS_VEGETAUX: ["Panés et nuggets"],
     CategoryValues.SAUCISSES_VEGETALES: ["Alternatives à la viande"],
     CategoryValues.STEAK_VEGETAL: ["Alternatives à la viande"],
+    CategoryValues.TOFU_FUME: ["Tofus, émincés, galettes"],
+    CategoryValues.TOFU_NATURE: ["Tofus, émincés, galettes"],
     CategoryValues.FLOCON_DAVOINE: ["Céréales adultes"],
     CategoryValues.QUINOA: ["Couscous, Blés et Céréales"],
+    CategoryValues.FEVES: ["Haricots et flageolets", "Légumes et purées"],
     CategoryValues.FLAGEOLETS_CONSERVE: ["Haricots et flageolets"],
     CategoryValues.HARICOTS_BLANCS_CONSERVE: ["Haricots et flageolets"],
     CategoryValues.HARICOTS_NOIRS_CONSERVE: ["Haricots et flageolets"],
@@ -53,8 +57,8 @@ CAT_DEPT_MAPPING = {
     CategoryValues.FETA: ["Mozzarellas Burratas Fetas"],
     CategoryValues.FROMAGE_BLANC: ["Skyrs, fromages blancs,allégés"],
     CategoryValues.FROMAGE_RACLETTE: ["Raclettes Tartiflettes Panés"],
-    CategoryValues.LAIT_DEMI_ECREME: ["Laits demi-écrémés"],
-    CategoryValues.LAIT_ENTIER: ["Laits entiers"],
+    CategoryValues.LAIT_DEMI_ECREME: ["Laits demi-écrémés", "Laits bio"],
+    CategoryValues.LAIT_ENTIER: ["Laits entiers", "Laits bio"],
     CategoryValues.MOZZARELLA: ["Mozzarellas Burratas Fetas"],
     CategoryValues.ROQUEFORT: ["Roqueforts et bleus"],
     CategoryValues.SKYR: ["Skyrs, fromages blancs,allégés"],
@@ -136,11 +140,40 @@ class Department(StrEnum):
 
 # Web cookies to send with each request.
 COOKIES = {
-    "datadome": "oS~RtmWvLsjPZFHMwLYyobN_TFoaKno_h_TAUlPySSj~LcGkR_LDXuZm6sNPSrl_v9UOJl3Cs3cdVHKcZe71UMhJUxnYeHj7QJhlwOygTJ0VD8VXUyGcL977BKyKNuHl",
-    "wdrivesr2": "!peK6dVxY0scdDWGYX+grUxlNrp1QYLFI2jUHkHnUj9HPXmlcg8AiR2x5I4BjsomZ1PsGkMwHgm6EKQ==",
-    "TS01b20143": "0130c016ab3f04cec1443baf33dbcf1d983460e0a93a39f2247af008c98376dc2928bca3a43723f5fd275626c695428c740a15c5bd",
-    "cdrivesr2": "!5abDGLLO3eN/DCbNk4xdzclww0TjJd2nM3yplP5B47wWWlQHdX+YKlvqSPqxwFBJy96JUt8mO/sPW4M=",
-    "TS01e6e41f": "0130c016ab3f04cec1443baf33dbcf1d983460e0a93a39f2247af008c98376dc2928bca3a43723f5fd275626c695428c740a15c5bd",
+    "datadome": "kz625vGVbHMeCWweWc9sIujqkix8NZnGJI2Gxrc2xENbnGUF0HTrGfOPQXk9taSD4WnPjRGalpr~pPMn0wU~I_Zn0~ijSHfMvs6OU1V1jamVr5~diQKRn4t06cJYjEkv",
+    "wdrivesr2": "!84x7v196niOrMsVc/xhadgKZDG6v1AQv5kFFD1fu89fdwS/VgEdEdMoC/fZPCTD3MKR9RM3ZiKqRdQ==",
+    "TS01b20143": "0130c016ab8bff21ab2a53bb31f0c9a146365d5c6a0fe8eda6239d4f4e6948cad54cb5d1b3f3a5dcfcf9325b037f1183222864271a",
+    "TS01e6e41f": "0130c016ab8bff21ab2a53bb31f0c9a146365d5c6a0fe8eda6239d4f4e6948cad54cb5d1b3f3a5dcfcf9325b037f1183222864271a",
+    "cdrivesr2": "!zWc8V…2NFoiLCJ2ZW5kb3JzIjp7ImVuYWJsZWQiOlsiYzpnb29nbGVhZHMtZVQzclp4RVkiLCJjOmNvb2tpZWludC1oM1BqRms0VCIsImM6YWItdGFzdHkiLCJjOmdvb2dsZWFuYS00VFhuSmlnUiJdfSwicHVycG9zZXMiOnsiZW5hYmxlZCI6WyJjb29raWVzZXQtUmVmR2NhS2EiLCJjb29raWVzZXQtS2FEOVVwOW4iLCJjb29raWVzZXQtTWVqWFVqVmoiXX0sInZlcnNpb24iOjJ9",
+    "euconsent-v2": "CQssfAAQssfAAAHABBENC2FgAAAAAAAAAAAAAAAAAAAA.IAAA.YAAAAAAAAAAA",
+    "_gcl_au": "1.1.1994375785.1793018125",
+    "_ga_5LY7M0RFYE": "GS2.1.s1793018125$o1$g1$t1793018140$j45$l0$h0",
+    "_ga": "GA1.1.1718431953.1793018125",
+    "_MFB_": "fHwxfHx8W118fHx8",
+}
+
+
+# HTTP headers to send with each request.
+HEADERS = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Language": "en-US,en;q=0.9,pt;q=0.8,es;q=0.7",
+    "Cache-Control": "no-cache",
+    "Connection": "keep-alive",
+    "Pragma": "no-cache",
+    "Referer": "https://fd14-courses.leclercdrive.fr/magasin-033701-033701-Tours-Nord.aspx",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "same-origin",
+    "Sec-Fetch-User": "?1",
+    "Upgrade-Insecure-Requests": "1",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+    "sec-ch-device-memory": "8",
+    "sec-ch-ua": '"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"',
+    "sec-ch-ua-arch": '"x86"',
+    "sec-ch-ua-full-version-list": '"Chromium";v="128.0.6613.138", "Not;A=Brand";v="24.0.0.0", "Google Chrome";v="128.0.6613.138"',
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-model": '""',
+    "sec-ch-ua-platform": '"Windows"',
 }
 
 
@@ -169,6 +202,7 @@ class LeclercProductsSpider(Spider, ProductSpider):
                 "playwright_include_page": True,
             },
             cookies=COOKIES,
+            headers=HEADERS,
             callback=self.parse,
         )
 
@@ -187,7 +221,12 @@ class LeclercProductsSpider(Spider, ProductSpider):
 
             yield from response.follow_all(
                 product_links,
+                meta={
+                    "playwright": True,
+                    "playwright_include_page": True,
+                },
                 cookies=COOKIES,
+                headers=HEADERS,
                 callback=self.parse_product,
             )
 
