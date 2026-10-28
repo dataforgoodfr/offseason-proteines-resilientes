@@ -160,20 +160,14 @@ HEADERS = {
     "Cache-Control": "no-cache",
     "Connection": "keep-alive",
     "Pragma": "no-cache",
+    "Host": "fd14-courses.leclercdrive.fr",
     "Referer": "https://fd14-courses.leclercdrive.fr/magasin-033701-033701-Tours-Nord.aspx",
     "Sec-Fetch-Dest": "document",
     "Sec-Fetch-Mode": "navigate",
     "Sec-Fetch-Site": "same-origin",
     "Sec-Fetch-User": "?1",
     "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
-    "sec-ch-device-memory": "8",
-    "sec-ch-ua": '"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"',
-    "sec-ch-ua-arch": '"x86"',
-    "sec-ch-ua-full-version-list": '"Chromium";v="128.0.6613.138", "Not;A=Brand";v="24.0.0.0", "Google Chrome";v="128.0.6613.138"',
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-model": '""',
-    "sec-ch-ua-platform": '"Windows"',
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0",
 }
 
 
@@ -197,10 +191,7 @@ class LeclercProductsSpider(Spider, ProductSpider):
 
         yield Request(
             url=url,
-            meta={
-                "playwright": True,
-                "playwright_include_page": True,
-            },
+            meta={"playwright": True},
             cookies=COOKIES,
             headers=HEADERS,
             callback=self.parse,
@@ -221,10 +212,7 @@ class LeclercProductsSpider(Spider, ProductSpider):
 
             yield from response.follow_all(
                 product_links,
-                meta={
-                    "playwright": True,
-                    "playwright_include_page": True,
-                },
+                meta={"playwright": True},
                 cookies=COOKIES,
                 headers=HEADERS,
                 callback=self.parse_product,
