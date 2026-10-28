@@ -29,6 +29,7 @@ CAT_DEPT_MAPPING = {
         "Tofus, seitans",
         "Traiteur végétal",
     ],
+    CategoryValues.FEVES: ["Spécialités végétales"],
     CategoryValues.FLAGEOLETS: ["Légumineuses"],
     CategoryValues.FLAGEOLETS_CONSERVE: ["Conserves de légumes"],
     CategoryValues.HARICOTS_BLANCS: ["Légumineuses"],

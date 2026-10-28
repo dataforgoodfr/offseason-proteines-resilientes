@@ -84,7 +84,7 @@ CAT_DEPT_MAPPING = {
     CategoryValues.GRAINES_COURGE: ["Mélanges, graines, fruits exotiques"],
     CategoryValues.GRAINES_LIN: ["Mélanges, graines, fruits exotiques"],
     CategoryValues.GRAINES_TOURNESOL: ["Mélanges, graines, fruits exotiques"],
-    CategoryValues.NOISETTES: ["Noix, noisettes"],
+    CategoryValues.NOISETTES: ["Noix, noisettes", "Amandes, noisettes"],
     CategoryValues.NOIX_CAJOUS: ["Noix de cajou"],
     CategoryValues.PIGNONS_PIN: [
         "Légumes secs, graines",

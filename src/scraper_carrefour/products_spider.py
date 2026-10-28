@@ -50,7 +50,7 @@ CAT_DEPT_MAPPING = {
     CategoryValues.POIS_CASSES: ["Lentilles et Légumes secs"],
     CategoryValues.POIS_CHICHES: ["Lentilles et Légumes secs"],
     CategoryValues.POIS_CHICHES_CONSERVE: ["Pois chiche"],
-    CategoryValues.AMANDES: ["Légumes et Fruits secs"],
+    CategoryValues.AMANDES: ["Légumes et Fruits secs", "Fruits secs et mélanges"],
     CategoryValues.BEURRE_DE_CACAHUETE: [
         "Pâtes à tartiner et Crèmes",
         "Pâtes à tartiner, Confitures et Miels",
