@@ -65,6 +65,7 @@ def main() -> None:
             "AUTOTHROTTLE_ENABLED": True,
             "AUTOTHROTTLE_DEBUG": True,
             "DOWNLOAD_DELAY": 10,
+            "AUTOTHROTTLE_TARGET_CONCURRENCY": 0.5,
             "BOT_NAME": BOT_NAME,
             "DATABASE_URL": args.database,
             "FEED_EXPORT_ENCODING": "utf-8",
@@ -77,7 +78,7 @@ def main() -> None:
             },
             "LOG_LEVEL": log_level,
             "PLAYWRIGHT_BROWSER_PROVIDER": "utils.browser.InvisibleBrowserProvider",
-            "PLAYWRIGHT_BROWSER_TYPE": "chromium",
+            "PLAYWRIGHT_BROWSER_TYPE": "firefox",
             "PLAYWRIGHT_LAUNCH_OPTIONS": {
                 "headless": False,
             },
