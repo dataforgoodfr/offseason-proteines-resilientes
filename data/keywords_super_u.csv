@@ -5,9 +5,9 @@ Nuggets,Nuggets poulet
 Cordon bleu,Cordon bleu
 Escalopes de dinde,Escalope de dinde
 Blanc de dinde (tranches),Tranches blanc de dinde
-Steak haché boeuf,Steak haché boeuf
-Rôti de boeuf,Rôti de boeuf
-Entrecôte boeuf,Entrecôte de boeuf
+Steak haché bœuf,Steak haché boeuf
+Rôti de bœuf,Rôti de boeuf
+Entrecôte bœuf,Entrecôte de boeuf
 Escalope de veau,Escalope veau
 Magret de canard,Magret de canard
 Confit de canard,Canard confit cuisse
@@ -17,6 +17,7 @@ Côtes de porc,Côte de porc échine
 Côtes de porc,Côte de porc première
 Jambon blanc,Jambon blanc
 Jambon cru,Tranches jambon cru
+Lapin,Lapin
 Lardons,Lardons
 Poitrine fumée / bacon,Poitrine fumée
 Rillettes,Rillettes porc
@@ -26,6 +27,7 @@ Merguez,Merguez barquette
 Saucisson sec,Saucisson sec
 Gigot d'agneau,Gigot d'agneau
 Côtes d'agneau,Côte d'agneau
+Anchois,Anchois
 Thon (conserve),Conserve thon entier
 Pavé de saumon,Pavé de saumon
 Saumon fumé,Saumon fumé tranches
@@ -42,10 +44,10 @@ Noix de saint-jacques,Noix de saint jacques sans corail
 Bâtonnets de surimi,Bâtonnets surimi
 Œufs,Boîte oeufs frais
 Fromage blanc nature,Fromage blanc nature
-Petits-suisses,Petits suisses nature
-Yaourt nature 0%,Yaourt nature 0%
+Petits‑suisses,Petit suisse nature
+Yaourt nature 0%,Yaourt nature 0%25
 Skyr,Skyr
-Lait demi ecrémé,Lait UHT demi écrémé
+Lait demi écrémé,Lait UHT demi écrémé
 Lait entier,Lait UHT entier
 Parmesan rapé,Parmesan rapé
 Emmental,Emmental français
@@ -58,6 +60,7 @@ Coulommiers,Coulommiers
 Brie,Brie
 Roquefort,Roquefort lait cru
 Feta,Feta grecque
+Fèves,Fèves
 Lentilles vertes,Lentilles vertes étui
 Lentilles vertes (conserve),Lentilles préparées
 Lentilles blondes,Lentilles blondes
@@ -92,6 +95,9 @@ Graines de tournesol,Graines de tournesol bio
 Graines de tournesol,Graines de tournesol grillées
 Pignons de pin,Pignons de pin U
 Pignons de pin,Pignons de pin vahiné
+Isolat de whey,Isolat de whey
+Protéines végétales poudre,Protéine végétale 3K
+Seitan,Seitan
 Noix de cajou,Noix de cajou sachet
 Amandes,Amandes décortiquées
 Pistaches,Pistaches grillées
