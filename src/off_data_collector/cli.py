@@ -4,6 +4,7 @@ from logging import DEBUG, INFO, getLogger
 from pathlib import Path
 
 from openfoodfacts import API as off_api
+from openfoodfacts import APIVersion as OFF_API_VERSION
 from openfoodfacts.types import JSONType
 from pyrate_limiter import Duration, limiter_factory
 from sqlalchemy import create_engine, select
@@ -126,7 +127,9 @@ async def __run() -> None:
 
     logger.debug("Setting up OpenFoodFacts REST API client")
     api_client = off_api(
-        user_agent=OPENFOODFACTS_USER_AGENT, country=OPENFOODFACTS_COUNTRY
+        user_agent=OPENFOODFACTS_USER_AGENT,
+        country=OPENFOODFACTS_COUNTRY,
+        version=OFF_API_VERSION.v3,
     )
 
     for reference in references:
