@@ -315,27 +315,37 @@ def __create_new_source(reference: str, data: JSONType) -> Source:
         url=f"https://fr.openfoodfacts.org/product/{reference}/",
         nutrition_facts=NutritionFacts(
             nutriscore=NutriScore(data["nutrition_grade_fr"])
-            if data.get("nutrition_grade_fr")
+            if data.get("nutrition_grade_fr") is not None
             and data["nutrition_grade_fr"] != "unknown"
             and data["nutrition_grade_fr"] != "not-applicable"
             else None,
-            novascore=NovaScore(data["nova_group"]) if data.get("nova_group") else None,
-            calories_100g=float(data["energy-kcal_100g"])
-            if data.get("energy-kcal_100g")
+            novascore=NovaScore(data["nova_group"])
+            if data.get("nova_group") is not None
             else None,
-            fat_100g=float(data["fat_100g"]) if data.get("fat_100g") else None,
+            calories_100g=float(data["energy-kcal_100g"])
+            if data.get("energy-kcal_100g") is not None
+            else None,
+            fat_100g=float(data["fat_100g"])
+            if data.get("fat_100g") is not None
+            else None,
             saturated_fat_100g=float(data["saturated-fat_100g"])
-            if data.get("saturated-fat_100g")
+            if data.get("saturated-fat_100g") is not None
             else None,
             carbohydrates_100g=float(data["carbohydrates_100g"])
-            if data.get("carbohydrates_100g")
+            if data.get("carbohydrates_100g") is not None
             else None,
-            sugars_100g=float(data["sugars_100g"]) if data.get("sugars_100g") else None,
-            fiber_100g=float(data["fiber_100g"]) if data.get("fiber_100g") else None,
+            sugars_100g=float(data["sugars_100g"])
+            if data.get("sugars_100g") is not None
+            else None,
+            fiber_100g=float(data["fiber_100g"])
+            if data.get("fiber_100g") is not None
+            else None,
             protein_100g=float(data["proteins_100g"])
-            if data.get("proteins_100g")
+            if data.get("proteins_100g") is not None
             else None,
-            salt_100g=float(data["salt_100g"]) if data.get("salt_100g") else None,
+            salt_100g=float(data["salt_100g"])
+            if data.get("salt_100g") is not None
+            else None,
         ),
         environmental_facts=environmental_facts,
     )
