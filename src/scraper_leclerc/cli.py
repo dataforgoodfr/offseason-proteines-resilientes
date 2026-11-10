@@ -62,6 +62,10 @@ def main() -> None:
 
     crawler = CrawlerProcess(
         settings={
+            "AUTOTHROTTLE_ENABLED": True,
+            "AUTOTHROTTLE_DEBUG": True,
+            "DOWNLOAD_DELAY": 10,
+            "AUTOTHROTTLE_TARGET_CONCURRENCY": 0.5,
             "BOT_NAME": BOT_NAME,
             "DATABASE_URL": args.database,
             "FEED_EXPORT_ENCODING": "utf-8",
@@ -73,14 +77,14 @@ def main() -> None:
                 "scraper_leclerc.pipeline_rdbms.ProductPipeline": 300,
             },
             "LOG_LEVEL": log_level,
-            "PLAYWRIGHT_BROWSER_TYPE": "chromium",
+            "PLAYWRIGHT_BROWSER_PROVIDER": "utils.browser.InvisibleBrowserProvider",
+            "PLAYWRIGHT_BROWSER_TYPE": "firefox",
             "PLAYWRIGHT_LAUNCH_OPTIONS": {
                 "headless": False,
             },
             "ROBOTSTXT_OBEY": False,
             "TELNETCONSOLE_ENABLED": False,
             "TWISTED_REACTOR": "twisted.internet.asyncioreactor.AsyncioSelectorReactor",
-            "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
             "COOKIES_ENABLED": True,
             "COOKIES_DEBUG": True,
         }

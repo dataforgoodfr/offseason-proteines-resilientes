@@ -12,6 +12,8 @@ dependencies = [
   "scrapy-playwright (>=0.0.44,<1.0.0)",
   "scrapy-impersonate (>=1.6.1,<2.0.0)",
   "pyrate-limiter (>=4.0.2,<5.0.0)",
+  "invisible-playwright (>=0.40.0,<0.41.0)",
+  "psycopg2-binary (>=2.9.13,<3.0.0)",
 ]
 
 [project.scripts]
